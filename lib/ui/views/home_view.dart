@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/domain/models/auth.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
 
 class HomeView extends StatelessWidget {

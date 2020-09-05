@@ -91,6 +91,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
     return product;
   }
 
+
   String nextIdentity() {
     var uuid = Uuid();
     return uuid.v4();

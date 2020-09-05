@@ -5,10 +5,10 @@ import 'package:wish_list/domain/repositories/user_repository.dart' as i_user_re
 
 class UserRepository implements i_user_repository.UserRepository {
 
-  final CollectionReference collection = Firestore.instance.collection('users');
+  final CollectionReference collection = FirebaseFirestore.instance.collection('users');
 
   Future<User> get(String uid) async {
-    final snapshot = await collection.document(uid).get();
+    final snapshot = await collection.doc(uid).get();
     if (!snapshot.exists) return null;
     return User.fromMap(snapshot.data());
   }
@@ -18,11 +18,11 @@ class UserRepository implements i_user_repository.UserRepository {
   }
 
   Future<void> update(User user) async {
-    await collection.document(user.id).updateData(user.toMap());
+    await collection.doc(user.id).update(user.toMap());
   }
 
   Future<void> delete(User user) async {
-    await collection.document(user.id).delete();
+    await collection.doc(user.id).delete();
   }
 
 }

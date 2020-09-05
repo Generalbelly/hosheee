@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:wish_list/adapter/gateway/auth.dart';
+import 'package:wish_list/adapter/gateway/logger.dart';
 import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
 import 'package:wish_list/adapter/gateway/product/product_repository.dart';
+import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
@@ -9,13 +14,14 @@ import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
 import 'package:wish_list/common/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:wish_list/domain/models/auth.dart' as i_auth;
+import 'package:wish_list/domain/models/logger.dart' as i_logger;
 import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
 import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
 import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
 import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
 import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
 import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
 import 'package:wish_list/ui/views/create_collection_view.dart';
 import 'package:wish_list/ui/views/create_product_view.dart';
@@ -23,9 +29,15 @@ import 'package:wish_list/ui/views/home_view.dart';
 import 'package:wish_list/ui/views/sign_up_view.dart';
 import 'package:wish_list/ui/views/sign_in_view.dart';
 
-void main() {
-  Provider.debugCheckInvalidValueType = null;
+class EnvironmentConfig {
+  static const BUNDLE_ID_SUFFIX = String.fromEnvironment('BUNDLE_ID_SUFFIX');
+  static const APP_ENV = String.fromEnvironment('APP_ENV');
+}
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Provider.debugCheckInvalidValueType = null;
+  await Firebase.initializeApp();
   runApp(App());
 }
 
@@ -38,6 +50,9 @@ class App extends StatelessWidget {
         Provider<i_auth.Auth>(
           create: (_) => Auth(),
         ),
+        Provider<i_logger.Logger>(
+          create: (_) => Logger(),
+        ),
         Provider<SignInUseCase>(
           create: (context) => SignInUseCase(Provider.of<i_auth.Auth>(context, listen: false)),
         ),
@@ -49,6 +64,9 @@ class App extends StatelessWidget {
         ),
         Provider<i_product_repository.ProductRepository>(
           create: (_) => ProductRepository(),
+        ),
+        Provider<i_url_metadata_repository.UrlMetadataRepository>(
+          create: (_) => UrlMetadataRepository(),
         ),
         Provider<ListCollectionsUseCase>(
           create: (context) => ListCollectionsUseCase(

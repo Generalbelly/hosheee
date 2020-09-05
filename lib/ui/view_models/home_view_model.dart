@@ -32,7 +32,6 @@ class HomeViewModel extends ChangeNotifier with RequestStatusManager {
     } else {
       print("not authenticated");
     }
-    print("come");
     ok();
     notifyListeners();
   }
