@@ -3,9 +3,15 @@ import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
 import 'package:wish_list/domain/models/user.dart';
 import 'package:wish_list/domain/repositories/collection_repository.dart';
+import 'package:wish_list/utils/helpers.dart';
 
 class ListCollectionsUseCaseRequest {
   ListCollectionsUseCaseRequest();
+
+  Map<String, dynamic> toMap() {
+    return {};
+  }
+
 }
 
 class ListCollectionsUseCaseResponse {
@@ -32,9 +38,11 @@ class ListCollectionsUseCase {
         return ListCollectionsUseCaseResponse(collections);
       }
       throw SignInRequiredException();
-    } catch (error) {
-      print(error);
-      return ListCollectionsUseCaseResponse(null, message: error.toString());
+    } catch (e) {
+      logger().error(e.toString(), {
+        'request': request.toMap(),
+      });
+      return ListCollectionsUseCaseResponse(null, message: e.toString());
     }
   }
 

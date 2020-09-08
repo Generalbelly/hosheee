@@ -47,7 +47,7 @@ class EditCollectionView extends StatelessWidget {
                 TextFormField(
                   decoration: InputDecoration(
                     hintText: 'Name',
-                    errorText: collectionViewModel.nameErrorMessage,
+                    errorText: collectionViewModel.errors['name'],
                   ),
                   onChanged: (value) => collectionViewModel.setName(value),
                 ),

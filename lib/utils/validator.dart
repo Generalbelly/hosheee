@@ -1,3 +1,5 @@
+import 'package:wish_list/domain/models/logger.dart';
+
 class ValidationResult {
   String field;
   dynamic input;
@@ -28,7 +30,7 @@ class Validator {
         }
         switch (rule) {
           case 'email':
-            if (input == null || !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(input)) {
+            if (input == null || !RegExp(r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(input)) {
               messages.add('The $field field must be a valid email.');
             }
             break;
@@ -61,7 +63,23 @@ class Validator {
               messages.add('The $field field may not be greater than $value characters');
             }
             break;
-          default:
+          case 'url':
+            if (!(input is String)) {
+              return false;
+            }
+            final _input = input as String;
+            var isValid = false;
+            try {
+              final uri = Uri.parse(_input);
+              isValid = uri.scheme.startsWith("http");
+            } catch (e) {
+              isValid = false;
+            }
+            if (!isValid) {
+              messages.add('The $field field must be a valid url');
+            }
+            break;
+      default:
             break;
         }
       }

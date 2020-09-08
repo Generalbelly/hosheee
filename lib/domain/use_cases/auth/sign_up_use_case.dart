@@ -1,10 +1,18 @@
 import 'package:wish_list/domain/models/auth.dart';
+import 'package:wish_list/utils/helpers.dart';
 
 class SignUpUseCaseRequest {
   String email;
   String password;
 
   SignUpUseCaseRequest(this.email, this.password);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'password': password,
+    };
+  }
 }
 
 class SignUpUseCaseResponse {
@@ -22,17 +30,16 @@ class SignUpUseCase {
   SignUpUseCase(this._authService);
 
   Future<SignUpUseCaseResponse> handle(SignUpUseCaseRequest request) async {
-    var message = 'An unexpected error happened.';
     try {
       final user = await _authService.signUpWithEmail(request.email, request.password);
-      if (user != null) {
-        return SignUpUseCaseResponse(user);
-      }
-    } catch (error) {
-      print(error);
-      message = error.toString();
+      return SignUpUseCaseResponse(user);
+    } catch (e) {
+      final message = e.toString();
+      logger().error(message, {
+        'request': request.toMap(),
+      });
+      return SignUpUseCaseResponse(null, message: message);
     }
-    return SignUpUseCaseResponse(null, message: message);
   }
 
 }

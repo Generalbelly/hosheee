@@ -9,7 +9,7 @@ class UrlMetadata {
   String url;
   String video;
 
-  UrlMetadata.fromMap(Map<String, dynamic> data)
+  UrlMetadata.fromMap(Map<dynamic, dynamic> data)
     :
       lang = data['lang'] ?? '',
       author = data['author'] ?? '',

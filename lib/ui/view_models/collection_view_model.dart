@@ -7,11 +7,13 @@ import 'package:wish_list/utils/validator.dart';
 class CollectionViewModel extends ChangeNotifier {
 
   Collection collection = Collection(null, '');
-  String nameErrorMessage;
+  List<Collection> collections = [];
 
+  Map<String, String> errors = {
+    'name': null,
+  };
   String message;
 
-  List<Collection> collections = [];
 
   AddCollectionUseCase _addCollectionUseCase;
   ListCollectionsUseCase _listCollectionsUseCase;
@@ -39,7 +41,7 @@ class CollectionViewModel extends ChangeNotifier {
       'name': ['required'],
     });
     final result = validator.validate()[0];
-    nameErrorMessage = result.valid ? null : result.messages[0];
+    errors['name'] = result.valid ? null : result.messages[0];
     return result.valid;
   }
 

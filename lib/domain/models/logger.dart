@@ -1,5 +1,4 @@
 abstract class Logger {
-
   log(String message, Object payload);
 
   info(String message, Object payload);

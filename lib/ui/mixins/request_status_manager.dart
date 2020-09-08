@@ -1,4 +1,4 @@
-enum Status {
+enum RequestStatus {
   initial,
   loading,
   ok,
@@ -6,34 +6,34 @@ enum Status {
 }
 
 mixin RequestStatusManager {
-  Status status = Status.initial;
+  RequestStatus status = RequestStatus.initial;
 
   void loading() {
-    status = Status.loading;
+    status = RequestStatus.loading;
   }
 
   bool isInitial() {
-    return status == Status.initial;
+    return status == RequestStatus.initial;
   }
 
   bool isLoading() {
-    return status == Status.loading;
+    return status == RequestStatus.loading;
   }
 
   void ok() {
-    status = Status.ok;
+    status = RequestStatus.ok;
   }
 
   bool isOk() {
-    return status == Status.loading;
+    return status == RequestStatus.loading;
   }
 
   void error() {
-    status = Status.error;
+    status = RequestStatus.error;
   }
 
   bool isError() {
-    return status == Status.loading;
+    return status == RequestStatus.loading;
   }
 
 }

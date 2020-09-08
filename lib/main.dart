@@ -1,13 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:wish_list/adapter/gateway/auth.dart';
-import 'package:wish_list/adapter/gateway/logger.dart';
 import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
 import 'package:wish_list/adapter/gateway/product/product_repository.dart';
 import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
@@ -15,7 +14,6 @@ import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
 import 'package:wish_list/common/theme.dart';
 import 'package:wish_list/domain/models/auth.dart' as i_auth;
-import 'package:wish_list/domain/models/logger.dart' as i_logger;
 import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
 import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
 import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
@@ -50,9 +48,6 @@ class App extends StatelessWidget {
         Provider<i_auth.Auth>(
           create: (_) => Auth(),
         ),
-        Provider<i_logger.Logger>(
-          create: (_) => Logger(),
-        ),
         Provider<SignInUseCase>(
           create: (context) => SignInUseCase(Provider.of<i_auth.Auth>(context, listen: false)),
         ),
@@ -86,6 +81,12 @@ class App extends StatelessWidget {
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
+        Provider<GetUrlMetadataUseCase>(
+          create: (context) => GetUrlMetadataUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_url_metadata_repository.UrlMetadataRepository>(context, listen: false),
+          ),
+        ),
         ChangeNotifierProvider<SignInViewModel>(
           create: (context) => SignInViewModel(Provider.of<SignInUseCase>(context, listen: false)),
         ),
@@ -99,7 +100,8 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(
-              Provider.of<AddProductUseCase>(context, listen: false)),
+              Provider.of<AddProductUseCase>(context, listen: false),
+              Provider.of<GetUrlMetadataUseCase>(context, listen: false)),
         ),
         ChangeNotifierProvider<HomeViewModel>(
           create: (context) => HomeViewModel(Provider.of<i_auth.Auth>(context, listen: false)),

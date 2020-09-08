@@ -45,10 +45,10 @@ class CreateProductView extends StatelessWidget {
               children: [
                 TextFormField(
                   decoration: InputDecoration(
-                    hintText: 'Product URL',
-                    errorText: productViewModel.urlErrorMessage,
+                    hintText: 'Product Page URL',
+                    errorText: productViewModel.errors['websiteUrl'],
                   ),
-                  onChanged: (value) => productViewModel.setName(value),
+                  onChanged: (value) => productViewModel.setWebsiteUrl(value),
                 ),
               ],
             ),

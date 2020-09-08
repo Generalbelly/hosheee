@@ -6,13 +6,11 @@ import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i
 class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepository {
 
   Future<UrlMetadata> get(String url) async {
-    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
-      functionName: 'fetchMetadata',
-    );
-    HttpsCallableResult resp = await callable.call(<String, dynamic>{
+    final callable = CloudFunctions(region: 'asia-northeast1').getHttpsCallable(functionName: 'fetchMetadata');
+    final resp = await callable.call(<String, dynamic>{
       'url': url,
     });
-    return resp.data ? UrlMetadata.fromMap(resp.data) : null;
+    return resp.data != null ? UrlMetadata.fromMap(resp.data) : null;
   }
 
 }

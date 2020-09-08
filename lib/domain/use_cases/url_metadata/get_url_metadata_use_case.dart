@@ -1,0 +1,52 @@
+import 'dart:async';
+import 'package:wish_list/domain/models/auth.dart';
+import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
+import 'package:wish_list/domain/models/url_metadata.dart';
+import 'package:wish_list/domain/models/user.dart';
+import 'package:wish_list/domain/repositories/url_metadata_repository.dart';
+import 'package:wish_list/utils/helpers.dart';
+
+class GetUrlMetadataUseCaseRequest {
+  String url;
+  GetUrlMetadataUseCaseRequest(this.url);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'url': url,
+    };
+  }
+}
+
+class GetUrlMetadataUseCaseResponse {
+  UrlMetadata urlMetadata;
+  String message;
+
+  GetUrlMetadataUseCaseResponse(this.urlMetadata, {String message})
+      : this.message = message;
+}
+
+class GetUrlMetadataUseCase {
+
+  Auth _auth;
+
+  UrlMetadataRepository _urlMetadataRepository;
+
+  GetUrlMetadataUseCase(this._auth, this._urlMetadataRepository);
+
+  Future<GetUrlMetadataUseCaseResponse> handle(GetUrlMetadataUseCaseRequest request) async {
+    try {
+      final user = await _auth.user();
+      if (user is User) {
+        final urlMetadata = await _urlMetadataRepository.get(request.url);
+        return GetUrlMetadataUseCaseResponse(urlMetadata);
+      }
+      throw SignInRequiredException();
+    } catch (e) {
+      logger().error(e.toString(), {
+        'request': request.toMap(),
+      });
+      return GetUrlMetadataUseCaseResponse(null, message: e.toString());
+    }
+  }
+
+}

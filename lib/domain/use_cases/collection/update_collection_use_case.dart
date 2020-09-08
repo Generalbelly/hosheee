@@ -3,11 +3,18 @@ import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
 import 'package:wish_list/domain/models/user.dart';
 import 'package:wish_list/domain/repositories/collection_repository.dart';
+import 'package:wish_list/utils/helpers.dart';
 
 class UpdateCollectionUseCaseRequest {
   String name;
 
   UpdateCollectionUseCaseRequest(this.name);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+    };
+  }
 }
 
 class UpdateCollectionUseCaseResponse {
@@ -37,9 +44,11 @@ class UpdateCollectionUseCase {
         return UpdateCollectionUseCaseResponse(collection);
       }
       throw SignInRequiredException();
-    } catch (error) {
-      print(error);
-      return UpdateCollectionUseCaseResponse(null, message: error.toString());
+    } catch (e) {
+      logger().error(e.toString(), {
+        'request': request.toMap(),
+      });
+      return UpdateCollectionUseCaseResponse(null, message: e.toString());
     }
   }
 

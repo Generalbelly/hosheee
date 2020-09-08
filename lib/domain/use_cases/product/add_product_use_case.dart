@@ -4,11 +4,18 @@ import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
 import 'package:wish_list/domain/models/user.dart';
 import 'package:wish_list/domain/repositories/product_repository.dart';
+import 'package:wish_list/utils/helpers.dart';
 
 class AddProductUseCaseRequest {
   Product product;
 
   AddProductUseCaseRequest(this.product);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'product': product,
+    };
+  }
 }
 
 class AddProductUseCaseResponse {
@@ -38,9 +45,11 @@ class AddProductUseCase {
         return AddProductUseCaseResponse(product);
       }
       throw SignInRequiredException();
-    } catch (error) {
-      print(error);
-      return AddProductUseCaseResponse(null, message: error.toString());
+    } catch (e) {
+      logger().error(e.toString(), {
+        'request': request.toMap(),
+      });
+      return AddProductUseCaseResponse(null, message: e.toString());
     }
   }
 
