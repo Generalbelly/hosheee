@@ -47,13 +47,14 @@ class ProductView extends StatelessWidget {
             });
           });
         }
+        final image = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl) : SizedBox.shrink();
         return SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(35.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.network(productViewModel.product.imageUrl),
+                image,
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name',
