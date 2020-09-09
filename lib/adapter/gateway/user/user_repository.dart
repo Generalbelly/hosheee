@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wish_list/domain/models/user.dart';
 import 'package:wish_list/domain/repositories/user_repository.dart' as i_user_repository;

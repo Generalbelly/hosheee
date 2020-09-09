@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:wish_list/domain/models/auth.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
@@ -38,9 +37,10 @@ class AddProductUseCase {
     try {
       final user = await _auth.user();
       if (user is User) {
+        request.product.id = _productRepository.nextIdentity();
         final product = await _productRepository.add(
             user.id,
-            Product(_productRepository.nextIdentity(), request.product.name)
+            request.product
         );
         return AddProductUseCaseResponse(product);
       }

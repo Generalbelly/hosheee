@@ -46,6 +46,7 @@ class EditCollectionView extends StatelessWidget {
                 Text('wish', style: Theme.of(context).textTheme.headline1),
                 TextFormField(
                   decoration: InputDecoration(
+                    labelText: 'Name',
                     hintText: 'Name',
                     errorText: collectionViewModel.errors['name'],
                   ),

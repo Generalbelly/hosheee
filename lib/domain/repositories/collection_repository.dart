@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:wish_list/domain/models/collection.dart';
 
 abstract class CollectionRepository {

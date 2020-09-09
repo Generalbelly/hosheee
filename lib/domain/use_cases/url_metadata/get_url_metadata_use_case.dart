@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:wish_list/domain/models/auth.dart';
 import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
 import 'package:wish_list/domain/models/url_metadata.dart';

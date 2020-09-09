@@ -48,6 +48,7 @@ class SignUpView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Email',
                       hintText: 'Email',
                       errorText: signUpViewModel.emailErrorMessage,
                     ),
@@ -55,6 +56,7 @@ class SignUpView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password',
                       hintText: 'Password',
                       errorText: signUpViewModel.passwordErrorMessage,
                     ),
@@ -63,6 +65,7 @@ class SignUpView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password Confirmation',
                       hintText: 'Password Confirmation',
                     ),
                     onChanged: (value) => signUpViewModel.passwordConfirmation = value,

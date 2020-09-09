@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:wish_list/domain/models/product.dart';
 
 abstract class ProductRepository {

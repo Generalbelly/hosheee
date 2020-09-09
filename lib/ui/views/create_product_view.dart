@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/views/product_view.dart';
 
 class CreateProductView extends StatelessWidget {
 
@@ -21,12 +22,12 @@ class CreateProductView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('New Product'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Save'),
-            onPressed: () => productViewModel.create(),
-          ),
-        ],
+        // actions: <Widget>[
+        //   FlatButton(
+        //     child: Text('Save'),
+        //     onPressed: () => productViewModel.create(),
+        //   ),
+        // ],
       ),
       body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
@@ -45,10 +46,36 @@ class CreateProductView extends StatelessWidget {
               children: [
                 TextFormField(
                   decoration: InputDecoration(
+                    labelText: 'Product Page URL',
                     hintText: 'Product Page URL',
                     errorText: productViewModel.errors['websiteUrl'],
                   ),
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
+                  onEditingComplete: () async {
+                    final result = await productViewModel.fillWithMetadata();
+                    if (result) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductView(productViewModel.product),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    child: Text('Skip'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductView(productViewModel.product),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -52,16 +52,16 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     return Collection.fromMap(snapshot.data());
   }
 
-  Future<Collection> add(String userId, Collection coll) {
+  Future<Collection> add(String userId, Collection collection) {
     return Future(() async {
-      final doc = getCollection(userId).doc();
+      final doc = getCollection(userId).doc(collection.id);
       StreamSubscription streamSubscription;
       streamSubscription = doc.snapshots().listen((event) {
         streamSubscription.cancel();
         final coll = Collection.fromMap(event.data());
         return coll;
       });
-      var data = coll.toMap();
+      var data = collection.toMap();
       data['createdAt'] = FieldValue.serverTimestamp();
       data['updatedAt'] = FieldValue.serverTimestamp();
       await doc.set(data);
@@ -70,7 +70,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     });
   }
 
-  Future<Collection> update(String userId, Collection coll) async {
+  Future<Collection> update(String userId, Collection collection) async {
     return Future(() async {
       final doc = getCollection(userId).doc();
       StreamSubscription streamSubscription;
@@ -78,7 +78,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
         streamSubscription.cancel();
         return Collection.fromMap(event.data());
       });
-      var data = coll.toMap();
+      var data = collection.toMap();
       data['updatedAt'] = FieldValue.serverTimestamp();
       await doc.update(data);
     }).timeout(Duration(seconds: 30), onTimeout: () {
@@ -86,9 +86,9 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     });
   }
 
-  Future<Collection> delete(String userId, Collection coll) async {
+  Future<Collection> delete(String userId, Collection collection) async {
     await getCollection(userId).doc().delete();
-    return coll;
+    return collection;
   }
 
   String nextIdentity() {

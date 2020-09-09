@@ -54,16 +54,17 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   Future<Product> add(String userId, Product product) {
     return Future(() async {
-      final doc = getCollection(userId).doc();
+      final doc = getCollection(userId).doc(product.id);
       StreamSubscription streamSubscription;
       streamSubscription = doc.snapshots().listen((event) {
         streamSubscription.cancel();
-        final coll = Product.fromMap(event.data());
-        return coll;
+        final product = Product.fromMap(event.data());
+        return product;
       });
       var data = product.toMap();
       data['createdAt'] = FieldValue.serverTimestamp();
       data['updatedAt'] = FieldValue.serverTimestamp();
+      print(product.websiteUrl);
       await doc.set(data);
     }).timeout(Duration(seconds: 30), onTimeout: () {
       return null;

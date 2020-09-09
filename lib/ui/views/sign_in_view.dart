@@ -51,6 +51,7 @@ class SignInView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Email',
                       hintText: 'Email',
                       errorText: signInViewModel.emailErrorMessage,
                     ),
@@ -58,6 +59,7 @@ class SignInView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password',
                       hintText: 'Password',
                       errorText: signInViewModel.passwordErrorMessage,
                     ),

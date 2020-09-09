@@ -108,7 +108,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'wish',
+        title: 'wish_list',
         theme: appTheme,
         initialRoute: '/',
         home: HomeView(),
