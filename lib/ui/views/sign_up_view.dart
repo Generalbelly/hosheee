@@ -36,64 +36,64 @@ class SignUpView extends StatelessWidget {
               });
             });
           }
-          return Center(
+          return SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(35.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'wish',
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Email',
-                      errorText: signUpViewModel.emailErrorMessage,
+                padding: EdgeInsets.all(35.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'wish',
+                      style: Theme.of(context).textTheme.headline1,
                     ),
-                    onChanged: (value) => signUpViewModel.email = value,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Password',
-                      errorText: signUpViewModel.passwordErrorMessage,
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Email',
+                        errorText: signUpViewModel.emailErrorMessage,
+                      ),
+                      onChanged: (value) => signUpViewModel.email = value,
                     ),
-                    onChanged: (value) => signUpViewModel.password = value,
-                    obscureText: true,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password Confirmation',
-                      hintText: 'Password Confirmation',
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Password',
+                        errorText: signUpViewModel.passwordErrorMessage,
+                      ),
+                      onChanged: (value) => signUpViewModel.password = value,
+                      obscureText: true,
                     ),
-                    onChanged: (value) => signUpViewModel.passwordConfirmation = value,
-                    obscureText: true,
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text('Sign up'),
-                      onPressed: () => signUpViewModel.submit(),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password Confirmation',
+                        hintText: 'Password Confirmation',
+                      ),
+                      onChanged: (value) => signUpViewModel.passwordConfirmation = value,
+                      obscureText: true,
                     ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FlatButton(
-                      child: Text('Sign in'),
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/sign-in');
-                      },
+                    SizedBox(
+                      height: 24,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        color: Colors.lightBlue,
+                        child: Text('Sign up'),
+                        onPressed: () => signUpViewModel.submit(),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FlatButton(
+                        child: Text('Sign in'),
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/sign-in');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           );
         },
       )

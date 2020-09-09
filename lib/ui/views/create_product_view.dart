@@ -22,12 +22,15 @@ class CreateProductView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('New Product'),
-        // actions: <Widget>[
-        //   FlatButton(
-        //     child: Text('Save'),
-        //     onPressed: () => productViewModel.create(),
-        //   ),
-        // ],
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Skip'),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ProductView(productViewModel.product)));
+            },
+          ),
+        ],
       ),
       body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
@@ -46,8 +49,8 @@ class CreateProductView extends StatelessWidget {
               children: [
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Product Page URL',
-                    hintText: 'Product Page URL',
+                    labelText: 'Website URL',
+                    hintText: 'Website URL',
                     errorText: productViewModel.errors['websiteUrl'],
                   ),
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
@@ -62,20 +65,6 @@ class CreateProductView extends StatelessWidget {
                       );
                     }
                   },
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    child: Text('Skip'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductView(productViewModel.product),
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

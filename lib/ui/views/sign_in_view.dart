@@ -36,58 +36,58 @@ class SignInView extends StatelessWidget {
               });
             });
           }
-          return Center(
+          return SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(35.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'wish',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headline1,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Email',
-                      errorText: signInViewModel.emailErrorMessage,
+                padding: EdgeInsets.all(35.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'wish',
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .headline1,
                     ),
-                    onChanged: (value) => signInViewModel.email = value,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Password',
-                      errorText: signInViewModel.passwordErrorMessage,
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Email',
+                        errorText: signInViewModel.emailErrorMessage,
+                      ),
+                      onChanged: (value) => signInViewModel.email = value,
                     ),
-                    onChanged: (value) => signInViewModel.password = value,
-                    obscureText: true,
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text('Sign in'),
-                      onPressed: () => signInViewModel.submit(),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Password',
+                        errorText: signInViewModel.passwordErrorMessage,
+                      ),
+                      onChanged: (value) => signInViewModel.password = value,
+                      obscureText: true,
                     ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FlatButton(
-                      child: Text('Create account'),
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/sign-up');
-                      },
+                    SizedBox(
+                      height: 24,
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        color: Colors.lightBlue,
+                        child: Text('Sign in'),
+                        onPressed: () => signInViewModel.submit(),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FlatButton(
+                        child: Text('Create account'),
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/sign-up');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
             ),
           );
         },

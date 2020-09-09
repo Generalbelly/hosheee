@@ -53,6 +53,7 @@ class ProductView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.network(productViewModel.product.imageUrl),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name',
@@ -64,8 +65,8 @@ class ProductView extends StatelessWidget {
                 ),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Product Page URL',
-                    hintText: 'Product Page URL',
+                    labelText: 'Website URL',
+                    hintText: 'Website URL',
                     errorText: productViewModel.errors['websiteUrl'],
                   ),
                   initialValue: productViewModel.product.websiteUrl,
