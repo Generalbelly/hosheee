@@ -3,9 +3,9 @@ class Product {
   String name;
   String websiteUrl;
   String imageUrl;
-  String videoUrl;
-  String title;
-  String description;
+  // String videoUrl;
+  // String title;
+  // String description;
   String note;
   double price;
   String provider;
@@ -13,11 +13,22 @@ class Product {
 //  Timestamp createdAt;
 //  Timestamp updatedAt;
 
-  Product(this.id, this.name, {String websiteUrl, String imageUrl, String videoUrl, String title, String description, String note, double price, String provider, String collectionId})
+  Product(this.id, this.name, {
+    String websiteUrl,
+    String imageUrl,
+    // String videoUrl,
+    // String title,
+    // String description,
+    String note,
+    double price,
+    String provider,
+    String collectionId
+  })
     : this.websiteUrl = websiteUrl,
       this.imageUrl = imageUrl,
-      this.title = title,
-      this.description = description,
+      // this.videoUrl = videoUrl,
+      // this.title = title,
+      // this.description = description,
       this.note = note,
       this.price = price,
       this.provider = provider,
@@ -28,9 +39,9 @@ class Product {
       name = data['name'],
       websiteUrl = data['websiteUrl'],
       imageUrl = data['imageUrl'],
-      videoUrl = data['videoUrl'],
-      title = data['title'],
-      description = data['description'],
+      // videoUrl = data['videoUrl'],
+      // title = data['title'],
+      // description = data['description'],
       note = data['note'],
       price = data['price'],
       provider = data['provider'],
@@ -42,9 +53,9 @@ class Product {
       'name': name,
       'websiteUrl': websiteUrl,
       'imageUrl': imageUrl,
-      'videoUrl': videoUrl,
-      'title': title,
-      'description': description,
+      // 'videoUrl': videoUrl,
+      // 'title': title,
+      // 'description': description,
       'note': note,
       'price': price,
       'provider': provider,

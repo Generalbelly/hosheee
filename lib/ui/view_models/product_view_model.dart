@@ -53,15 +53,21 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
     // notifyListeners();
   }
 
-  void setTitle(String value) {
-    product.title = value;
-    // notifyListeners();
-  }
+  // void setTitle(String value) {
+  //   product.title = value;
+  //   // notifyListeners();
+  // }
+  //
+  // void setDescription(String value) {
+  //   product.title = value;
+  //   // notifyListeners();
+  // }
+  //
+  // void setVideoUrl(String value) async {
+  //   product.videoUrl = value;
+  //   // notifyListeners();
+  // }
 
-  void setDescription(String value) {
-    product.title = value;
-    // notifyListeners();
-  }
 
   void setWebsiteUrl(String value) async {
     product.websiteUrl = value;
@@ -75,11 +81,6 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
   void setImageUrl(String value) async {
     product.imageUrl = value;
-    // notifyListeners();
-  }
-
-  void setVideoUrl(String value) async {
-    product.videoUrl = value;
     // notifyListeners();
   }
 
@@ -102,11 +103,12 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
         print(urlMetadata.url);
         print(urlMetadata.image);
         product.name = urlMetadata.title;
-        product.title = urlMetadata.title;
-        product.description = urlMetadata.description;
+        // product.videoUrl = urlMetadata.video;
+        // product.title = urlMetadata.title;
+        // product.description = urlMetadata.description;
+        product.note = urlMetadata.description;
         product.websiteUrl = urlMetadata.url;
         product.imageUrl = urlMetadata.image;
-        product.videoUrl = urlMetadata.video;
         product.provider = urlMetadata.publisher;
       }
       return true;
