@@ -32,7 +32,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
       query = query.limit(limit);
     }
     if (_lastVisible != null) {
-      query = query.startAfter([_lastVisible]);
+      query = query.startAfter([_lastVisible.data()[orderBy]]);
     }
 
     final querySnapshot = await query.get();
@@ -58,8 +58,8 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
       StreamSubscription streamSubscription;
       streamSubscription = doc.snapshots().listen((event) {
         streamSubscription.cancel();
-        final coll = Collection.fromMap(event.data());
-        return coll;
+        final collection = Collection.fromMap(event.data());
+        return collection;
       });
       var data = collection.toMap();
       data['createdAt'] = FieldValue.serverTimestamp();

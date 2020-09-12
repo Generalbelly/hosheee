@@ -15,11 +15,8 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
   String message;
 
-  List<Product> products = [];
-
   AddProductUseCase _addProductUseCase;
   GetUrlMetadataUseCase _getUrlMetadataUseCase;
-
 
   bool _detailHidden = true;
   bool get detailHidden => _detailHidden;
@@ -29,8 +26,9 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   ProductViewModel(
-      AddProductUseCase addProductUseCase,
-      GetUrlMetadataUseCase getUrlMetadataUseCase) {
+    AddProductUseCase addProductUseCase,
+    GetUrlMetadataUseCase getUrlMetadataUseCase
+  ) {
     _addProductUseCase = addProductUseCase;
     _getUrlMetadataUseCase = getUrlMetadataUseCase;
   }

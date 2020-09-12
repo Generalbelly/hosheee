@@ -33,7 +33,7 @@ class ProductView extends StatelessWidget {
             child: Text('Save'),
             onPressed: () async {
               await productViewModel.create();
-              Navigator.popUntil(context, ModalRoute.withName('/'));
+              //Navigator.popUntil(context, ModalRoute.withName('/'));
             },
           ),
         ],

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:wish_list/ui/view_models/home_view_model.dart';
 
 class CollectionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final collectionViewModel = Provider.of<CollectionViewModel>(context);
+    final homeViewModel = Provider.of<HomeViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -20,7 +20,7 @@ class CollectionsView extends StatelessWidget {
       ),
       body: GridView.count(
         crossAxisCount: 2,
-        children: collectionViewModel.collections.map((collection) => Center(
+        children: homeViewModel.collections.map((collection) => Center(
           child: Text(
             collection.name,
             style: Theme.of(context).textTheme.headline5,

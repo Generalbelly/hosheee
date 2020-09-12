@@ -6,10 +6,12 @@ import 'package:wish_list/adapter/gateway/collection/collection_repository.dart'
 import 'package:wish_list/adapter/gateway/product/product_repository.dart';
 import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
 import 'package:wish_list/common/theme.dart';
@@ -63,14 +65,20 @@ class App extends StatelessWidget {
         Provider<i_url_metadata_repository.UrlMetadataRepository>(
           create: (_) => UrlMetadataRepository(),
         ),
-        Provider<ListCollectionsUseCase>(
-          create: (context) => ListCollectionsUseCase(
+        Provider<ListProductsUseCase>(
+          create: (context) => ListProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
-              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
         Provider<AddCollectionUseCase>(
           create: (context) => AddCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionsUseCase>(
+          create: (context) => ListCollectionsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
           ),
@@ -95,16 +103,23 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<CollectionViewModel>(
           create: (context) => CollectionViewModel(
-              Provider.of<ListCollectionsUseCase>(context, listen: false),
               Provider.of<AddCollectionUseCase>(context, listen: false)),
         ),
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(
               Provider.of<AddProductUseCase>(context, listen: false),
-              Provider.of<GetUrlMetadataUseCase>(context, listen: false)),
+              Provider.of<GetUrlMetadataUseCase>(context, listen: false)
+          ),
+        ),
+        ChangeNotifierProvider<ProductsViewModel>(
+          create: (context) => ProductsViewModel(
+              Provider.of<ListProductsUseCase>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider<HomeViewModel>(
-          create: (context) => HomeViewModel(Provider.of<i_auth.Auth>(context, listen: false)),
+          create: (context) => HomeViewModel(
+              Provider.of<i_auth.Auth>(context, listen: false),
+          ),
         ),
       ],
       child: MaterialApp(

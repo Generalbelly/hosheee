@@ -25,7 +25,7 @@ mixin RequestStatusManager {
   }
 
   bool isOk() {
-    return status == RequestStatus.loading;
+    return status == RequestStatus.ok;
   }
 
   void error() {
@@ -33,7 +33,7 @@ mixin RequestStatusManager {
   }
 
   bool isError() {
-    return status == RequestStatus.loading;
+    return status == RequestStatus.error;
   }
 
 }

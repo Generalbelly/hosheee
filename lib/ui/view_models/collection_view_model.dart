@@ -1,13 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
 import 'package:wish_list/utils/validator.dart';
 
 class CollectionViewModel extends ChangeNotifier {
 
   Collection collection = Collection(null, '');
-  List<Collection> collections = [];
 
   Map<String, String> errors = {
     'name': null,
@@ -16,16 +14,9 @@ class CollectionViewModel extends ChangeNotifier {
 
 
   AddCollectionUseCase _addCollectionUseCase;
-  ListCollectionsUseCase _listCollectionsUseCase;
 
-  CollectionViewModel(
-      ListCollectionsUseCase listCollectionsUseCase,
-      AddCollectionUseCase createCollectionUseCase) {
-    _listCollectionsUseCase = listCollectionsUseCase;
-    _addCollectionUseCase = createCollectionUseCase;
-    if (collections.length == 0) {
-      list();
-    }
+  CollectionViewModel(AddCollectionUseCase addCollectionUseCase) {
+    _addCollectionUseCase = addCollectionUseCase;
   }
 
   setName(String value) {
@@ -67,13 +58,13 @@ class CollectionViewModel extends ChangeNotifier {
 //    notifyListeners();
   }
 
-  list() async {
-    final response = await _listCollectionsUseCase.handle(
-        ListCollectionsUseCaseRequest());
-    collections = response.collections;
-    print(collections);
-    message = response.message;
-    notifyListeners();
-  }
+  // list() async {
+  //   final response = await _listCollectionsUseCase.handle(
+  //       ListCollectionsUseCaseRequest());
+  //   collections = response.collections;
+  //   print(collections);
+  //   message = response.message;
+  //   notifyListeners();
+  // }
 }
 

@@ -6,10 +6,25 @@ import 'package:wish_list/domain/repositories/collection_repository.dart';
 import 'package:wish_list/utils/helpers.dart';
 
 class ListCollectionsUseCaseRequest {
-  ListCollectionsUseCaseRequest();
+  String searchQuery;
+  String orderBy = 'createdAt';
+  bool descending = false;
+  int limit = 0;
+
+  ListCollectionsUseCaseRequest({String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}):
+    this.limit = limit,
+    this.descending = descending,
+    this.orderBy = orderBy,
+    this.searchQuery = searchQuery;
+
 
   Map<String, dynamic> toMap() {
-    return {};
+    return {
+      'searchQuery': searchQuery,
+      'orderBy': orderBy,
+      'descending': descending,
+      'limit': limit,
+    };
   }
 
 }

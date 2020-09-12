@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:wish_list/utils/helpers.dart';
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
@@ -32,7 +33,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
       query = query.limit(limit);
     }
     if (_lastVisible != null) {
-      query = query.startAfter([_lastVisible]);
+      query = query.startAfter([_lastVisible.data()[orderBy]]);
     }
 
     final querySnapshot = await query.get();
@@ -41,7 +42,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
     _lastDescending = descending;
     _lastSearchQuery = searchQuery;
 
-    if (querySnapshot.docs.length == 0) return List<Product>();
+    if (querySnapshot.docs.length == 0) return [];
     _lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
     return querySnapshot.docs.map((snapshot) => Product.fromMap(snapshot.data())).toList();
   }
