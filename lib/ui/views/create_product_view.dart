@@ -18,7 +18,7 @@ class CreateProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
-
+    final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
     return Scaffold(
       appBar: AppBar(
         title: Text('New Product'),
@@ -65,6 +65,27 @@ class CreateProductView extends StatelessWidget {
                       );
                     }
                   },
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: nextButtonColor,
+                    child: Text('Next'),
+                    onPressed:  () async {
+                      final result = await productViewModel.fillWithMetadata();
+                      if (result) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductView(productViewModel.product),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

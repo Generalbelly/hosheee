@@ -20,6 +20,14 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   AddProductUseCase _addProductUseCase;
   GetUrlMetadataUseCase _getUrlMetadataUseCase;
 
+
+  bool _detailHidden = true;
+  bool get detailHidden => _detailHidden;
+  set detailHidden(bool value) {
+    _detailHidden = value;
+    notifyListeners();
+  }
+
   ProductViewModel(
       AddProductUseCase addProductUseCase,
       GetUrlMetadataUseCase getUrlMetadataUseCase) {
@@ -57,7 +65,7 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
   void setWebsiteUrl(String value) async {
     product.websiteUrl = value;
-    // notifyListeners();
+    notifyListeners();
   }
 
   void setProvider(String value) async {
