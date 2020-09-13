@@ -37,7 +37,7 @@ class ProductsViewModel extends ChangeNotifier with RequestStatusManager {
       _scrollControllerListenerAdded = true;
     }
     final response = await _listProductsUseCase.handle(ListProductsUseCaseRequest(
-      limit: 8,
+      limit: 15,
     ));
     message = response.message;
     products.addAll(response.products);

@@ -7,7 +7,7 @@ import 'package:wish_list/utils/validator.dart';
 
 class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
-  Product product = Product(null, '');
+  Product product;
   Map<String, String> errors = {
     'websiteUrl': null,
     'name': null,
@@ -23,6 +23,17 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   set detailHidden(bool value) {
     _detailHidden = value;
     notifyListeners();
+  }
+
+  bool _isEditing = false;
+  bool get isEditing => _isEditing;
+  set isEditing(bool value) {
+    _isEditing = value;
+    notifyListeners();
+  }
+
+  bool isReadOnly() {
+    return product.id != null && _isEditing;
   }
 
   ProductViewModel(
@@ -48,7 +59,7 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   void setName(String value) {
     product.name = value;
     _validateName(product.name);
-    // notifyListeners();
+    notifyListeners();
   }
 
   // void setTitle(String value) {

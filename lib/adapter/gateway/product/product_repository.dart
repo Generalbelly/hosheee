@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
-import 'package:wish_list/utils/helpers.dart';
 
 class ProductRepository implements i_product_repository.ProductRepository {
 

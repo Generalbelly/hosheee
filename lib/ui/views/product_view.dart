@@ -23,17 +23,23 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
-    productViewModel.product = product;
+    if (productViewModel.product == null || productViewModel.product.id != product.id) {
+      productViewModel.product = product;
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: product.id != null ? Text(product.name) : Text('New Product'),
+        title: product.id != null ? Text(product.name) : Text('New Item'),
         actions: <Widget>[
           FlatButton(
-            child: Text('Save'),
+            child: productViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
             onPressed: () async {
-              await productViewModel.create();
-              //Navigator.popUntil(context, ModalRoute.withName('/'));
+              if (productViewModel.isReadOnly()) {
+                productViewModel.isEditing = false;
+              } else {
+                await productViewModel.create();
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+              }
             },
           ),
         ],
@@ -47,7 +53,7 @@ class ProductView extends StatelessWidget {
             });
           });
         }
-        final imageField = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl) : SizedBox.shrink();
+        final imageField = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover,) : SizedBox.shrink();
         final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
           decoration: InputDecoration(
             labelText: 'Price',
@@ -60,6 +66,7 @@ class ProductView extends StatelessWidget {
           ],
           keyboardType: TextInputType.number,
           onChanged: (value) => productViewModel.setPrice(double.parse(value)),
+          readOnly: productViewModel.isReadOnly(),
         );
 
         return SingleChildScrollView(
@@ -77,6 +84,7 @@ class ProductView extends StatelessWidget {
                   ),
                   initialValue: productViewModel.product.name,
                   onChanged: (value) => productViewModel.setName(value),
+                  readOnly: productViewModel.isReadOnly(),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -86,6 +94,7 @@ class ProductView extends StatelessWidget {
                   ),
                   initialValue: productViewModel.product.websiteUrl,
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
+                  readOnly: productViewModel.isReadOnly(),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -96,6 +105,7 @@ class ProductView extends StatelessWidget {
                   initialValue: productViewModel.product.note,
                   onChanged: (value) => productViewModel.setNote(value),
                   maxLines: 4,
+                  readOnly: productViewModel.isReadOnly(),
                 ),
                 priceField,
                 SizedBox(
