@@ -29,13 +29,16 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   bool _isEditing = false;
   bool get isEditing => _isEditing;
   set isEditing(bool value) {
-    print(value);
     _isEditing = value;
     notifyListeners();
   }
 
   bool isReadOnly() {
-    return product != null && product.id != null && !_isEditing;
+    return product.id != null && !_isEditing;
+  }
+
+  void makeReadOnly() {
+    _isEditing = false;
   }
 
   ProductViewModel(

@@ -23,9 +23,11 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
-    print(productViewModel.isReadOnly());
-    if (productViewModel.product == null || productViewModel.product.id != product.id) {
+    if (productViewModel.product.id == null || productViewModel.product.id != product.id) {
       productViewModel.product = product;
+      if (product.id != null) {
+        productViewModel.makeReadOnly();
+      }
     }
 
     return Scaffold(
