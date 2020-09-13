@@ -1,6 +1,6 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 
@@ -98,6 +98,9 @@ class ProductView extends StatelessWidget {
                   initialValue: productViewModel.product.websiteUrl,
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   readOnly: productViewModel.isReadOnly(),
+                  onTap: () {
+                    productViewModel.onWebsiteUrlTap();
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(

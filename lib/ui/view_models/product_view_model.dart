@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
@@ -173,6 +174,19 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 //      message = response.message;
 //    }
 //    notifyListeners();
+  }
+
+  Future<void> onWebsiteUrlTap() async {
+    print('tapped');
+    if (await canLaunch(product.websiteUrl)) {
+      await launch(
+        product.websiteUrl,
+        forceSafariVC: true,
+        forceWebView: true,
+      );
+    } else {
+      message = 'Could not launch ${product.websiteUrl}';
+    }
   }
 
 }
