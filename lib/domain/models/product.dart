@@ -13,7 +13,8 @@ class Product {
 //  Timestamp createdAt;
 //  Timestamp updatedAt;
 
-  Product(this.id, this.name, {
+  Product(this.id, {
+    String name,
     String websiteUrl,
     String imageUrl,
     // String videoUrl,

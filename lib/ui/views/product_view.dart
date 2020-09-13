@@ -23,6 +23,7 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
+    print(productViewModel.isReadOnly());
     if (productViewModel.product == null || productViewModel.product.id != product.id) {
       productViewModel.product = product;
     }
@@ -35,7 +36,7 @@ class ProductView extends StatelessWidget {
             child: productViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
             onPressed: () async {
               if (productViewModel.isReadOnly()) {
-                productViewModel.isEditing = false;
+                productViewModel.isEditing = true;
               } else {
                 await productViewModel.create();
                 Navigator.popUntil(context, ModalRoute.withName('/'));

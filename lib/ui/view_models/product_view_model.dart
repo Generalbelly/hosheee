@@ -7,7 +7,8 @@ import 'package:wish_list/utils/validator.dart';
 
 class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
-  Product product;
+  Product product = Product(null);
+
   Map<String, String> errors = {
     'websiteUrl': null,
     'name': null,
@@ -28,12 +29,13 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   bool _isEditing = false;
   bool get isEditing => _isEditing;
   set isEditing(bool value) {
+    print(value);
     _isEditing = value;
     notifyListeners();
   }
 
   bool isReadOnly() {
-    return product.id != null && _isEditing;
+    return product != null && product.id != null && !_isEditing;
   }
 
   ProductViewModel(
@@ -103,10 +105,10 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
     // notifyListeners();
   }
 
-  Future<bool> fillWithMetadata() async {
+  Future<void> fillWithMetadata() async {
     if (_validateWebsiteUrl(product.websiteUrl)) {
       final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(product.websiteUrl));
-      message = response.message;
+      // message = response.message;
       final urlMetadata = response.urlMetadata;
       if (urlMetadata != null) {
         print(urlMetadata.url);
@@ -120,9 +122,7 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
         product.imageUrl = urlMetadata.image;
         product.provider = urlMetadata.publisher;
       }
-      return true;
     }
-    return false;
   }
 
   bool _validateWebsiteUrl(String value) {

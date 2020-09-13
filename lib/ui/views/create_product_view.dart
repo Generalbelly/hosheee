@@ -55,15 +55,13 @@ class CreateProductView extends StatelessWidget {
                   ),
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   onEditingComplete: () async {
-                    final result = await productViewModel.fillWithMetadata();
-                    if (result) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductView(productViewModel.product),
-                        ),
-                      );
-                    }
+                    await productViewModel.fillWithMetadata();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductView(productViewModel.product),
+                      ),
+                    );
                   },
                 ),
                 SizedBox(
@@ -75,15 +73,13 @@ class CreateProductView extends StatelessWidget {
                     color: nextButtonColor,
                     child: Text('Next'),
                     onPressed:  () async {
-                      final result = await productViewModel.fillWithMetadata();
-                      if (result) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductView(productViewModel.product),
-                          ),
-                        );
-                      }
+                      await productViewModel.fillWithMetadata();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductView(productViewModel.product),
+                        ),
+                      );
                     },
                   ),
                 ),
