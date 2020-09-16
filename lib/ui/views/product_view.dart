@@ -56,7 +56,10 @@ class ProductView extends StatelessWidget {
             });
           });
         }
-        final imageField = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover,) : SizedBox.shrink();
+        final imageField = productViewModel.product.imageUrl != null ?
+          Image.network(product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+            return Icon(Icons.error_outline);
+          }) : SizedBox.shrink();
         final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
           decoration: InputDecoration(
             labelText: 'Price',

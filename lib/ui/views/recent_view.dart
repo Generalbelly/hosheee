@@ -4,6 +4,7 @@ import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/views/product_view.dart';
 
 class RecentView extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
@@ -13,7 +14,9 @@ class RecentView extends StatelessWidget {
           crossAxisCount: 3,
           children: productsViewModel.products.map((product) => GestureDetector(
             child: product.imageUrl != null ?
-              Image.network(product.imageUrl, fit: BoxFit.cover) :
+              Image.network(product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                return Icon(Icons.error_outline);
+              }) :
               Container(
                 alignment: Alignment.center,
                 child: Padding(
