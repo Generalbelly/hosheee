@@ -50,11 +50,6 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
     _getUrlMetadataUseCase = getUrlMetadataUseCase;
   }
 
-  // void setProduct(Product value) {
-  //   product = value;
-  //   clearErrors();
-  // }
-
   void clearErrors() {
     errors = {
       'websiteUrl': null,

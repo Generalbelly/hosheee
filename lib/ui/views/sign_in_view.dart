@@ -38,7 +38,7 @@ class SignInView extends StatelessWidget {
           }
           return SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.all(35.0),
+                padding: EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

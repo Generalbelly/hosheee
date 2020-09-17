@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,11 +78,26 @@ class ProductView extends StatelessWidget {
 
         return SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(35.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 imageField,
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  child: OutlineButton(
+                    onPressed: () async {
+                      if (await canLaunch(product.websiteUrl)) {
+                        await launch(product.websiteUrl);
+                      } else {
+                        _showSnackBar(context, 'Could not launch the url.', (ctx) {
+                          Scaffold.of(ctx).hideCurrentSnackBar();
+                        });
+                      }
+                    },
+                    child: Text('Go To URL'),
+                  ),
+                ),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name',

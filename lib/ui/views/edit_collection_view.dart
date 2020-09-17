@@ -39,7 +39,7 @@ class EditCollectionView extends StatelessWidget {
         }
         return Center(
           child: Container(
-            padding: EdgeInsets.all(35.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
