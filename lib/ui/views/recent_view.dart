@@ -26,71 +26,79 @@ class RecentView extends StatelessWidget {
         });
       });
     }
-    print(MediaQuery.of(context).size.width);
 
     final body = productsViewModel.products.length > 0
       ?
-      Stack(children: [
-        // 無限スクロールでローディングするときに出すか考える
-        // Container(
-        //   child: productsViewModel.products.length > 12
-        //     ?
-        //       Stack(
-        //         children: <Widget>[
-        //           Positioned(
-        //             bottom: 10.0,
-        //             left: MediaQuery.of(context).size.width / 2 - 20,
-        //             height: 30.0,
-        //             width: 30.0,
-        //             child: productsViewModel.allImagesLoaded ? SizedBox.shrink() : CircularProgressIndicator(),
-        //           ),
-        //         ],
-        //       )
-        //     :
-        //       SizedBox.shrink(),
-        // ),
-        GridView.count(
-            controller: productsViewModel.scrollController,
-            crossAxisCount: 3,
-            children: productsViewModel.products.map((product) =>
-              GestureDetector(
+      CustomScrollView(
+        controller: productsViewModel.scrollController,
+        slivers: <Widget>[
+          SliverGrid(
+            delegate: SliverChildBuilderDelegate((c, i) {
+              final product = productsViewModel.products[i];
+              return GestureDetector(
                 child: product.imageUrl != null
-                ?
-                  Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                      return Icon(Icons.error_outline);
-                    },
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (loadingProgress == null) {
-                          productsViewModel.imageLoadingDone(product.imageUrl);
-                        }
-                      });
-                      return child;
-                    },
-                  )
-                :
-                  Container(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        product.name,
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
-                      ),
+                    ?
+                Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                    return Icon(Icons.error_outline);
+                  },
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (loadingProgress == null) {
+                        productsViewModel.imageLoadingDone(product.imageUrl);
+                      }
+                    });
+                    return child;
+                  },
+                )
+                    :
+                Container(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      product.name,
+                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
                   ),
+                ),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(product)));
                 },
-              )).toList())
-      ])
+              );
+            },
+              childCount: productsViewModel.products.length,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: productsViewModel.allImagesLoaded
+              ?
+                SizedBox.shrink()
+              :
+                Container(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
+                    ),
+                  )
+                )
+          ),
+        ],
+      )
       :
         Container(
           child: Center(
-            child: productsViewModel.allImagesLoaded ? SizedBox.shrink() : SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
+            child: productsViewModel.allImagesLoaded
+              ?
+                SizedBox.shrink()
+              :
+                SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
           ),
         );
     return Scaffold(

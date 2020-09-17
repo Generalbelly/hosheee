@@ -26,6 +26,7 @@ class ProductsViewModel extends ChangeNotifier {
   }
 
   void _scrollListener() {
+    print("at the end of list");
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       print("at the end of list");
