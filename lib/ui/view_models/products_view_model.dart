@@ -4,7 +4,7 @@ import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
 import 'package:wish_list/ui/mixins/request_status_manager.dart';
 
-class ProductsViewModel extends ChangeNotifier with RequestStatusManager {
+class ProductsViewModel extends ChangeNotifier {
 
   String message;
 
@@ -14,6 +14,9 @@ class ProductsViewModel extends ChangeNotifier with RequestStatusManager {
 
   ScrollController scrollController = ScrollController();
   bool _scrollControllerListenerAdded = false;
+
+  List<ImageLoadingStatus> imageLoadingStatuses = [];
+  bool allImagesLoaded = false;
 
   ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
@@ -30,16 +33,43 @@ class ProductsViewModel extends ChangeNotifier with RequestStatusManager {
     }
   }
 
+  void imageLoadingDone(String url) {
+    final imageLoadingStatus = imageLoadingStatuses.firstWhere((imageLoadingStatus) => imageLoadingStatus.url == url, orElse: () => null);
+    if (imageLoadingStatus != null) {
+      imageLoadingStatus.ok();
+    }
+    if (!allImagesLoaded) {
+      allImagesLoaded = _checkIfImageLoadingAllDone();
+      if (allImagesLoaded) {
+        notifyListeners();
+      }
+    }
+  }
+
+  bool _checkIfImageLoadingAllDone() {
+    imageLoadingStatuses.forEach((imageLoadingStatus) {
+      if (!imageLoadingStatus.isOk()) {
+        return false;
+      }
+    });
+    return true;
+  }
+
   Future<void> listRecent() async {
     if (!_scrollControllerListenerAdded) {
-      print("yes");
       scrollController.addListener(_scrollListener);
       _scrollControllerListenerAdded = true;
     }
+    allImagesLoaded = false;
     final response = await _listProductsUseCase.handle(ListProductsUseCaseRequest(
       limit: 15,
     ));
     message = response.message;
+    response.products.forEach((product) {
+      if (product.websiteUrl != null) {
+        imageLoadingStatuses.add(ImageLoadingStatus(product.websiteUrl));
+      }
+    });
     products.addAll(response.products);
     notifyListeners();
   }

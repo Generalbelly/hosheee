@@ -12,6 +12,10 @@ mixin RequestStatusManager {
     status = RequestStatus.loading;
   }
 
+  void initial() {
+    status = RequestStatus.initial;
+  }
+
   bool isInitial() {
     return status == RequestStatus.initial;
   }
@@ -35,5 +39,12 @@ mixin RequestStatusManager {
   bool isError() {
     return status == RequestStatus.error;
   }
+
+}
+
+class ImageLoadingStatus with RequestStatusManager {
+  String url;
+
+  ImageLoadingStatus(this.url);
 
 }
