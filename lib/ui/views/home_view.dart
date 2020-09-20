@@ -7,6 +7,11 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeViewModel = Provider.of<HomeViewModel>(context);
+    if (homeViewModel.contents.length == 0) {
+      return Scaffold(
+        body: SizedBox.shrink(),
+      );
+    }
     if (!homeViewModel.isInitial() && homeViewModel.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacementNamed(context, '/sign-in');

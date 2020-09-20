@@ -15,8 +15,10 @@ class ProductsViewModel extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
   bool _scrollControllerListenerAdded = false;
 
-  List<ImageLoadingStatus> imageLoadingStatuses = [];
-  bool allImagesLoaded = false;
+  // List<ImageLoadingStatusManager> imageLoadingStatusManagers = [];
+  // bool allImagesLoaded = false;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
@@ -26,53 +28,55 @@ class ProductsViewModel extends ChangeNotifier {
   }
 
   void _scrollListener() {
-    print("at the end of list");
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-        !scrollController.position.outOfRange) {
-      print("at the end of list");
+        !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
       listRecent();
     }
   }
 
-  void imageLoadingDone(String url) {
-    final imageLoadingStatus = imageLoadingStatuses.firstWhere((imageLoadingStatus) => imageLoadingStatus.url == url, orElse: () => null);
-    if (imageLoadingStatus != null) {
-      imageLoadingStatus.ok();
-    }
-    if (!allImagesLoaded) {
-      allImagesLoaded = _checkIfImageLoadingAllDone();
-      if (allImagesLoaded) {
-        notifyListeners();
-      }
-    }
-  }
+  // void imageLoadingDone(String url) {
+  //   final imageLoadingStatus = imageLoadingStatusManagers.firstWhere((imageLoadingStatus) => imageLoadingStatus.url == url, orElse: () => null);
+  //   if (imageLoadingStatus != null) {
+  //     imageLoadingStatus.ok();
+  //   }
+  //   if (!allImagesLoaded) {
+  //     allImagesLoaded = _checkIfImageLoadingAllDone();
+  //     if (allImagesLoaded) {
+  //       notifyListeners();
+  //     }
+  //   }
+  // }
 
-  bool _checkIfImageLoadingAllDone() {
-    imageLoadingStatuses.forEach((imageLoadingStatus) {
-      if (!imageLoadingStatus.isOk()) {
-        return false;
-      }
-    });
-    return true;
-  }
+  // bool _checkIfImageLoadingAllDone() {
+  //   imageLoadingStatusManagers.forEach((imageLoadingStatus) {
+  //     if (!imageLoadingStatus.isOk()) {
+  //       return false;
+  //     }
+  //   });
+  //   return true;
+  // }
 
-  Future<void> listRecent() async {
+  void listRecent() {
+    print('listRecent');
     if (!_scrollControllerListenerAdded) {
       scrollController.addListener(_scrollListener);
       _scrollControllerListenerAdded = true;
     }
-    allImagesLoaded = false;
-    final response = await _listProductsUseCase.handle(ListProductsUseCaseRequest(
-      limit: 15,
-    ));
-    message = response.message;
-    response.products.forEach((product) {
-      if (product.websiteUrl != null) {
-        imageLoadingStatuses.add(ImageLoadingStatus(product.websiteUrl));
-      }
-    });
-    products.addAll(response.products);
+    requestStatusManager.loading();
     notifyListeners();
+    print('notifyListeners:1');
+    _listProductsUseCase.handle(ListProductsUseCaseRequest(
+      (response) {
+        message = response.message;
+        if (requestStatusManager.isLoading()) {
+          requestStatusManager.ok();
+        }
+        products = response.products;
+        notifyListeners();
+        print('notifyListeners:2');
+      },
+      limit: 3,
+    ));
   }
 
 }

@@ -37,8 +37,8 @@ class CreateProductView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
-              productViewModel.message = null;
             });
+            productViewModel.message = null;
           });
         }
         return Center(
@@ -73,13 +73,14 @@ class CreateProductView extends StatelessWidget {
                     color: nextButtonColor,
                     child: Text('Next'),
                     onPressed:  () async {
-                      await productViewModel.fillWithMetadata();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductView(productViewModel.product),
-                        ),
-                      );
+                      if (await productViewModel.fillWithMetadata()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductView(productViewModel.product),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),

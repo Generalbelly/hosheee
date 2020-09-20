@@ -6,7 +6,9 @@ import 'package:wish_list/adapter/gateway/collection/collection_repository.dart'
 import 'package:wish_list/adapter/gateway/product/product_repository.dart';
 import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
@@ -89,6 +91,18 @@ class App extends StatelessWidget {
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
+        Provider<UpdateProductUseCase>(
+          create: (context) => UpdateProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteProductUseCase>(
+          create: (context) => DeleteProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
         Provider<GetUrlMetadataUseCase>(
           create: (context) => GetUrlMetadataUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
@@ -108,12 +122,14 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(
               Provider.of<AddProductUseCase>(context, listen: false),
+              Provider.of<UpdateProductUseCase>(context, listen: false),
+              Provider.of<DeleteProductUseCase>(context, listen: false),
               Provider.of<GetUrlMetadataUseCase>(context, listen: false)
           ),
         ),
         ChangeNotifierProvider<ProductsViewModel>(
           create: (context) => ProductsViewModel(
-              Provider.of<ListProductsUseCase>(context, listen: false),
+            Provider.of<ListProductsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<HomeViewModel>(
@@ -142,8 +158,15 @@ class App extends StatelessWidget {
                 },
               );
               break;
+            default:
+              return MaterialPageRoute(builder: (_) {
+                return Scaffold(
+                  body: Center(
+                    child: Text('No route defined for ${settings.name}'),
+                  ),
+                );
+              });
           }
-          return null;
         },
       ),
     );

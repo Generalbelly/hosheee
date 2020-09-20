@@ -10,6 +10,7 @@ import 'package:wish_list/ui/views/recent_view.dart';
 
 class HomeViewModel extends ChangeNotifier with RequestStatusManager {
 
+  List<Widget> contents = [];
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
   set selectedIndex(int value) {
@@ -31,22 +32,18 @@ class HomeViewModel extends ChangeNotifier with RequestStatusManager {
     _auth.onAuthStateChanged(_handleAuthChange);
   }
 
-  void _handleAuthChange(dynamic u) {
-    user = u;
-    if (user != null) {
-      print(user.email);
-      print("authenticated");
-    } else {
-      print("not authenticated");
+  void _handleAuthChange(User u) {
+    if (user == null && u != null) {
+      contents = <Widget>[
+        RecentView(),
+        CollectionsView(),
+      ];
+      print(u.email);
     }
+    user = u;
     ok();
     notifyListeners();
   }
-
-  final List<Widget> contents = <Widget>[
-    RecentView(),
-    CollectionsView(),
-  ];
 
 }
 

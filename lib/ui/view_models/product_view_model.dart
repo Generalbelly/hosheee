@@ -1,14 +1,22 @@
 import 'package:flutter/foundation.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/utils/validator.dart';
 
 class ProductViewModel extends ChangeNotifier with RequestStatusManager {
 
-  Product product = Product(null);
+  Product _product = Product(null);
+  Product get product => _product;
+  set product(Product value) {
+    _product = value;
+    if (_product.id != null) {
+      _isEditing = false;
+    }
+  }
 
   Map<String, String> errors = {
     'websiteUrl': null,
@@ -18,6 +26,8 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   String message;
 
   AddProductUseCase _addProductUseCase;
+  UpdateProductUseCase _updateProductUseCase;
+  DeleteProductUseCase _deleteProductUseCase;
   GetUrlMetadataUseCase _getUrlMetadataUseCase;
 
   bool _detailHidden = true;
@@ -35,18 +45,18 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   bool isReadOnly() {
-    return product.id != null && !_isEditing;
-  }
-
-  void makeReadOnly() {
-    _isEditing = false;
+    return _product.id != null && !_isEditing;
   }
 
   ProductViewModel(
     AddProductUseCase addProductUseCase,
-    GetUrlMetadataUseCase getUrlMetadataUseCase
+    UpdateProductUseCase updateProductUseCase,
+    DeleteProductUseCase deleteProductUseCase,
+    GetUrlMetadataUseCase getUrlMetadataUseCase,
   ) {
     _addProductUseCase = addProductUseCase;
+    _updateProductUseCase = updateProductUseCase;
+    _deleteProductUseCase = deleteProductUseCase;
     _getUrlMetadataUseCase = getUrlMetadataUseCase;
   }
 
@@ -58,69 +68,74 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   void setName(String value) {
-    product.name = value;
-    _validateName(product.name);
+    _product.name = value;
+    _validateName(_product.name);
     notifyListeners();
   }
 
   // void setTitle(String value) {
-  //   product.title = value;
+  //   _product.title = value;
   //   // notifyListeners();
   // }
   //
   // void setDescription(String value) {
-  //   product.title = value;
+  //   _product.title = value;
   //   // notifyListeners();
   // }
   //
   // void setVideoUrl(String value) async {
-  //   product.videoUrl = value;
+  //   _product.videoUrl = value;
   //   // notifyListeners();
   // }
 
 
   void setWebsiteUrl(String value) async {
-    product.websiteUrl = value;
+    _product.websiteUrl = value;
+    _validateWebsiteUrl(value);
     notifyListeners();
   }
 
   void setProvider(String value) async {
-    product.provider = value;
+    _product.provider = value;
     // notifyListeners();
   }
 
   void setImageUrl(String value) async {
-    product.imageUrl = value;
+    _product.imageUrl = value;
     // notifyListeners();
   }
 
   void setNote(String value) async {
-    product.note = value;
+    _product.note = value;
     // notifyListeners();
   }
 
   void setPrice(double value) async {
-    product.price = value;
+    _product.price = value;
     // notifyListeners();
   }
 
-  Future<void> fillWithMetadata() async {
-    if (_validateWebsiteUrl(product.websiteUrl)) {
-      final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(product.websiteUrl));
-      // message = response.message;
+  Future<bool> fillWithMetadata() async {
+    final isValid = _validateWebsiteUrl(_product.websiteUrl);
+    if (isValid) {
+      final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl));
+      message = response.message;
       final urlMetadata = response.urlMetadata;
       if (urlMetadata != null) {
-        print(urlMetadata.url);
-        print(urlMetadata.image);
-        product.name = urlMetadata.title;
-        // product.videoUrl = urlMetadata.video;
-        // product.title = urlMetadata.title;
-        // product.description = urlMetadata.description;
-        product.note = urlMetadata.description;
-        product.websiteUrl = urlMetadata.url;
-        product.imageUrl = urlMetadata.image;
-        product.provider = urlMetadata.publisher;
+        _product.name = urlMetadata.title;
+        // _product.videoUrl = urlMetadata.video;
+        // _product.title = urlMetadata.title;
+        // _product.description = urlMetadata.description;
+        _product.note = urlMetadata.description;
+        _product.websiteUrl = urlMetadata.url;
+        _product.imageUrl = urlMetadata.image;
+        _product.provider = urlMetadata.publisher;
       }
+      notifyListeners();
+      return true;
+    } else {
+      notifyListeners();
+      return false;
     }
   }
 
@@ -147,41 +162,30 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   bool _validateProduct() {
-    return _validateName(product.name) && _validateWebsiteUrl(product.websiteUrl);
+    return _validateName(_product.name) && _validateWebsiteUrl(_product.websiteUrl);
   }
 
-  Future<void> create() async {
+  Future<void> save() async {
     message = null;
     if (_validateProduct()) {
-      final response = await _addProductUseCase.handle(
-          AddProductUseCaseRequest(product));
-      message = response.message;
+      if (_product.id != null) {
+        final response = await _updateProductUseCase.handle(UpdateProductUseCaseRequest(_product));
+        message = response.message;
+      } else {
+        final response = await _addProductUseCase.handle(AddProductUseCaseRequest(_product));
+        message = response.message;
+      }
     }
     notifyListeners();
   }
 
-  Future<void> update() async {
-//    final nameValid = _validateName();
-//    message = null;
-//    if (nameValid) {
-//      final response = await _createProductUseCase.handle(
-//          AddProductUseCaseRequest(name));
-//      message = response.message;
-//    }
-//    notifyListeners();
-  }
-
-  Future<void> onWebsiteUrlTap() async {
-    print('tapped');
-    if (await canLaunch(product.websiteUrl)) {
-      await launch(
-        product.websiteUrl,
-        forceSafariVC: true,
-        forceWebView: true,
-      );
-    } else {
-      message = 'Could not launch ${product.websiteUrl}';
+  Future<void> delete() async {
+    message = null;
+    if (_product.id != null) {
+      final response = await _deleteProductUseCase.handle(DeleteProductUseCaseRequest(_product));
+      message = response.message;
     }
+    notifyListeners();
   }
 
 }

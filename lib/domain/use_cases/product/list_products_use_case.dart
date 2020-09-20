@@ -8,10 +8,11 @@ import 'package:wish_list/utils/helpers.dart';
 class ListProductsUseCaseRequest {
   String searchQuery;
   String orderBy = 'createdAt';
-  bool descending = false;
+  bool descending = true;
   int limit = 0;
+  Function(ListProductsUseCaseResponse) callback;
 
-  ListProductsUseCaseRequest({String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}):
+  ListProductsUseCaseRequest(this.callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}):
     this.limit = limit,
     this.descending = descending,
     this.orderBy = orderBy,
@@ -28,10 +29,10 @@ class ListProductsUseCaseRequest {
 }
 
 class ListProductsUseCaseResponse {
-  List<Product> products;
+  List<Product> products = [];
   String message;
 
-  ListProductsUseCaseResponse(this.products, {String message})
+  ListProductsUseCaseResponse({this.products, String message})
     : this.message = message;
 }
 
@@ -43,26 +44,30 @@ class ListProductsUseCase {
 
   ListProductsUseCase(this._auth, this._productRepository);
 
-  Future<ListProductsUseCaseResponse> handle(ListProductsUseCaseRequest request) async {
+  void handle(ListProductsUseCaseRequest request) async {
     try {
       final user = await _auth.user();
-      if (user is User) {
-        final products = await _productRepository.list(
-          user.id,
-          searchQuery: request.searchQuery,
-          orderBy: request.orderBy,
-          descending: request.descending,
-          limit: request.limit,
-        );
-        print(products);
-        return ListProductsUseCaseResponse(products);
+      if (!(user is User)) {
+        throw SignInRequiredException();
       }
-      throw SignInRequiredException();
+      _productRepository.list(
+        user.id,
+        (products) => request.callback(ListProductsUseCaseResponse(
+            products: products
+        )),
+        searchQuery: request.searchQuery,
+        orderBy: request.orderBy,
+        descending: request.descending,
+        limit: request.limit,
+      );
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return ListProductsUseCaseResponse(null, message: e.toString());
+      request.callback(ListProductsUseCaseResponse(
+          products: [],
+          message: e.toString()
+      ));
     }
   }
 

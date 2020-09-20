@@ -33,8 +33,8 @@ class EditCollectionView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, collectionViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
-              collectionViewModel.message = null;
             });
+            collectionViewModel.message = null;
           });
         }
         return Center(
@@ -43,7 +43,7 @@ class EditCollectionView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('wish', style: Theme.of(context).textTheme.headline1),
+                Text('wish list', style: Theme.of(context).textTheme.headline1),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name',

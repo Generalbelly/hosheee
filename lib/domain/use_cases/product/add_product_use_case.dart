@@ -18,10 +18,9 @@ class AddProductUseCaseRequest {
 }
 
 class AddProductUseCaseResponse {
-  Product product;
   String message;
 
-  AddProductUseCaseResponse(this.product, {String message})
+  AddProductUseCaseResponse({String message})
     : this.message = message;
 }
 
@@ -36,20 +35,20 @@ class AddProductUseCase {
   Future<AddProductUseCaseResponse> handle(AddProductUseCaseRequest request) async {
     try {
       final user = await _auth.user();
-      if (user is User) {
-        request.product.id = _productRepository.nextIdentity();
-        final product = await _productRepository.add(
-            user.id,
-            request.product
-        );
-        return AddProductUseCaseResponse(product);
+      if (!(user is User)) {
+        throw SignInRequiredException();
       }
-      throw SignInRequiredException();
+      request.product.id = _productRepository.nextIdentity();
+      await _productRepository.add(
+          user.id,
+          request.product
+      );
+      return AddProductUseCaseResponse();
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return AddProductUseCaseResponse(null, message: e.toString());
+      return AddProductUseCaseResponse(message: e.toString());
     }
   }
 

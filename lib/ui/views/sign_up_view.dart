@@ -32,8 +32,8 @@ class SignUpView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, signUpViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
-                signUpViewModel.message = null;
               });
+              signUpViewModel.message = null;
             });
           }
           return SingleChildScrollView(
@@ -41,9 +41,10 @@ class SignUpView extends StatelessWidget {
                 padding: EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'wish',
+                      'wish list',
                       style: Theme.of(context).textTheme.headline1,
                     ),
                     TextFormField(

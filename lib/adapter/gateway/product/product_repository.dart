@@ -6,18 +6,22 @@ import 'package:wish_list/domain/repositories/product_repository.dart' as i_prod
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
+  List<List<Product>> _all_products;
   DocumentSnapshot _lastVisible;
   String _lastSearchQuery;
   String _lastOrderBy;
   bool _lastDescending;
+  List<StreamSubscription> _listListeners = [];
 
   CollectionReference getCollection(String userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId).collection("products");
   }
 
-  Future<List<Product>> list(String userId, {String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}) async {
+  void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     if (_lastSearchQuery != searchQuery || _lastOrderBy != orderBy || _lastDescending != descending) {
+      _all_products = [];
       _lastVisible = null;
+      _listListeners.forEach((listListener) async { await listListener.cancel(); });
     }
     Query query;
     if (searchQuery != null) {
@@ -35,15 +39,52 @@ class ProductRepository implements i_product_repository.ProductRepository {
       query = query.startAfter([_lastVisible.data()[orderBy]]);
     }
 
-    final querySnapshot = await query.get();
-
     _lastOrderBy = orderBy;
     _lastDescending = descending;
     _lastSearchQuery = searchQuery;
+    _lastVisible = null;
 
-    if (querySnapshot.docs.length == 0) return [];
-    _lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-    return querySnapshot.docs.map((snapshot) => Product.fromMap(snapshot.data())).toList();
+    final handler = (productsIndex, limit, descending) => (QuerySnapshot snapshot) {
+      if (snapshot.docChanges.length == 0) {
+        callback([]);
+        return;
+      }
+      if (_lastVisible == null) {
+        _lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
+      }
+      var products = List<Product>();
+      if (_all_products.length > productsIndex) {
+        products = _all_products[productsIndex];
+      }
+      snapshot.docChanges.forEach((docChange) {
+        final incomingProduct = Product.fromMap(docChange.doc.data());
+        print("productId:${incomingProduct.id}");
+        print("createdAt:${incomingProduct.createdAt}");
+        print("updatedAt:${incomingProduct.updatedAt}");
+        print("oldIndex:${docChange.oldIndex}");
+        print("newIndex:${docChange.newIndex}");
+        print("newIndex:${docChange.type}");
+        if (docChange.type == DocumentChangeType.added) {
+          products.insert(docChange.newIndex, incomingProduct);
+        }
+        if (docChange.type == DocumentChangeType.modified) {
+          final productIndex = products.indexWhere((product) => product.id == incomingProduct.id);
+          products[productIndex] = incomingProduct;
+        }
+        if (docChange.type == DocumentChangeType.removed) {
+          products.removeWhere((product) => product.id == incomingProduct.id);
+        }
+      });
+      if (_all_products.length > productsIndex) {
+        _all_products[productsIndex] = products;
+      } else {
+        _all_products.add(products);
+      }
+      callback(_all_products.expand((ps) => ps).toList());
+      return;
+    };
+    final listener = query.snapshots().listen(handler(_all_products.length, limit, descending));
+    _listListeners.add(listener);
   }
 
   Future<Product> get(String userId, String productId) async {
@@ -52,44 +93,24 @@ class ProductRepository implements i_product_repository.ProductRepository {
     return Product.fromMap(snapshot.data());
   }
 
-  Future<Product> add(String userId, Product product) {
-    return Future(() async {
-      final doc = getCollection(userId).doc(product.id);
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        final product = Product.fromMap(event.data());
-        return product;
-      });
-      var data = product.toMap();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      print(product.websiteUrl);
-      await doc.set(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> add(String userId, Product product) async {
+    final doc = getCollection(userId).doc(product.id);
+    var data = product.toMap();
+    data['createdAt'] = FieldValue.serverTimestamp();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.set(data);
   }
 
-  Future<Product> update(String userId, Product product) async {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        return Product.fromMap(event.data());
-      });
-      var data = product.toMap();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.update(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> update(String userId, Product product) async {
+    final doc = getCollection(userId).doc(product.id);
+    var data = product.toMap();
+    data.removeWhere((key, value) => key == "createdAt");
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.update(data);
   }
 
-  Future<Product> delete(String userId, Product product) async {
-    await getCollection(userId).doc().delete();
-    return product;
+  Future<void> delete(String userId, Product product) async {
+    await getCollection(userId).doc(product.id).delete();
   }
 
 

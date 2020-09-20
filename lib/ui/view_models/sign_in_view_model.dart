@@ -55,8 +55,6 @@ class SignInViewModel extends ChangeNotifier {
   }
 
   submit() async {
-    email = 'no@gmail.com';
-    password = 'password';
     final emailValid = validateEmail();
     final passwordValid = validatePassword();
     user = null;

@@ -35,8 +35,8 @@ class CreateCollectionView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, collectionViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
-              collectionViewModel.message = null;
             });
+            collectionViewModel.message = null;
           });
         }
         return Center(

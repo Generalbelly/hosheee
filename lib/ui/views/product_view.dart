@@ -24,12 +24,10 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
-    if (productViewModel.product.id == null || productViewModel.product.id != product.id) {
+    if (productViewModel.product.id != product.id) {
       productViewModel.product = product;
-      if (product.id != null) {
-        productViewModel.makeReadOnly();
-      }
     }
+    print(product.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +39,7 @@ class ProductView extends StatelessWidget {
               if (productViewModel.isReadOnly()) {
                 productViewModel.isEditing = true;
               } else {
-                await productViewModel.create();
+                await productViewModel.save();
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
             },
@@ -53,8 +51,8 @@ class ProductView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
-              productViewModel.message = null;
             });
+            productViewModel.message = null;
           });
         }
         final imageField = productViewModel.product.imageUrl != null ?
@@ -76,12 +74,50 @@ class ProductView extends StatelessWidget {
           readOnly: productViewModel.isReadOnly(),
         );
 
+        final setting = product.id != null
+          ?
+            Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon: Icon(Icons.more_horiz),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      child: Wrap(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(Icons.delete),
+                            title: Text('Delete'),
+                            onTap: () async {
+                              await productViewModel.delete();
+                              Navigator.popUntil(context, ModalRoute.withName('/'));
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        )
+          :
+            Container(
+              padding: EdgeInsets.only(top: 24.0),
+              child: SizedBox.shrink(),
+            );
+
         return SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(24.0),
+            padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                setting,
                 imageField,
                 Container(
                   padding: EdgeInsets.all(8.0),
@@ -117,9 +153,6 @@ class ProductView extends StatelessWidget {
                   initialValue: productViewModel.product.websiteUrl,
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   readOnly: productViewModel.isReadOnly(),
-                  onTap: () {
-                    productViewModel.onWebsiteUrlTap();
-                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(

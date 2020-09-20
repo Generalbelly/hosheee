@@ -5,7 +5,8 @@ enum RequestStatus {
   error,
 }
 
-mixin RequestStatusManager {
+class RequestStatusManager {
+
   RequestStatus status = RequestStatus.initial;
 
   void loading() {
@@ -42,9 +43,9 @@ mixin RequestStatusManager {
 
 }
 
-class ImageLoadingStatus with RequestStatusManager {
+class ImageLoadingStatusManager extends RequestStatusManager {
   String url;
 
-  ImageLoadingStatus(this.url);
+  ImageLoadingStatusManager(this.url);
 
 }

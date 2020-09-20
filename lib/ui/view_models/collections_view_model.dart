@@ -25,7 +25,6 @@ class CollectionsViewModel extends ChangeNotifier with RequestStatusManager {
   void _scrollListener() {
     if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      print("at the end of list");
       listRecent();
     }
   }

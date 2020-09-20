@@ -22,8 +22,8 @@ class RecentView extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, productsViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
-          productsViewModel.message = null;
         });
+        productsViewModel.message = null;
       });
     }
 
@@ -37,68 +37,68 @@ class RecentView extends StatelessWidget {
               final product = productsViewModel.products[i];
               return GestureDetector(
                 child: product.imageUrl != null
-                    ?
-                Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                    return Icon(Icons.error_outline);
-                  },
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (loadingProgress == null) {
-                        productsViewModel.imageLoadingDone(product.imageUrl);
-                      }
-                    });
-                    return child;
-                  },
-                )
-                    :
-                Container(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      product.name,
-                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ?
+                    Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                        return Icon(Icons.error_outline);
+                      },
+                      // loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                      //   WidgetsBinding.instance.addPostFrameCallback((_) {
+                      //     if (loadingProgress == null) {
+                      //       productsViewModel.imageLoadingDone(product.imageUrl);
+                      //     }
+                      //   });
+                      //   return child;
+                      // },
+                    )
+                  :
+                    Container(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          product.name,
+                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(product)));
-                },
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(product)));
+                    },
               );
             },
               childCount: productsViewModel.products.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: 1,
             ),
           ),
           SliverToBoxAdapter(
-            child: productsViewModel.allImagesLoaded
+            child: productsViewModel.requestStatusManager.isLoading()
               ?
-                SizedBox.shrink()
-              :
                 Container(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
-                    ),
-                  )
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: SizedBox(width: 32, height: 32, child: CircularProgressIndicator()),
+                      ),
+                    )
                 )
+              :
+                SizedBox.shrink()
           ),
         ],
       )
       :
         Container(
           child: Center(
-            child: productsViewModel.allImagesLoaded
+            child: productsViewModel.requestStatusManager.isLoading()
               ?
-                SizedBox.shrink()
+                SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
               :
-                SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
+                Text("No item saved yet.")
           ),
         );
     return Scaffold(

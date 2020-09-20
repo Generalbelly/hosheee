@@ -89,7 +89,7 @@ class Auth implements i_auth.Auth {
     return firebaseUser != null ? _createUserFrom(firebaseUser) : null;
   }
 
-  StreamSubscription onAuthStateChanged(Function callback) {
+  StreamSubscription onAuthStateChanged(Function(User) callback) {
     return _auth.authStateChanges().listen((firebase_auth.User firebaseUser) {
       var user;
       if (firebaseUser != null) {
