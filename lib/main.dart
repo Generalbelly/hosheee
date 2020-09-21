@@ -28,7 +28,6 @@ import 'package:wish_list/domain/repositories/collection_repository.dart' as i_c
 import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
 import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
 import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:wish_list/ui/views/create_collection_view.dart';
 import 'package:wish_list/ui/views/create_product_view.dart';
 import 'package:wish_list/ui/views/home_view.dart';
 import 'package:wish_list/ui/views/sign_up_view.dart';
@@ -170,18 +169,9 @@ class App extends StatelessWidget {
           '/sign-up': (context) => SignUpView(),
           '/sign-in': (context) => SignInView(),
           '/products/create': (context) => CreateProductView(),
-          '/collections/create': (context) => CreateCollectionView(),
         },
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
-            // case '/collections/create':
-            //   return MaterialPageRoute(
-            //     fullscreenDialog: true,
-            //     builder: (BuildContext context) {
-            //       return CreateCollectionView();
-            //     },
-            //   );
-            //   break;
             default:
               return MaterialPageRoute(builder: (_) {
                 return Scaffold(

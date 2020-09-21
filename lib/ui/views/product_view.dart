@@ -2,14 +2,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 
 class ProductView extends StatelessWidget {
-
-  final Product product;
-
-  ProductView(this.product, {Key key}) : super(key: key);
 
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -24,14 +19,10 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
-    if (productViewModel.product.id != product.id) {
-      productViewModel.product = product;
-    }
-    print(product.id);
 
     return Scaffold(
       appBar: AppBar(
-        title: product.id != null ? Text(product.name) : Text('New Item'),
+        title: productViewModel.product.id != null ? Text(productViewModel.product.name) : Text('New Item'),
         actions: <Widget>[
           FlatButton(
             child: productViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
@@ -56,7 +47,7 @@ class ProductView extends StatelessWidget {
           });
         }
         final imageField = productViewModel.product.imageUrl != null ?
-          Image.network(product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+          Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
             return Icon(Icons.error_outline);
           }) : SizedBox.shrink();
         final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
@@ -74,7 +65,7 @@ class ProductView extends StatelessWidget {
           readOnly: productViewModel.isReadOnly(),
         );
 
-        final setting = product.id != null
+        final setting = productViewModel.product.id != null
           ?
             Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -123,8 +114,8 @@ class ProductView extends StatelessWidget {
                   padding: EdgeInsets.all(8.0),
                   child: OutlineButton(
                     onPressed: () async {
-                      if (await canLaunch(product.websiteUrl)) {
-                        await launch(product.websiteUrl);
+                      if (await canLaunch(productViewModel.product.websiteUrl)) {
+                        await launch(productViewModel.product.websiteUrl);
                       } else {
                         _showSnackBar(context, 'Could not launch the url.', (ctx) {
                           Scaffold.of(ctx).hideCurrentSnackBar();

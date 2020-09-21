@@ -18,6 +18,7 @@ class CreateProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
+
     final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +28,7 @@ class CreateProductView extends StatelessWidget {
             child: Text('Skip'),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => ProductView(productViewModel.product)));
+                  builder: (context) => ProductView()));
             },
           ),
         ],
@@ -45,7 +46,7 @@ class CreateProductView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
                   decoration: InputDecoration(
@@ -59,7 +60,7 @@ class CreateProductView extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductView(productViewModel.product),
+                        builder: (context) => ProductView(),
                       ),
                     );
                   },
@@ -77,7 +78,7 @@ class CreateProductView extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductView(productViewModel.product),
+                            builder: (context) => ProductView(),
                           ),
                         );
                       }

@@ -72,7 +72,7 @@ class ProductsViewModel extends ChangeNotifier {
         products = response.products;
         notifyListeners();
       },
-      limit: 15,
+      limit: 3,
     ));
   }
 

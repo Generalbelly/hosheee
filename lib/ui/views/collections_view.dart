@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish_list/domain/models/collection.dart';
+import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/views/collection_view.dart';
 
@@ -26,6 +28,8 @@ class CollectionsView extends StatelessWidget {
         collectionsViewModel.message = null;
       });
     }
+
+    final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
 
     final body = collectionsViewModel.collections.length > 0
         ?
@@ -65,7 +69,8 @@ class CollectionsView extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView(collection)));
+                collectionViewModel.collection = collection;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
               },
             );
           },
@@ -107,7 +112,8 @@ class CollectionsView extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.pushNamed(context, '/collections/create');
+                collectionViewModel.collection = Collection(null);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
               },
             ),
           ],

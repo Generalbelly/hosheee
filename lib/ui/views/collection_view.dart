@@ -1,13 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 
 class CollectionView extends StatelessWidget {
-
-  final Collection collection;
-
-  CollectionView(this.collection, {Key key}) : super(key: key);
 
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -22,14 +17,10 @@ class CollectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collectionViewModel = Provider.of<CollectionViewModel>(context);
-    if (collectionViewModel.collection.id != collection.id) {
-      collectionViewModel.collection = collection;
-    }
-    print(collection.id);
 
     return Scaffold(
       appBar: AppBar(
-        title: collection.id != null ? Text(collection.name) : Text('New Item'),
+        title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Item'),
         actions: <Widget>[
           FlatButton(
             child: collectionViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
@@ -54,13 +45,13 @@ class CollectionView extends StatelessWidget {
           });
         }
         final imageField = collectionViewModel.collection.imageUrl != null ?
-        Image.network(collection.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+        Image.network(collectionViewModel.collection.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
           return Icon(Icons.error_outline);
         }) : SizedBox.shrink();
 
-        final setting = collection.id != null
-            ?
-        Row(
+        final setting = collectionViewModel.collection.id != null
+          ?
+            Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
@@ -89,8 +80,8 @@ class CollectionView extends StatelessWidget {
             ),
           ],
         )
-            :
-        Container(
+          :
+            Container(
           padding: EdgeInsets.only(top: 24.0),
           child: SizedBox.shrink(),
         );

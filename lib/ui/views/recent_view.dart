@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish_list/domain/models/product.dart';
+import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/views/product_view.dart';
 
@@ -26,6 +28,7 @@ class RecentView extends StatelessWidget {
         productsViewModel.message = null;
       });
     }
+    final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
     final body = productsViewModel.products.length > 0
       ?
@@ -65,7 +68,8 @@ class RecentView extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(product)));
+                      productViewModel.product = product;
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                     },
               );
             },
@@ -107,6 +111,7 @@ class RecentView extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
+              productViewModel.product = Product(null);
               Navigator.pushNamed(context, '/products/create');
             },
           ),
