@@ -57,14 +57,12 @@ class ProductsViewModel extends ChangeNotifier {
   // }
 
   void listRecent() {
-    print('listRecent');
     if (!_scrollControllerListenerAdded) {
       scrollController.addListener(_scrollListener);
       _scrollControllerListenerAdded = true;
     }
     requestStatusManager.loading();
     notifyListeners();
-    print('notifyListeners:1');
     _listProductsUseCase.handle(ListProductsUseCaseRequest(
       (response) {
         message = response.message;
@@ -73,7 +71,6 @@ class ProductsViewModel extends ChangeNotifier {
         }
         products = response.products;
         notifyListeners();
-        print('notifyListeners:2');
       },
       limit: 15,
     ));
