@@ -72,7 +72,7 @@ class RecentView extends StatelessWidget {
               childCount: productsViewModel.products.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
+              crossAxisCount: 3,
             ),
           ),
           SliverToBoxAdapter(

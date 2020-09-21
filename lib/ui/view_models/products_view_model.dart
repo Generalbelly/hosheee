@@ -75,7 +75,7 @@ class ProductsViewModel extends ChangeNotifier {
         notifyListeners();
         print('notifyListeners:2');
       },
-      limit: 3,
+      limit: 15,
     ));
   }
 
