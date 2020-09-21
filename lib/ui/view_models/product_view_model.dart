@@ -95,6 +95,11 @@ class ProductViewModel extends ChangeNotifier with RequestStatusManager {
     notifyListeners();
   }
 
+  void setCollectionId(String value) async {
+    _product.collectionId = value;
+    notifyListeners();
+  }
+
   void setProvider(String value) async {
     _product.provider = value;
     // notifyListeners();

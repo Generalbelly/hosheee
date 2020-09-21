@@ -2,6 +2,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wish_list/domain/models/collection.dart';
+import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 
 class ProductView extends StatelessWidget {
@@ -19,6 +21,7 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
+    final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -137,16 +140,6 @@ class ProductView extends StatelessWidget {
                 ),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Website URL',
-                    hintText: 'Website URL',
-                    errorText: productViewModel.errors['websiteUrl'],
-                  ),
-                  initialValue: productViewModel.product.websiteUrl,
-                  onChanged: (value) => productViewModel.setWebsiteUrl(value),
-                  readOnly: productViewModel.isReadOnly(),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
                     labelText: 'Note',
                     hintText: 'Note',
                     errorText: productViewModel.errors['note'],
@@ -155,6 +148,34 @@ class ProductView extends StatelessWidget {
                   onChanged: (value) => productViewModel.setNote(value),
                   maxLines: 4,
                   readOnly: productViewModel.isReadOnly(),
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Website URL',
+                    hintText: 'Website URL',
+                    errorText: productViewModel.errors['websiteUrl'],
+                  ),
+                  initialValue: productViewModel.product.websiteUrl,
+                  onChanged: (value) => productViewModel.setWebsiteUrl(value),
+                  readOnly: productViewModel.isReadOnly(),
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Collection',
+                    hintText: 'Collection',
+                  ),
+                  value: productViewModel.product.collectionId,
+                  elevation: 16,
+                  onChanged: (value) {
+                    productViewModel.setCollectionId(value);
+                  },
+                  items: collectionsViewModel.collections
+                      .map<DropdownMenuItem<String>>((Collection collection) {
+                    return DropdownMenuItem<String>(
+                      value: collection.id,
+                      child: Text(collection.name),
+                    );
+                  }).toList(),
                 ),
                 priceField,
                 SizedBox(
