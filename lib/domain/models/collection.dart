@@ -7,7 +7,8 @@ class Collection {
   Timestamp createdAt;
   Timestamp updatedAt;
 
-  Collection(this.id, this.name, {String imageUrl}):
+  Collection(this.id, {String name, String imageUrl}):
+    name = name,
     imageUrl = imageUrl;
 
   Collection.fromMap(Map<String, dynamic> data)

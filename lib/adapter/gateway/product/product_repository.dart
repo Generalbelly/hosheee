@@ -6,7 +6,7 @@ import 'package:wish_list/domain/repositories/product_repository.dart' as i_prod
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
-  List<List<Product>> _all_products;
+  List<List<Product>> _allProducts;
   DocumentSnapshot _lastVisible;
   String _lastSearchQuery;
   String _lastOrderBy;
@@ -19,7 +19,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     if (_lastSearchQuery != searchQuery || _lastOrderBy != orderBy || _lastDescending != descending) {
-      _all_products = [];
+      _allProducts = [];
       _lastVisible = null;
       _listListeners.forEach((listListener) async { await listListener.cancel(); });
     }
@@ -53,8 +53,8 @@ class ProductRepository implements i_product_repository.ProductRepository {
         _lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
       }
       var products = List<Product>();
-      if (_all_products.length > productsIndex) {
-        products = _all_products[productsIndex];
+      if (_allProducts.length > productsIndex) {
+        products = _allProducts[productsIndex];
       }
       snapshot.docChanges.forEach((docChange) {
         final incomingProduct = Product.fromMap(docChange.doc.data());
@@ -75,15 +75,15 @@ class ProductRepository implements i_product_repository.ProductRepository {
           products.removeWhere((product) => product.id == incomingProduct.id);
         }
       });
-      if (_all_products.length > productsIndex) {
-        _all_products[productsIndex] = products;
+      if (_allProducts.length > productsIndex) {
+        _allProducts[productsIndex] = products;
       } else {
-        _all_products.add(products);
+        _allProducts.add(products);
       }
-      callback(_all_products.expand((ps) => ps).toList());
+      callback(_allProducts.expand((ps) => ps).toList());
       return;
     };
-    final listener = query.snapshots().listen(handler(_all_products.length, limit, descending));
+    final listener = query.snapshots().listen(handler(_allProducts.length, limit, descending));
     _listListeners.add(listener);
   }
 

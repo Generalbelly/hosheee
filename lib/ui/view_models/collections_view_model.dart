@@ -4,7 +4,7 @@ import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
 import 'package:wish_list/ui/mixins/request_status_manager.dart';
 
-class CollectionsViewModel extends ChangeNotifier with RequestStatusManager {
+class CollectionsViewModel extends ChangeNotifier {
 
   String message;
 
@@ -12,34 +12,46 @@ class CollectionsViewModel extends ChangeNotifier with RequestStatusManager {
 
   ListCollectionsUseCase _listCollectionsUseCase;
 
-  ScrollController _scrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
   bool _scrollControllerListenerAdded = false;
 
+  // List<ImageLoadingStatusManager> imageLoadingStatusManagers = [];
+  // bool allImagesLoaded = false;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
+
   CollectionsViewModel(
-    ListCollectionsUseCase listCollectionsUseCase,
-  ) {
-    print('come');
+      ListCollectionsUseCase listCollectionsUseCase,
+      ) {
     _listCollectionsUseCase = listCollectionsUseCase;
+    listRecent();
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
       listRecent();
     }
   }
 
-  Future<void> listRecent() async {
+  void listRecent() {
     if (!_scrollControllerListenerAdded) {
-      _scrollController.addListener(_scrollListener);
+      scrollController.addListener(_scrollListener);
       _scrollControllerListenerAdded = true;
     }
-    final response = await _listCollectionsUseCase.handle(ListCollectionsUseCaseRequest(
-      limit: 20,
-    ));
-    message = response.message;
-    collections = response.collections;
+    requestStatusManager.loading();
     notifyListeners();
+    _listCollectionsUseCase.handle(ListCollectionsUseCaseRequest(
+          (response) {
+        message = response.message;
+        if (requestStatusManager.isLoading()) {
+          requestStatusManager.ok();
+        }
+        collections = response.collections;
+        notifyListeners();
+      },
+      limit: 15,
+    ));
   }
 
 }

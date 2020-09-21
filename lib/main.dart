@@ -5,6 +5,8 @@ import 'package:wish_list/adapter/gateway/auth.dart';
 import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
 import 'package:wish_list/adapter/gateway/product/product_repository.dart';
 import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
+import 'package:wish_list/domain/use_cases/collection/delete_collection_use_case.dart';
+import 'package:wish_list/domain/use_cases/collection/update_collection_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
@@ -79,6 +81,18 @@ class App extends StatelessWidget {
               Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
           ),
         ),
+        Provider<UpdateCollectionUseCase>(
+          create: (context) => UpdateCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteCollectionUseCase>(
+          create: (context) => DeleteCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
         Provider<ListCollectionsUseCase>(
           create: (context) => ListCollectionsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
@@ -117,7 +131,10 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<CollectionViewModel>(
           create: (context) => CollectionViewModel(
-              Provider.of<AddCollectionUseCase>(context, listen: false)),
+              Provider.of<AddCollectionUseCase>(context, listen: false),
+              Provider.of<UpdateCollectionUseCase>(context, listen: false),
+              Provider.of<DeleteCollectionUseCase>(context, listen: false)
+          ),
         ),
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(

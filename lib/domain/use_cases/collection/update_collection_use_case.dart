@@ -6,23 +6,22 @@ import 'package:wish_list/domain/repositories/collection_repository.dart';
 import 'package:wish_list/utils/helpers.dart';
 
 class UpdateCollectionUseCaseRequest {
-  String name;
+  Collection collection;
 
-  UpdateCollectionUseCaseRequest(this.name);
+  UpdateCollectionUseCaseRequest(this.collection);
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
+      'collection': collection,
     };
   }
 }
 
 class UpdateCollectionUseCaseResponse {
-  Collection collection;
   String message;
 
-  UpdateCollectionUseCaseResponse(this.collection, {String message})
-    : this.message = message;
+  UpdateCollectionUseCaseResponse({String message})
+      : this.message = message;
 }
 
 class UpdateCollectionUseCase {
@@ -36,19 +35,19 @@ class UpdateCollectionUseCase {
   Future<UpdateCollectionUseCaseResponse> handle(UpdateCollectionUseCaseRequest request) async {
     try {
       final user = await _auth.user();
-      if (user is User) {
-        final collection = await _collectionRepository.update(
-            user.id,
-            Collection(_collectionRepository.nextIdentity(), request.name)
-        );
-        return UpdateCollectionUseCaseResponse(collection);
+      if (!(user is User)) {
+        throw SignInRequiredException();
       }
-      throw SignInRequiredException();
+      await _collectionRepository.update(
+          user.id,
+          request.collection
+      );
+      return UpdateCollectionUseCaseResponse();
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return UpdateCollectionUseCaseResponse(null, message: e.toString());
+      return UpdateCollectionUseCaseResponse(message: e.toString());
     }
   }
 
