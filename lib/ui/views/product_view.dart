@@ -166,7 +166,7 @@ class ProductView extends StatelessWidget {
                   ),
                   value: productViewModel.product.collectionId,
                   elevation: 16,
-                  onChanged: (value) {
+                  onChanged: productViewModel.isReadOnly() ? null : (value) {
                     productViewModel.setCollectionId(value);
                   },
                   items: collectionsViewModel.collections
