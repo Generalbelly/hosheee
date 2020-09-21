@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:wish_list/ui/views/collection_view.dart';
 
 class CreateCollectionView extends StatelessWidget {
 
@@ -17,17 +18,24 @@ class CreateCollectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collectionViewModel = Provider.of<CollectionViewModel>(context);
-
+    final nextButtonColor = collectionViewModel.errors['name'] == null && collectionViewModel.collection.name != null ? Colors.lightBlue : null;
     return Scaffold(
       appBar: AppBar(
         title: Text('New Collection'),
         actions: <Widget>[
-          FlatButton(
-            child: Text('Next'),
-            onPressed: () {
-              Navigator.pushNamed(context, "/products/create");
-            },
-          ),
+          // FlatButton(
+          //   child: Text('Next'),
+          //   onPressed: () {
+          //     if (collectionViewModel.errors['name'] != null) {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => CollectionView(collectionViewModel.collection),
+          //         ),
+          //       );
+          //     }
+          //   },
+          // ),
         ],
       ),
       body: Builder(builder: (BuildContext context) {
@@ -51,6 +59,26 @@ class CreateCollectionView extends StatelessWidget {
                     errorText: collectionViewModel.errors['name'],
                   ),
                   onChanged: (value) => collectionViewModel.setName(value),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: nextButtonColor,
+                    child: Text('Next'),
+                    onPressed:  () async {
+                      if (collectionViewModel.errors['name'] != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CollectionView(collectionViewModel.collection),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

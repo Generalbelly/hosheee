@@ -170,17 +170,18 @@ class App extends StatelessWidget {
           '/sign-up': (context) => SignUpView(),
           '/sign-in': (context) => SignInView(),
           '/products/create': (context) => CreateProductView(),
+          '/collections/create': (context) => CreateCollectionView(),
         },
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
-            case '/collections/create':
-              return MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) {
-                  return CreateCollectionView();
-                },
-              );
-              break;
+            // case '/collections/create':
+            //   return MaterialPageRoute(
+            //     fullscreenDialog: true,
+            //     builder: (BuildContext context) {
+            //       return CreateCollectionView();
+            //     },
+            //   );
+            //   break;
             default:
               return MaterialPageRoute(builder: (_) {
                 return Scaffold(
