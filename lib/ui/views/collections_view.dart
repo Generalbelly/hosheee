@@ -98,7 +98,7 @@ class CollectionsView extends StatelessWidget {
               ?
           SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
               :
-          Text("No item saved yet.")
+          Text("No collection saved yet.")
       ),
     );
     return Scaffold(

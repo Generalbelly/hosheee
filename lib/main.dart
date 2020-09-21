@@ -13,6 +13,7 @@ import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
@@ -147,6 +148,11 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<ProductsViewModel>(
           create: (context) => ProductsViewModel(
             Provider.of<ListProductsUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<CollectionsViewModel>(
+          create: (context) => CollectionsViewModel(
+            Provider.of<ListCollectionsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<HomeViewModel>(
