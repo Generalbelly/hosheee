@@ -59,13 +59,14 @@ class CreateProductView extends StatelessWidget {
                   ),
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   onEditingComplete: () async {
-                    await productViewModel.fillWithMetadata();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductView(),
-                      ),
-                    );
+                    if (await productViewModel.fillWithMetadata()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductView(),
+                        ),
+                      );
+                    }
                   },
                 ),
                 SizedBox(
