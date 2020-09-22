@@ -4,6 +4,7 @@ import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
+import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/utils/validator.dart';
 
 class ProductViewModel extends ChangeNotifier {
@@ -43,9 +44,7 @@ class ProductViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isReadOnly() {
-    return _product.id != null && !_isEditing;
-  }
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   ProductViewModel(
     AddProductUseCase addProductUseCase,
@@ -57,6 +56,10 @@ class ProductViewModel extends ChangeNotifier {
     _updateProductUseCase = updateProductUseCase;
     _deleteProductUseCase = deleteProductUseCase;
     _getUrlMetadataUseCase = getUrlMetadataUseCase;
+  }
+
+  bool isReadOnly() {
+    return _product.id != null && !_isEditing;
   }
 
   void clearErrors() {
@@ -121,7 +124,9 @@ class ProductViewModel extends ChangeNotifier {
 
   Future<bool> fillWithMetadata() async {
     final isValid = _validateWebsiteUrl(_product.websiteUrl);
-    if (isValid) {
+    if (isValid && !requestStatusManager.isLoading()) {
+      requestStatusManager.loading();
+      notifyListeners();
       final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl));
       message = response.message;
       final urlMetadata = response.urlMetadata;
@@ -135,6 +140,7 @@ class ProductViewModel extends ChangeNotifier {
         _product.imageUrl = urlMetadata.image;
         _product.provider = urlMetadata.publisher;
       }
+      requestStatusManager.ok();
       notifyListeners();
       return true;
     } else {
@@ -170,8 +176,10 @@ class ProductViewModel extends ChangeNotifier {
   }
 
   Future<void> save() async {
-    message = null;
-    if (_validateProduct()) {
+    if (_validateProduct() && !requestStatusManager.isLoading()) {
+      message = null;
+      requestStatusManager.loading();
+      notifyListeners();
       if (_product.id != null) {
         final response = await _updateProductUseCase.handle(UpdateProductUseCaseRequest(_product));
         message = response.message;
@@ -179,17 +187,21 @@ class ProductViewModel extends ChangeNotifier {
         final response = await _addProductUseCase.handle(AddProductUseCaseRequest(_product));
         message = response.message;
       }
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> delete() async {
-    message = null;
-    if (_product.id != null) {
+    if (_product.id != null && !requestStatusManager.isLoading()) {
+      message = null;
+      requestStatusManager.loading();
+      notifyListeners();
       final response = await _deleteProductUseCase.handle(DeleteProductUseCaseRequest(_product));
       message = response.message;
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
 }

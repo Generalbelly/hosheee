@@ -4,6 +4,7 @@ import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/views/product_view.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class RecentView extends StatelessWidget {
 
@@ -29,6 +30,7 @@ class RecentView extends StatelessWidget {
         productsViewModel.message = null;
       });
     }
+
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
     final body = productsViewModel.products.length > 0
       ?
@@ -47,14 +49,6 @@ class RecentView extends StatelessWidget {
                       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                         return Icon(Icons.error_outline);
                       },
-                      // loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                      //   WidgetsBinding.instance.addPostFrameCallback((_) {
-                      //     if (loadingProgress == null) {
-                      //       productsViewModel.imageLoadingDone(product.imageUrl);
-                      //     }
-                      //   });
-                      //   return child;
-                      // },
                     )
                   :
                     Container(
@@ -98,11 +92,7 @@ class RecentView extends StatelessWidget {
       :
         Container(
           child: Center(
-            child: productsViewModel.requestStatusManager.isLoading()
-              ?
-                SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
-              :
-                Text("No item saved yet.")
+            child: Text("No item saved yet."),
           ),
         );
     return Scaffold(
@@ -117,7 +107,7 @@ class RecentView extends StatelessWidget {
           ),
         ],
       ),
-      body: body);
+      body: ProgressModal(isLoading: productsViewModel.requestStatusManager.isLoading(), child: body));
   }
 }
 

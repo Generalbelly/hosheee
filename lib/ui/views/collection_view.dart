@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CollectionView extends StatelessWidget {
 
@@ -35,7 +36,7 @@ class CollectionView extends StatelessWidget {
           ),
         ],
       ),
-      body: Builder(builder: (BuildContext context) {
+      body: ProgressModal(isLoading: collectionViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
         if (collectionViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, collectionViewModel.message, (ctx) {
@@ -50,8 +51,8 @@ class CollectionView extends StatelessWidget {
         }) : SizedBox.shrink();
 
         final setting = collectionViewModel.collection.id != null
-          ?
-            Row(
+            ?
+        Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
@@ -80,8 +81,8 @@ class CollectionView extends StatelessWidget {
             ),
           ],
         )
-          :
-            Container(
+            :
+        Container(
           padding: EdgeInsets.only(top: 24.0),
           child: SizedBox.shrink(),
         );
@@ -108,7 +109,7 @@ class CollectionView extends StatelessWidget {
             ),
           ),
         );
-      }),
+      })),
     );
   }
 }

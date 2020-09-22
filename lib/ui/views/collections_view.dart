@@ -4,6 +4,7 @@ import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/views/collection_view.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CollectionsView extends StatelessWidget {
 
@@ -100,11 +101,7 @@ class CollectionsView extends StatelessWidget {
         :
     Container(
       child: Center(
-          child: collectionsViewModel.requestStatusManager.isLoading()
-              ?
-          SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
-              :
-          Text("No collection saved yet.")
+        child: Text("No collection saved yet.")
       ),
     );
     return Scaffold(
@@ -119,7 +116,7 @@ class CollectionsView extends StatelessWidget {
             ),
           ],
         ),
-        body: body);
+        body: ProgressModal(isLoading: collectionsViewModel.requestStatusManager.isLoading(),child: body));
   }
 }
 

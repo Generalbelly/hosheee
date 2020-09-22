@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class ProductView extends StatelessWidget {
 
@@ -40,7 +41,7 @@ class ProductView extends StatelessWidget {
           ),
         ],
       ),
-      body: Builder(builder: (BuildContext context) {
+      body: ProgressModal(isLoading: productViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
@@ -50,9 +51,9 @@ class ProductView extends StatelessWidget {
           });
         }
         final imageField = productViewModel.product.imageUrl != null ?
-          Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-            return Icon(Icons.error_outline);
-          }) : SizedBox.shrink();
+        Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+          return Icon(Icons.error_outline);
+        }) : SizedBox.shrink();
         final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
           decoration: InputDecoration(
             labelText: 'Price',
@@ -69,8 +70,8 @@ class ProductView extends StatelessWidget {
         );
 
         final setting = productViewModel.product.id != null
-          ?
-            Row(
+            ?
+        Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
@@ -99,11 +100,11 @@ class ProductView extends StatelessWidget {
             ),
           ],
         )
-          :
-            Container(
-              padding: EdgeInsets.only(top: 24.0),
-              child: SizedBox.shrink(),
-            );
+            :
+        Container(
+          padding: EdgeInsets.only(top: 24.0),
+          child: SizedBox.shrink(),
+        );
 
         return SingleChildScrollView(
           child: Container(
@@ -192,7 +193,7 @@ class ProductView extends StatelessWidget {
             ),
           ),
         );
-      }),
+      })),
     );
   }
 }

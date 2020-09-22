@@ -6,7 +6,7 @@ import 'package:wish_list/domain/use_cases/collection/update_collection_use_case
 import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/utils/validator.dart';
 
-class CollectionViewModel extends ChangeNotifier with RequestStatusManager {
+class CollectionViewModel extends ChangeNotifier {
 
   Collection _collection = Collection(null);
   Collection get collection => _collection;
@@ -41,9 +41,7 @@ class CollectionViewModel extends ChangeNotifier with RequestStatusManager {
     notifyListeners();
   }
 
-  bool isReadOnly() {
-    return _collection.id != null && !_isEditing;
-  }
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   CollectionViewModel(
     AddCollectionUseCase addCollectionUseCase,
@@ -53,6 +51,10 @@ class CollectionViewModel extends ChangeNotifier with RequestStatusManager {
     _addCollectionUseCase = addCollectionUseCase;
     _updateCollectionUseCase = updateCollectionUseCase;
     _deleteCollectionUseCase = deleteCollectionUseCase;
+  }
+
+  bool isReadOnly() {
+    return _collection.id != null && !_isEditing;
   }
 
   void clearErrors() {
@@ -83,8 +85,9 @@ class CollectionViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   Future<void> save() async {
-    message = null;
-    if (_validateCollection()) {
+    if (_validateCollection() && !requestStatusManager.isLoading()) {
+      message = null;
+      requestStatusManager.loading();
       if (_collection.id != null) {
         final response = await _updateCollectionUseCase.handle(UpdateCollectionUseCaseRequest(_collection));
         message = response.message;
@@ -92,17 +95,20 @@ class CollectionViewModel extends ChangeNotifier with RequestStatusManager {
         final response = await _addCollectionUseCase.handle(AddCollectionUseCaseRequest(_collection));
         message = response.message;
       }
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> delete() async {
-    message = null;
-    if (_collection.id != null) {
+    if (_collection.id != null && !requestStatusManager.isLoading()) {
+      message = null;
+      requestStatusManager.loading();
       final response = await _deleteCollectionUseCase.handle(DeleteCollectionUseCaseRequest(_collection));
       message = response.message;
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
 }
