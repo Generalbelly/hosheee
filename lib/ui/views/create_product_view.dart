@@ -34,7 +34,7 @@ class CreateProductView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(isLoading: productViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
+      body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
@@ -43,7 +43,9 @@ class CreateProductView extends StatelessWidget {
             productViewModel.message = null;
           });
         }
-        return Center(
+        return ProgressModal(
+          isLoading: productViewModel.requestStatusManager.isLoading(),
+          child: Center(
           child: Container(
             padding: EdgeInsets.all(24.0),
             child: Column(
@@ -89,8 +91,9 @@ class CreateProductView extends StatelessWidget {
               ],
             ),
           ),
+        )
         );
-      })),
+      }),
     );
   }
 }
