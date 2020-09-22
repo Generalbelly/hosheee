@@ -57,6 +57,7 @@ class CreateProductView extends StatelessWidget {
                     hintText: 'Website URL',
                     errorText: productViewModel.errors['websiteUrl'],
                   ),
+                  initialValue: productViewModel.product.websiteUrl,
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   onEditingComplete: () async {
                     if (await productViewModel.fillWithMetadata()) {
