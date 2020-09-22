@@ -4,10 +4,9 @@ import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/utils/validator.dart';
 
-class ProductViewModel extends ChangeNotifier with RequestStatusManager {
+class ProductViewModel extends ChangeNotifier {
 
   Product _product = Product(null);
   Product get product => _product;
