@@ -3,7 +3,7 @@ import 'package:wish_list/domain/models/product.dart';
 
 abstract class ProductRepository {
 
-  void listByCollectionId(String userId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0});
+  void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0});
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0});
 

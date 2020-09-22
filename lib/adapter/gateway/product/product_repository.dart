@@ -19,51 +19,34 @@ class ProductRepository implements i_product_repository.ProductRepository {
     return FirebaseFirestore.instance.collection('users').doc(userId).collection("products");
   }
 
-  void listByCollectionId(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
+  void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
+    final pqc = ProductQueryConfig(null, orderBy, descending, limit);
+    if (!listQueryConfig.isEqualTo(pqc)) {
+      listQueryConfig = pqc;
+    }
+    final query = listQueryConfig.getListByCollectionQuery(userId, collectionId);
 
+    final handler = (productsIndex) => (QuerySnapshot snapshot) {
+      listQueryConfig.handleSnapshot(productsIndex, snapshot);
+      callback(listQueryConfig.getCombinedResult());
+    };
+    final listener = query.snapshots().listen(handler(listQueryConfig.accumulatedResult.length));
+    listQueryConfig.attachListener(listener);
   }
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ProductQueryConfig(searchQuery, orderBy, descending, limit);
-    if (!_listQueryConfig.isEqualTo(pqc)) {
+    if (!listQueryConfig.isEqualTo(pqc)) {
       listQueryConfig = pqc;
     }
-    final query = listQueryConfig.getQuery(userId);
+    final query = listQueryConfig.getListQuery(userId);
 
-    final handler = (productsIndex, limit, descending) => (QuerySnapshot snapshot) {
-      if (snapshot.docChanges.length == 0) {
-        callback(_listQueryConfig.getCombinedResult());
-        return;
-      }
-      if (_listQueryConfig.lastVisible == null) {
-        _listQueryConfig.lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
-      }
-      var products = _listQueryConfig.retrieveResult(productsIndex);
-      snapshot.docChanges.forEach((docChange) {
-        final incomingProduct = Product.fromMap(docChange.doc.data());
-        print("productId:${incomingProduct.id}");
-        print("createdAt:${incomingProduct.createdAt}");
-        print("updatedAt:${incomingProduct.updatedAt}");
-        print("oldIndex:${docChange.oldIndex}");
-        print("newIndex:${docChange.newIndex}");
-        print("newIndex:${docChange.type}");
-        if (docChange.type == DocumentChangeType.added) {
-          products.insert(docChange.newIndex, incomingProduct);
-        }
-        if (docChange.type == DocumentChangeType.modified) {
-          final productIndex = products.indexWhere((product) => product.id == incomingProduct.id);
-          products[productIndex] = incomingProduct;
-        }
-        if (docChange.type == DocumentChangeType.removed) {
-          products.removeWhere((product) => product.id == incomingProduct.id);
-        }
-      });
-      _listQueryConfig.upsertResult(productsIndex, products);
-      callback(_listQueryConfig.getCombinedResult());
-      return;
+    final handler = (productsIndex) => (QuerySnapshot snapshot) {
+      listQueryConfig.handleSnapshot(productsIndex, snapshot);
+      callback(listQueryConfig.getCombinedResult());
     };
-    final listener = query.snapshots().listen(handler(_listQueryConfig.accumulatedResult.length, limit, descending));
-    _listQueryConfig.attachListener(listener);
+    final listener = query.snapshots().listen(handler(listQueryConfig.accumulatedResult.length));
+    listQueryConfig.attachListener(listener);
   }
 
   Future<Product> get(String userId, String productId) async {
