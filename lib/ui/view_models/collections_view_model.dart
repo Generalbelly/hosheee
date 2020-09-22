@@ -13,7 +13,6 @@ class CollectionsViewModel extends ChangeNotifier {
   ListCollectionsUseCase _listCollectionsUseCase;
 
   ScrollController scrollController = ScrollController();
-  bool _scrollControllerListenerAdded = false;
 
   // List<ImageLoadingStatusManager> imageLoadingStatusManagers = [];
   // bool allImagesLoaded = false;
@@ -24,6 +23,7 @@ class CollectionsViewModel extends ChangeNotifier {
       ListCollectionsUseCase listCollectionsUseCase,
       ) {
     _listCollectionsUseCase = listCollectionsUseCase;
+    scrollController.addListener(_scrollListener);
     listRecent();
   }
 
@@ -35,10 +35,6 @@ class CollectionsViewModel extends ChangeNotifier {
   }
 
   void listRecent() {
-    if (!_scrollControllerListenerAdded) {
-      scrollController.addListener(_scrollListener);
-      _scrollControllerListenerAdded = true;
-    }
     requestStatusManager.loading();
     notifyListeners();
     _listCollectionsUseCase.handle(ListCollectionsUseCaseRequest(

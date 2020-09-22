@@ -13,10 +13,6 @@ class ProductsViewModel extends ChangeNotifier {
   ListProductsUseCase _listProductsUseCase;
 
   ScrollController scrollController = ScrollController();
-  bool _scrollControllerListenerAdded = false;
-
-  // List<ImageLoadingStatusManager> imageLoadingStatusManagers = [];
-  // bool allImagesLoaded = false;
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
@@ -24,6 +20,7 @@ class ProductsViewModel extends ChangeNotifier {
     ListProductsUseCase listProductsUseCase,
   ) {
     _listProductsUseCase = listProductsUseCase;
+    scrollController.addListener(_scrollListener);
     listRecent();
   }
 
@@ -34,33 +31,7 @@ class ProductsViewModel extends ChangeNotifier {
     }
   }
 
-  // void imageLoadingDone(String url) {
-  //   final imageLoadingStatus = imageLoadingStatusManagers.firstWhere((imageLoadingStatus) => imageLoadingStatus.url == url, orElse: () => null);
-  //   if (imageLoadingStatus != null) {
-  //     imageLoadingStatus.ok();
-  //   }
-  //   if (!allImagesLoaded) {
-  //     allImagesLoaded = _checkIfImageLoadingAllDone();
-  //     if (allImagesLoaded) {
-  //       notifyListeners();
-  //     }
-  //   }
-  // }
-
-  // bool _checkIfImageLoadingAllDone() {
-  //   imageLoadingStatusManagers.forEach((imageLoadingStatus) {
-  //     if (!imageLoadingStatus.isOk()) {
-  //       return false;
-  //     }
-  //   });
-  //   return true;
-  // }
-
   void listRecent() {
-    if (!_scrollControllerListenerAdded) {
-      scrollController.addListener(_scrollListener);
-      _scrollControllerListenerAdded = true;
-    }
     requestStatusManager.loading();
     notifyListeners();
     _listProductsUseCase.handle(ListProductsUseCaseRequest(

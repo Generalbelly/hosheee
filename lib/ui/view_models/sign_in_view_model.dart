@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:wish_list/domain/models/user.dart';
+import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/utils/validator.dart';
 import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
 
@@ -17,6 +18,8 @@ class SignInViewModel extends ChangeNotifier {
   User user;
 
   SignInUseCase _signInUseCase;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   SignInViewModel(this._signInUseCase);
 
@@ -57,15 +60,17 @@ class SignInViewModel extends ChangeNotifier {
   submit() async {
     final emailValid = validateEmail();
     final passwordValid = validatePassword();
-    user = null;
-    message = null;
-    if (emailValid && passwordValid) {
+    if (emailValid && passwordValid && !requestStatusManager.isLoading()) {
+      user = null;
+      message = null;
+      requestStatusManager.loading();
       final signInUseCaseResponse = await _signInUseCase.handle(
           SignInUseCaseRequest(email, password));
       user = signInUseCaseResponse.user;
       message = signInUseCaseResponse.message;
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
 }

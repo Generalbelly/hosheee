@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/views/product_view.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CreateProductView extends StatelessWidget {
 
@@ -33,7 +34,7 @@ class CreateProductView extends StatelessWidget {
           ),
         ],
       ),
-      body: Builder(builder: (BuildContext context) {
+      body: ProgressModal(isLoading: productViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
@@ -89,7 +90,7 @@ class CreateProductView extends StatelessWidget {
             ),
           ),
         );
-      }),
+      })),
     );
   }
 }
