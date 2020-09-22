@@ -17,6 +17,7 @@ import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
+import 'package:wish_list/ui/view_models/recent_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
 import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
 import 'package:wish_list/common/theme.dart';
@@ -142,6 +143,11 @@ class App extends StatelessWidget {
               Provider.of<UpdateProductUseCase>(context, listen: false),
               Provider.of<DeleteProductUseCase>(context, listen: false),
               Provider.of<GetUrlMetadataUseCase>(context, listen: false)
+          ),
+        ),
+        ChangeNotifierProvider<RecentViewModel>(
+          create: (context) => RecentViewModel(
+            Provider.of<ListProductsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<ProductsViewModel>(

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wish_list/domain/models/model.dart';
 
-class Product {
+class Product implements Model {
+
   String id;
   String name;
   String websiteUrl;

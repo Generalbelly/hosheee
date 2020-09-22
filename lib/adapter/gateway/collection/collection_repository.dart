@@ -46,7 +46,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
 
     final handler = (collectionsIndex, limit, descending) => (QuerySnapshot snapshot) {
       if (snapshot.docChanges.length == 0) {
-        callback([]);
+        callback(_allCollections.expand((ps) => ps).toList());
         return;
       }
       if (_lastVisible == null) {
@@ -58,12 +58,12 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
       }
       snapshot.docChanges.forEach((docChange) {
         final incomingCollection = Collection.fromMap(docChange.doc.data());
-        print("collectionId:${incomingCollection.id}");
-        print("createdAt:${incomingCollection.createdAt}");
-        print("updatedAt:${incomingCollection.updatedAt}");
-        print("oldIndex:${docChange.oldIndex}");
-        print("newIndex:${docChange.newIndex}");
-        print("newIndex:${docChange.type}");
+        // print("collectionId:${incomingCollection.id}");
+        // print("createdAt:${incomingCollection.createdAt}");
+        // print("updatedAt:${incomingCollection.updatedAt}");
+        // print("oldIndex:${docChange.oldIndex}");
+        // print("newIndex:${docChange.newIndex}");
+        // print("newIndex:${docChange.type}");
         if (docChange.type == DocumentChangeType.added) {
           collections.insert(docChange.newIndex, incomingCollection);
         }

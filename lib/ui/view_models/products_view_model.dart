@@ -17,31 +17,33 @@ class ProductsViewModel extends ChangeNotifier {
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
   ProductsViewModel(
-    ListProductsUseCase listProductsUseCase,
-  ) {
+      ListProductsUseCase listProductsUseCase,
+      ) {
     _listProductsUseCase = listProductsUseCase;
     scrollController.addListener(_scrollListener);
-    listRecent();
+    list();
   }
 
   void _scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
-      listRecent();
+      list();
     }
   }
 
-  void listRecent() {
+  void list() {
     requestStatusManager.loading();
     notifyListeners();
     _listProductsUseCase.handle(ListProductsUseCaseRequest(
-      (response) {
+          (response) {
         message = response.message;
-        requestStatusManager.ok();
+        if (requestStatusManager.isLoading()) {
+          requestStatusManager.ok();
+        }
         products = response.products;
         notifyListeners();
       },
-      limit: 3,
+      limit: 15,
     ));
   }
 

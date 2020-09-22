@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
-import 'package:wish_list/ui/view_models/products_view_model.dart';
+import 'package:wish_list/ui/view_models/recent_view_model.dart';
 import 'package:wish_list/ui/views/product_view.dart';
 import 'package:wish_list/ui/views/progress_modal.dart';
 
@@ -20,8 +20,7 @@ class RecentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build:recent_view');
-    final productsViewModel = Provider.of<ProductsViewModel>(context);
+    final productsViewModel = Provider.of<RecentViewModel>(context);
     if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, productsViewModel.message, (ctx) {
