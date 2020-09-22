@@ -19,7 +19,10 @@ class HomeView extends StatelessWidget {
     }
     return Scaffold(
       body: Center(
-        child: homeViewModel.contents.elementAt(homeViewModel.selectedIndex),
+        child: IndexedStack(
+          index: homeViewModel.selectedIndex,
+          children: homeViewModel.contents,
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

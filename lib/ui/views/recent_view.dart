@@ -19,6 +19,7 @@ class RecentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build:recent_view');
     final productsViewModel = Provider.of<ProductsViewModel>(context);
     if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -29,7 +30,6 @@ class RecentView extends StatelessWidget {
       });
     }
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
-
     final body = productsViewModel.products.length > 0
       ?
       CustomScrollView(

@@ -19,6 +19,7 @@ class CollectionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build:collections_view');
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
     if (collectionsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
