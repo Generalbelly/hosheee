@@ -98,11 +98,7 @@ class RecentView extends StatelessWidget {
       :
         Container(
           child: Center(
-            child: productsViewModel.requestStatusManager.isLoading()
-              ?
-                SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
-              :
-                Text("No item saved yet.")
+            child: Text("No item saved yet."),
           ),
         );
     return Scaffold(

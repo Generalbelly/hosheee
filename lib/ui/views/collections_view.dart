@@ -100,11 +100,7 @@ class CollectionsView extends StatelessWidget {
         :
     Container(
       child: Center(
-          child: collectionsViewModel.requestStatusManager.isLoading()
-              ?
-          SizedBox(width: 32, height: 32, child: CircularProgressIndicator())
-              :
-          Text("No collection saved yet.")
+          child: Text("No collection saved yet."),
       ),
     );
     return Scaffold(
