@@ -107,7 +107,10 @@ class RecentView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(isLoading: productsViewModel.requestStatusManager.isLoading(), child: body));
+      body: ProgressModal(
+        isLoading: productsViewModel.requestStatusManager.isLoading() &&
+        productsViewModel.products.length == 0,
+        child: body));
   }
 }
 

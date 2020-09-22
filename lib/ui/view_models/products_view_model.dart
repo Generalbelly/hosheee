@@ -37,9 +37,7 @@ class ProductsViewModel extends ChangeNotifier {
     _listProductsUseCase.handle(ListProductsUseCaseRequest(
       (response) {
         message = response.message;
-        if (requestStatusManager.isLoading()) {
-          requestStatusManager.ok();
-        }
+        requestStatusManager.ok();
         products = response.products;
         notifyListeners();
       },

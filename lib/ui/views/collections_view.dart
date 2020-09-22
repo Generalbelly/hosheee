@@ -4,6 +4,7 @@ import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/collections_view_model.dart';
 import 'package:wish_list/ui/views/collection_view.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CollectionsView extends StatelessWidget {
 
@@ -41,24 +42,14 @@ class CollectionsView extends StatelessWidget {
           delegate: SliverChildBuilderDelegate((c, i) {
             final collection = collectionsViewModel.collections[i];
             return GestureDetector(
-              child: collection.imageUrl != null
-                  ?
+              child: collection.imageUrl != null ?
               Image.network(
                 collection.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                   return Icon(Icons.error_outline);
                 },
-                // loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                //   WidgetsBinding.instance.addPostFrameCallback((_) {
-                //     if (loadingProgress == null) {
-                //       collectionsViewModel.imageLoadingDone(collection.imageUrl);
-                //     }
-                //   });
-                //   return child;
-                // },
-              )
-                  :
+              ) :
               Container(
                 alignment: Alignment.center,
                 child: Padding(
@@ -115,7 +106,10 @@ class CollectionsView extends StatelessWidget {
             ),
           ],
         ),
-        body: body);
+        body: ProgressModal(
+          isLoading: collectionsViewModel.requestStatusManager.isLoading() &&
+          collectionsViewModel.collections.length == 0,
+          child: body));
   }
 }
 

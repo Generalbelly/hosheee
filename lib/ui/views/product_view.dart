@@ -41,7 +41,7 @@ class ProductView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(isLoading: productViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
+      body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
@@ -50,10 +50,11 @@ class ProductView extends StatelessWidget {
             productViewModel.message = null;
           });
         }
-        final imageField = productViewModel.product.imageUrl != null ?
-        Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+
+        final imageField = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
           return Icon(Icons.error_outline);
         }) : SizedBox.shrink();
+
         final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
           decoration: InputDecoration(
             labelText: 'Price',
@@ -69,9 +70,7 @@ class ProductView extends StatelessWidget {
           readOnly: productViewModel.isReadOnly(),
         );
 
-        final setting = productViewModel.product.id != null
-            ?
-        Row(
+        final setting = productViewModel.product.id != null ? Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
@@ -99,14 +98,14 @@ class ProductView extends StatelessWidget {
               },
             ),
           ],
-        )
-            :
-        Container(
+        ) : Container(
           padding: EdgeInsets.only(top: 24.0),
           child: SizedBox.shrink(),
         );
 
-        return SingleChildScrollView(
+        return ProgressModal(
+          isLoading: productViewModel.requestStatusManager.isLoading(),
+          child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0),
             child: Column(
@@ -192,8 +191,8 @@ class ProductView extends StatelessWidget {
               ],
             ),
           ),
-        );
-      })),
+        ));
+      }),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish_list/ui/view_models/home_view_model.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class HomeView extends StatelessWidget {
 
@@ -12,16 +13,19 @@ class HomeView extends StatelessWidget {
         body: SizedBox.shrink(),
       );
     }
-    if (!homeViewModel.isInitial() && homeViewModel.user == null) {
+    if (!homeViewModel.requestStatusManager.isInitial() && homeViewModel.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacementNamed(context, '/sign-in');
       });
     }
     return Scaffold(
-      body: Center(
-        child: IndexedStack(
-          index: homeViewModel.selectedIndex,
-          children: homeViewModel.contents,
+      body: ProgressModal(
+        isLoading: homeViewModel.requestStatusManager.isLoading(),
+        child: Center(
+          child: IndexedStack(
+            index: homeViewModel.selectedIndex,
+            children: homeViewModel.contents,
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -8,7 +8,7 @@ import 'package:wish_list/ui/mixins/request_status_manager.dart';
 import 'package:wish_list/ui/views/collections_view.dart';
 import 'package:wish_list/ui/views/recent_view.dart';
 
-class HomeViewModel extends ChangeNotifier with RequestStatusManager {
+class HomeViewModel extends ChangeNotifier {
 
   List<Widget> contents = [];
   int _selectedIndex = 0;
@@ -24,6 +24,8 @@ class HomeViewModel extends ChangeNotifier with RequestStatusManager {
   List<Collection> collections = [];
 
   String message;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   HomeViewModel(
     Auth auth,
@@ -41,7 +43,7 @@ class HomeViewModel extends ChangeNotifier with RequestStatusManager {
       print(u.email);
     }
     user = u;
-    ok();
+    requestStatusManager.ok();
     notifyListeners();
   }
 

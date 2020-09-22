@@ -36,7 +36,7 @@ class CollectionView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(isLoading: collectionViewModel.requestStatusManager.isLoading(), child: Builder(builder: (BuildContext context) {
+      body: Builder(builder: (BuildContext context) {
         if (collectionViewModel.message != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, collectionViewModel.message, (ctx) {
@@ -87,7 +87,9 @@ class CollectionView extends StatelessWidget {
           child: SizedBox.shrink(),
         );
 
-        return SingleChildScrollView(
+        return ProgressModal(
+          isLoading: collectionViewModel.requestStatusManager.isLoading(),
+          child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0),
             child: Column(
@@ -108,8 +110,8 @@ class CollectionView extends StatelessWidget {
               ],
             ),
           ),
-        );
-      })),
+        ));
+      }),
     );
   }
 }
