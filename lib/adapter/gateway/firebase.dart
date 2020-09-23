@@ -18,7 +18,7 @@ abstract class QueryManager {
   Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
 }
 
-class ProductQueryConfig implements QueryManager {
+class ProductQueryManager implements QueryManager {
   List<List<Product>> accumulatedResult = [];
   DocumentSnapshot lastVisible;
   String searchQuery;
@@ -27,7 +27,7 @@ class ProductQueryConfig implements QueryManager {
   int limit;
   List<StreamSubscription> _listeners = [];
 
-  ProductQueryConfig(this.searchQuery, this.orderBy, this.descending, this.limit);
+  ProductQueryManager(this.searchQuery, this.orderBy, this.descending, this.limit);
 
   bool isEqualTo(QueryManager qm) {
     return (searchQuery == qm.searchQuery && orderBy == qm.orderBy && descending == qm.descending && limit == qm.limit);
