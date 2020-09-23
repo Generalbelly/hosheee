@@ -15,7 +15,7 @@ abstract class QueryManager {
   void upsertResult(int resultIndex, List<Model> result);
   List<Model> retrieveResult(int resultIndex);
   List<Model> getCombinedResult();
-  void handleSnapshot(int resultIndex, QuerySnapshot snapshot);
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
 }
 
 class ProductQueryConfig implements QueryManager {
@@ -61,34 +61,39 @@ class ProductQueryConfig implements QueryManager {
     return accumulatedResult.expand((ps) => ps).toList();
   }
 
-  void handleSnapshot(int resultIndex, QuerySnapshot snapshot) {
-    if (snapshot.docChanges.length == 0) {
-      return;
-    }
-    if (lastVisible == null) {
-      lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
-    }
-    var products = retrieveResult(resultIndex);
-    snapshot.docChanges.forEach((docChange) {
-      final incomingProduct = Product.fromMap(docChange.doc.data());
-      print("productId:${incomingProduct.id}");
-      print("createdAt:${incomingProduct.createdAt}");
-      print("updatedAt:${incomingProduct.updatedAt}");
-      print("oldIndex:${docChange.oldIndex}");
-      print("newIndex:${docChange.newIndex}");
-      print("newIndex:${docChange.type}");
-      if (docChange.type == DocumentChangeType.added) {
-        products.insert(docChange.newIndex, incomingProduct);
-      }
-      if (docChange.type == DocumentChangeType.modified) {
-        final productIndex = products.indexWhere((product) => product.id == incomingProduct.id);
-        products[productIndex] = incomingProduct;
-      }
-      if (docChange.type == DocumentChangeType.removed) {
-        products.removeWhere((product) => product.id == incomingProduct.id);
-      }
-    });
-    upsertResult(resultIndex, products);
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb) {
+    return (int resultIndex) {
+      return (QuerySnapshot snapshot) {
+        if (snapshot.docChanges.length == 0) {
+          return;
+        }
+        if (lastVisible == null) {
+          lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
+        }
+        var products = retrieveResult(resultIndex);
+        snapshot.docChanges.forEach((docChange) {
+          final incomingProduct = Product.fromMap(docChange.doc.data());
+          print("productId:${incomingProduct.id}");
+          print("createdAt:${incomingProduct.createdAt}");
+          print("updatedAt:${incomingProduct.updatedAt}");
+          print("oldIndex:${docChange.oldIndex}");
+          print("newIndex:${docChange.newIndex}");
+          print("newIndex:${docChange.type}");
+          if (docChange.type == DocumentChangeType.added) {
+            products.insert(docChange.newIndex, incomingProduct);
+          }
+          if (docChange.type == DocumentChangeType.modified) {
+            final productIndex = products.indexWhere((product) => product.id == incomingProduct.id);
+            products[productIndex] = incomingProduct;
+          }
+          if (docChange.type == DocumentChangeType.removed) {
+            products.removeWhere((product) => product.id == incomingProduct.id);
+          }
+        });
+        upsertResult(resultIndex, products);
+        cb();
+      };
+    }(accumulatedResult.length);
   }
 
   Query getListQuery(String userId) {

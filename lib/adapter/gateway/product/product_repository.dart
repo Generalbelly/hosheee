@@ -8,11 +8,18 @@ import 'package:wish_list/domain/repositories/product_repository.dart' as i_prod
 class ProductRepository implements i_product_repository.ProductRepository {
 
   ProductQueryConfig _listQueryConfig = ProductQueryConfig(null, 'createdAt', true, 0);
+  ProductQueryConfig _listByCollectionIdQueryConfig = ProductQueryConfig(null, 'createdAt', true, 0);
 
   ProductQueryConfig get listQueryConfig => _listQueryConfig;
   set listQueryConfig(ProductQueryConfig value) {
     _listQueryConfig.detachListeners();
     _listQueryConfig = value;
+  }
+
+  ProductQueryConfig get listByCollectionIdQueryConfig => _listByCollectionIdQueryConfig;
+  set listByCollectionIdQueryConfig(ProductQueryConfig value) {
+    _listByCollectionIdQueryConfig.detachListeners();
+    _listByCollectionIdQueryConfig = value;
   }
 
   CollectionReference getCollection(String userId) {
@@ -21,17 +28,15 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ProductQueryConfig(null, orderBy, descending, limit);
-    if (!listQueryConfig.isEqualTo(pqc)) {
-      listQueryConfig = pqc;
+    if (!listByCollectionIdQueryConfig.isEqualTo(pqc)) {
+      listByCollectionIdQueryConfig = pqc;
     }
-    final query = listQueryConfig.getListByCollectionQuery(userId, collectionId);
+    final query = listByCollectionIdQueryConfig.getListByCollectionQuery(userId, collectionId);
 
-    final handler = (productsIndex) => (QuerySnapshot snapshot) {
-      listQueryConfig.handleSnapshot(productsIndex, snapshot);
-      callback(listQueryConfig.getCombinedResult());
-    };
-    final listener = query.snapshots().listen(handler(listQueryConfig.accumulatedResult.length));
-    listQueryConfig.attachListener(listener);
+    final listener = query.snapshots().listen(listByCollectionIdQueryConfig.getSnapshotHandler(() {
+      callback(listByCollectionIdQueryConfig.getCombinedResult());
+    }));
+    listByCollectionIdQueryConfig.attachListener(listener);
   }
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
@@ -41,11 +46,9 @@ class ProductRepository implements i_product_repository.ProductRepository {
     }
     final query = listQueryConfig.getListQuery(userId);
 
-    final handler = (productsIndex) => (QuerySnapshot snapshot) {
-      listQueryConfig.handleSnapshot(productsIndex, snapshot);
+    final listener = query.snapshots().listen(listQueryConfig.getSnapshotHandler(() {
       callback(listQueryConfig.getCombinedResult());
-    };
-    final listener = query.snapshots().listen(handler(listQueryConfig.accumulatedResult.length));
+    }));
     listQueryConfig.attachListener(listener);
   }
 
