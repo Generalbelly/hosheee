@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/collections_view_model.dart';
+import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/views/collection_view.dart';
+import 'package:wish_list/ui/views/products_view.dart';
 import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CollectionsView extends StatelessWidget {
@@ -21,6 +23,7 @@ class CollectionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
+    final productsViewModel = Provider.of<ProductsViewModel>(context);
     if (collectionsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, collectionsViewModel.message, (ctx) {
@@ -60,8 +63,8 @@ class CollectionsView extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                collectionViewModel.collection = collection;
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
+                productsViewModel.collection = collection;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsView()));
               },
             );
           },

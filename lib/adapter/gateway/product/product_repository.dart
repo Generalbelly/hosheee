@@ -1,50 +1,56 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:wish_list/adapter/gateway/firebase.dart';
+import 'package:wish_list/adapter/gateway/product/firebase.dart';
 import 'package:wish_list/domain/models/product.dart';
 import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
-  ProductQueryManager _listQueryManager = ProductQueryManager(null, 'createdAt', true, 0);
-  ProductQueryManager _listByCollectionIdQueryManager = ProductQueryManager(null, 'createdAt', true, 0);
+  ListProductsQueryManager _listQueryManager;
+  ListProductsByCollectionIdQueryManager _listByCollectionIdQueryManager;
 
-  ProductQueryManager get listQueryManager => _listQueryManager;
-  set listQueryManager(ProductQueryManager value) {
-    _listQueryManager.detachListeners();
+  ListProductsQueryManager get listQueryManager => _listQueryManager;
+  set listQueryManager(ListProductsQueryManager value) {
+    if (_listQueryManager != null) {
+      _listQueryManager.detachListeners();
+    }
     _listQueryManager = value;
   }
 
-  ProductQueryManager get listByCollectionIdQueryManager => _listByCollectionIdQueryManager;
-  set listByCollectionIdQueryManager(ProductQueryManager value) {
-    _listByCollectionIdQueryManager.detachListeners();
+  ListProductsByCollectionIdQueryManager get listByCollectionIdQueryManager => _listByCollectionIdQueryManager;
+  set listByCollectionIdQueryManager(ListProductsByCollectionIdQueryManager value) {
+    if (_listByCollectionIdQueryManager != null) {
+      _listByCollectionIdQueryManager.detachListeners();
+    }
     _listByCollectionIdQueryManager = value;
   }
 
-  CollectionReference getCollection(String userId) {
-    return FirebaseFirestore.instance.collection('users').doc(userId).collection("products");
-  }
-
   void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
-    final pqc = ProductQueryManager(null, orderBy, descending, limit);
-    if (!listByCollectionIdQueryManager.isEqualTo(pqc)) {
+    final pqc = ListProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, limit);
+    print(userId);
+    print(collectionId);
+    print(descending);
+    print(limit);
+    if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isEqualTo(pqc)) {
+      print('first time or not equal');
       listByCollectionIdQueryManager = pqc;
     }
-    final query = listByCollectionIdQueryManager.getListByCollectionQuery(userId, collectionId);
+    final query = listByCollectionIdQueryManager.query();
 
     final listener = query.snapshots().listen(listByCollectionIdQueryManager.getSnapshotHandler(() {
       callback(listByCollectionIdQueryManager.getCombinedResult());
     }));
+    print(listByCollectionIdQueryManager.accumulatedResult.length);
     listByCollectionIdQueryManager.attachListener(listener);
   }
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
-    final pqc = ProductQueryManager(searchQuery, orderBy, descending, limit);
-    if (!listQueryManager.isEqualTo(pqc)) {
+    final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, limit);
+    if (listQueryManager == null || !listQueryManager.isEqualTo(pqc)) {
       listQueryManager = pqc;
     }
-    final query = listQueryManager.getListQuery(userId);
+    final query = listQueryManager.query();
 
     final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(() {
       callback(listQueryManager.getCombinedResult());

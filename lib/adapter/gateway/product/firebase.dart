@@ -4,44 +4,39 @@ import 'dart:async';
 import 'package:wish_list/domain/models/product.dart';
 
 abstract class QueryManager {
-  String searchQuery;
-  String orderBy;
-  bool descending;
-  int limit;
-
-  bool isEqualTo(QueryManager qm);
-  void detachListeners();
-  void attachListener(StreamSubscription listener);
-  void upsertResult(int resultIndex, List<Model> result);
-  List<Model> retrieveResult(int resultIndex);
-  List<Model> getCombinedResult();
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
-}
-
-class ProductQueryManager implements QueryManager {
-  List<List<Product>> accumulatedResult = [];
   DocumentSnapshot lastVisible;
-  String searchQuery;
-  String orderBy;
-  bool descending;
-  int limit;
   List<StreamSubscription> _listeners = [];
 
-  ProductQueryManager(this.searchQuery, this.orderBy, this.descending, this.limit);
-
-  bool isEqualTo(QueryManager qm) {
-    return (searchQuery == qm.searchQuery && orderBy == qm.orderBy && descending == qm.descending && limit == qm.limit);
-  }
-
+  bool isEqualTo(QueryManager qm);
+  List<Model> getCombinedResult();
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
+  Query query();
   void detachListeners() {
     _listeners.forEach((listListener) async { await listListener.cancel(); });
   }
-
   void attachListener(StreamSubscription listener) {
     _listeners.add(listener);
   }
+}
 
-  void upsertResult(int resultIndex, List<Model> result) {
+class ListProductsQueryManager extends QueryManager {
+  List<List<Product>> accumulatedResult = [];
+  String userId;
+  String searchQuery;
+  String orderBy;
+  bool descending;
+  int limit;
+
+  ListProductsQueryManager(this.userId, this.searchQuery, this.orderBy, this.descending, this.limit);
+
+  bool isEqualTo(QueryManager qm) {
+    if (qm is ListProductsQueryManager) {
+      return (userId == qm.userId && searchQuery == qm.searchQuery && orderBy == qm.orderBy && descending == qm.descending);
+    }
+    return false;
+  }
+
+  void _upsertResult(int resultIndex, List<Model> result) {
     if (accumulatedResult.length > resultIndex) {
       accumulatedResult[resultIndex] = result;
     } else {
@@ -49,7 +44,7 @@ class ProductQueryManager implements QueryManager {
     }
   }
 
-  List<Product> retrieveResult(int resultIndex) {
+  List<Product> _retrieveResult(int resultIndex) {
     var products = List<Product>();
     if (accumulatedResult.length > resultIndex) {
       products = accumulatedResult[resultIndex];
@@ -65,12 +60,13 @@ class ProductQueryManager implements QueryManager {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
+          cb();
           return;
         }
         if (lastVisible == null) {
           lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
         }
-        var products = retrieveResult(resultIndex);
+        var products = _retrieveResult(resultIndex);
         snapshot.docChanges.forEach((docChange) {
           final incomingProduct = Product.fromMap(docChange.doc.data());
           print("productId:${incomingProduct.id}");
@@ -90,13 +86,13 @@ class ProductQueryManager implements QueryManager {
             products.removeWhere((product) => product.id == incomingProduct.id);
           }
         });
-        upsertResult(resultIndex, products);
+        _upsertResult(resultIndex, products);
         cb();
       };
     }(accumulatedResult.length);
   }
 
-  Query getListQuery(String userId) {
+  Query query() {
     var query;
     if (searchQuery != null) {
       query = FirebaseFirestore.instance.collection('users').doc(userId).collection("products")
@@ -118,7 +114,78 @@ class ProductQueryManager implements QueryManager {
     return query;
   }
 
-  Query getListByCollectionQuery(String userId, String collectionId) {
+}
+
+class ListProductsByCollectionIdQueryManager extends QueryManager {
+  List<List<Product>> accumulatedResult = [];
+  String userId;
+  String collectionId;
+  String orderBy;
+  bool descending;
+  int limit;
+
+  ListProductsByCollectionIdQueryManager(this.userId, this.collectionId, this.orderBy, this.descending, this.limit);
+
+  bool isEqualTo(QueryManager qm) {
+    if (qm is ListProductsByCollectionIdQueryManager) {
+      return (userId == qm.userId && collectionId == qm.collectionId && orderBy == qm.orderBy && descending == qm.descending);
+    }
+    return false;
+  }
+
+  void _upsertResult(int resultIndex, List<Model> result) {
+    if (accumulatedResult.length > resultIndex) {
+      accumulatedResult[resultIndex] = result;
+    } else {
+      accumulatedResult.add(result);
+    }
+  }
+
+  List<Product> _retrieveResult(int resultIndex) {
+    var products = List<Product>();
+    if (accumulatedResult.length > resultIndex) {
+      products = accumulatedResult[resultIndex];
+    }
+    return products;
+  }
+
+  List<Product> getCombinedResult() {
+    return accumulatedResult.expand((ps) => ps).toList();
+  }
+
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb) {
+    return (int resultIndex) {
+      return (QuerySnapshot snapshot) {
+        if (snapshot.docChanges.length == 0) {
+          cb();
+          return;
+        }
+        if (lastVisible == null) {
+          lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
+        }
+        var products = _retrieveResult(resultIndex);
+        snapshot.docChanges.forEach((docChange) {
+          final incomingProduct = Product.fromMap(docChange.doc.data());
+          print("productId:${incomingProduct.id}");
+          print("collectionId:${incomingProduct.collectionId}");
+          if (docChange.type == DocumentChangeType.added) {
+            products.insert(docChange.newIndex, incomingProduct);
+          }
+          if (docChange.type == DocumentChangeType.modified) {
+            final productIndex = products.indexWhere((product) => product.id == incomingProduct.id);
+            products[productIndex] = incomingProduct;
+          }
+          if (docChange.type == DocumentChangeType.removed) {
+            products.removeWhere((product) => product.id == incomingProduct.id);
+          }
+        });
+        _upsertResult(resultIndex, products);
+        cb();
+      };
+    }(accumulatedResult.length);
+  }
+
+  Query query() {
     var query = FirebaseFirestore.instance.collection('users').doc(userId).collection("products")
       .where('collectionId', isEqualTo: collectionId)
       .orderBy(orderBy, descending: descending);

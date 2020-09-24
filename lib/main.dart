@@ -9,6 +9,7 @@ import 'package:wish_list/domain/use_cases/collection/delete_collection_use_case
 import 'package:wish_list/domain/use_cases/collection/update_collection_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
 import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
 import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
@@ -72,6 +73,12 @@ class App extends StatelessWidget {
         ),
         Provider<ListProductsUseCase>(
           create: (context) => ListProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListProductsByCollectionIdUseCase>(
+          create: (context) => ListProductsByCollectionIdUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
@@ -152,7 +159,7 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<ProductsViewModel>(
           create: (context) => ProductsViewModel(
-            Provider.of<ListProductsUseCase>(context, listen: false),
+            Provider.of<ListProductsByCollectionIdUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<CollectionsViewModel>(
