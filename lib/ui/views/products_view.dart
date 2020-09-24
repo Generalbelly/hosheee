@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/domain/models/product.dart';
+import 'package:wish_list/ui/view_models/collection_view_model.dart';
 import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
+import 'package:wish_list/ui/views/collection_view.dart';
 import 'package:wish_list/ui/views/product_view.dart';
 import 'package:wish_list/ui/views/progress_modal.dart';
 
@@ -21,6 +22,8 @@ class ProductsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
+    final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
+
     if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, productsViewModel.message, (ctx) {
@@ -98,10 +101,10 @@ class ProductsView extends StatelessWidget {
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.edit),
               onPressed: () {
-                productViewModel.product = Product(null);
-                Navigator.pushNamed(context, '/products/create');
+                collectionViewModel.collection = productsViewModel.collection;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
               },
             ),
           ],
