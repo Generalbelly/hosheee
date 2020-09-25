@@ -99,6 +99,7 @@ class ProductsView extends StatelessWidget {
     );
     return Scaffold(
         appBar: AppBar(
+          title: Text(productsViewModel.collection.name),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
