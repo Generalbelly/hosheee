@@ -5,11 +5,16 @@ enum RequestStatus {
   error,
 }
 
-mixin RequestStatusManager {
+class RequestStatusManager {
+
   RequestStatus status = RequestStatus.initial;
 
   void loading() {
     status = RequestStatus.loading;
+  }
+
+  void initial() {
+    status = RequestStatus.initial;
   }
 
   bool isInitial() {
@@ -25,7 +30,7 @@ mixin RequestStatusManager {
   }
 
   bool isOk() {
-    return status == RequestStatus.loading;
+    return status == RequestStatus.ok;
   }
 
   void error() {
@@ -33,7 +38,14 @@ mixin RequestStatusManager {
   }
 
   bool isError() {
-    return status == RequestStatus.loading;
+    return status == RequestStatus.error;
   }
+
+}
+
+class ImageLoadingStatusManager extends RequestStatusManager {
+  String url;
+
+  ImageLoadingStatusManager(this.url);
 
 }

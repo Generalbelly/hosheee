@@ -1,5 +1,3 @@
-import 'package:hosheee/domain/models/logger.dart';
-
 class ValidationResult {
   String field;
   dynamic input;

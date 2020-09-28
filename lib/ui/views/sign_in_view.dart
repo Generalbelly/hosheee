@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hosheee/ui/view_models/home_view_model.dart';
-import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
+import 'package:wish_list/ui/view_models/home_view_model.dart';
+import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class SignInView extends StatelessWidget {
 
@@ -26,70 +27,73 @@ class SignInView extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Builder(
-        builder: (BuildContext context) {
-          if (signInViewModel.message != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showSnackBar(context, signInViewModel.message, (ctx) {
-                Scaffold.of(ctx).hideCurrentSnackBar();
+      body: ProgressModal(isLoading: signInViewModel.requestStatusManager.isLoading(), child: Builder(
+          builder: (BuildContext context) {
+            if (signInViewModel.message != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _showSnackBar(context, signInViewModel.message, (ctx) {
+                  Scaffold.of(ctx).hideCurrentSnackBar();
+                });
                 signInViewModel.message = null;
               });
-            });
-          }
-          return Center(
-            child: Container(
-              padding: EdgeInsets.all(35.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'hosheee',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headline1,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Email',
-                      errorText: signInViewModel.emailErrorMessage,
+            }
+            return SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'wish list',
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .headline1,
                     ),
-                    onChanged: (value) => signInViewModel.email = value,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      errorText: signInViewModel.passwordErrorMessage,
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Email',
+                        errorText: signInViewModel.emailErrorMessage,
+                      ),
+                      onChanged: (value) => signInViewModel.email = value,
                     ),
-                    onChanged: (value) => signInViewModel.password = value,
-                    obscureText: true,
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text('Sign in'),
-                      onPressed: () => signInViewModel.submit(),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Password',
+                        errorText: signInViewModel.passwordErrorMessage,
+                      ),
+                      onChanged: (value) => signInViewModel.password = value,
+                      obscureText: true,
                     ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FlatButton(
-                      child: Text('Create account'),
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/sign-up');
-                      },
+                    SizedBox(
+                      height: 24,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        color: Colors.lightBlue,
+                        child: Text('Sign in'),
+                        onPressed: () => signInViewModel.submit(),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FlatButton(
+                        child: Text('Create account'),
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/sign-up');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      )
+            );
+          }
+      )),
     );
   }
 }

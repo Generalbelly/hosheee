@@ -5,10 +5,10 @@ import 'package:wish_list/domain/models/user.dart';
 import 'package:wish_list/domain/repositories/product_repository.dart';
 import 'package:wish_list/utils/helpers.dart';
 
-class AddProductUseCaseRequest {
+class UpdateProductUseCaseRequest {
   Product product;
 
-  AddProductUseCaseRequest(this.product);
+  UpdateProductUseCaseRequest(this.product);
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,38 +17,37 @@ class AddProductUseCaseRequest {
   }
 }
 
-class AddProductUseCaseResponse {
+class UpdateProductUseCaseResponse {
   String message;
 
-  AddProductUseCaseResponse({String message})
+  UpdateProductUseCaseResponse({String message})
     : this.message = message;
 }
 
-class AddProductUseCase {
+class UpdateProductUseCase {
 
   Auth _auth;
 
   ProductRepository _productRepository;
 
-  AddProductUseCase(this._auth, this._productRepository);
+  UpdateProductUseCase(this._auth, this._productRepository);
 
-  Future<AddProductUseCaseResponse> handle(AddProductUseCaseRequest request) async {
+  Future<UpdateProductUseCaseResponse> handle(UpdateProductUseCaseRequest request) async {
     try {
       final user = await _auth.user();
       if (!(user is User)) {
         throw SignInRequiredException();
       }
-      request.product.id = _productRepository.nextIdentity();
-      await _productRepository.add(
+      await _productRepository.update(
           user.id,
           request.product
       );
-      return AddProductUseCaseResponse();
+      return UpdateProductUseCaseResponse();
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return AddProductUseCaseResponse(message: e.toString());
+      return UpdateProductUseCaseResponse(message: e.toString());
     }
   }
 

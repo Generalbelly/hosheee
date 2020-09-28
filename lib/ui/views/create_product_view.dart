@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hosheee/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/views/product_view.dart';
+import 'package:wish_list/ui/views/progress_modal.dart';
 
 class CreateProductView extends StatelessWidget {
 
@@ -18,13 +20,17 @@ class CreateProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
 
+    final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
     return Scaffold(
       appBar: AppBar(
         title: Text('New Product'),
         actions: <Widget>[
           FlatButton(
-            child: Text('Save'),
-            onPressed: () => productViewModel.create(),
+            child: Text('Skip'),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ProductView()));
+            },
           ),
         ],
       ),
@@ -33,26 +39,61 @@ class CreateProductView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
-              productViewModel.message = null;
             });
+            productViewModel.message = null;
           });
         }
-        return Center(
+        return ProgressModal(
+          isLoading: productViewModel.requestStatusManager.isLoading(),
+          child: Center(
           child: Container(
-            padding: EdgeInsets.all(35.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
                   decoration: InputDecoration(
-                    hintText: 'Product Page URL',
+                    labelText: 'Website URL',
+                    hintText: 'Website URL',
                     errorText: productViewModel.errors['websiteUrl'],
                   ),
+                  initialValue: productViewModel.product.websiteUrl,
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
+                  onEditingComplete: () async {
+                    if (await productViewModel.fillWithMetadata()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductView(),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                    color: nextButtonColor,
+                    child: Text('Next'),
+                    onPressed:  () async {
+                      if (await productViewModel.fillWithMetadata()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductView(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
           ),
+        )
         );
       }),
     );

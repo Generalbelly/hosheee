@@ -32,9 +32,6 @@ class Logger implements i_logger.Logger {
   }
 
   error(String message, Object payload) async {
-    print("error");
-    print(message);
-    print(payload);
     final callable = CloudFunctions(region: 'asia-northeast1').getHttpsCallable(functionName: 'writeLog');
     await callable.call(<String, dynamic>{
       'severity': 'ERROR',

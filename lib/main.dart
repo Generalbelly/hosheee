@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hosheee/adapter/gateway/auth.dart';
-import 'package:hosheee/adapter/gateway/collection/collection_repository.dart';
-import 'package:hosheee/adapter/gateway/product/product_repository.dart';
-import 'package:hosheee/adapter/gateway/url_metadata/url_metadata_repository.dart';
-import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
-import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:hosheee/ui/view_models/collection_view_model.dart';
-import 'package:hosheee/ui/view_models/home_view_model.dart';
-import 'package:hosheee/ui/view_models/product_view_model.dart';
-import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
-import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
-import 'package:hosheee/common/theme.dart';
-import 'package:hosheee/domain/models/auth.dart' as i_auth;
-import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
-import 'package:hosheee/domain/use_cases/auth/sign_in_use_case.dart';
-import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
-import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
-import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
-import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
-import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:hosheee/ui/views/create_collection_view.dart';
-import 'package:hosheee/ui/views/create_product_view.dart';
-import 'package:hosheee/ui/views/home_view.dart';
-import 'package:hosheee/ui/views/sign_up_view.dart';
-import 'package:hosheee/ui/views/sign_in_view.dart';
+import 'package:wish_list/adapter/gateway/auth.dart';
+import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
+import 'package:wish_list/adapter/gateway/product/product_repository.dart';
+import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
+import 'package:wish_list/domain/use_cases/collection/delete_collection_use_case.dart';
+import 'package:wish_list/domain/use_cases/collection/update_collection_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
+import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
+import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
+import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:wish_list/ui/view_models/collections_view_model.dart';
+import 'package:wish_list/ui/view_models/home_view_model.dart';
+import 'package:wish_list/ui/view_models/product_view_model.dart';
+import 'package:wish_list/ui/view_models/products_view_model.dart';
+import 'package:wish_list/ui/view_models/recent_view_model.dart';
+import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
+import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
+import 'package:wish_list/common/theme.dart';
+import 'package:wish_list/domain/models/auth.dart' as i_auth;
+import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
+import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
+import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
+import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
+import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
+import 'package:wish_list/ui/views/create_product_view.dart';
+import 'package:wish_list/ui/views/home_view.dart';
+import 'package:wish_list/ui/views/sign_up_view.dart';
+import 'package:wish_list/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
-  static const BUILD_ENV = String.fromEnvironment('BUILD_ENV');
+  static const BUNDLE_ID_SUFFIX = String.fromEnvironment('BUNDLE_ID_SUFFIX');
+  static const APP_ENV = String.fromEnvironment('APP_ENV');
 }
 
 void main() async {
@@ -62,10 +71,16 @@ class App extends StatelessWidget {
         Provider<i_url_metadata_repository.UrlMetadataRepository>(
           create: (_) => UrlMetadataRepository(),
         ),
-        Provider<ListCollectionsUseCase>(
-          create: (context) => ListCollectionsUseCase(
+        Provider<ListProductsUseCase>(
+          create: (context) => ListProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
-              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListProductsByCollectionIdUseCase>(
+          create: (context) => ListProductsByCollectionIdUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
         Provider<AddCollectionUseCase>(
@@ -74,8 +89,38 @@ class App extends StatelessWidget {
               Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
           ),
         ),
+        Provider<UpdateCollectionUseCase>(
+          create: (context) => UpdateCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteCollectionUseCase>(
+          create: (context) => DeleteCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionsUseCase>(
+          create: (context) => ListCollectionsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
         Provider<AddProductUseCase>(
           create: (context) => AddProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<UpdateProductUseCase>(
+          create: (context) => UpdateProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteProductUseCase>(
+          create: (context) => DeleteProductUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
@@ -94,20 +139,42 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<CollectionViewModel>(
           create: (context) => CollectionViewModel(
-              Provider.of<ListCollectionsUseCase>(context, listen: false),
-              Provider.of<AddCollectionUseCase>(context, listen: false)),
+              Provider.of<AddCollectionUseCase>(context, listen: false),
+              Provider.of<UpdateCollectionUseCase>(context, listen: false),
+              Provider.of<DeleteCollectionUseCase>(context, listen: false)
+          ),
         ),
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(
               Provider.of<AddProductUseCase>(context, listen: false),
-              Provider.of<GetUrlMetadataUseCase>(context, listen: false)),
+              Provider.of<UpdateProductUseCase>(context, listen: false),
+              Provider.of<DeleteProductUseCase>(context, listen: false),
+              Provider.of<GetUrlMetadataUseCase>(context, listen: false)
+          ),
+        ),
+        ChangeNotifierProvider<RecentViewModel>(
+          create: (context) => RecentViewModel(
+            Provider.of<ListProductsUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<ProductsViewModel>(
+          create: (context) => ProductsViewModel(
+            Provider.of<ListProductsByCollectionIdUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<CollectionsViewModel>(
+          create: (context) => CollectionsViewModel(
+            Provider.of<ListCollectionsUseCase>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider<HomeViewModel>(
-          create: (context) => HomeViewModel(Provider.of<i_auth.Auth>(context, listen: false)),
+          create: (context) => HomeViewModel(
+              Provider.of<i_auth.Auth>(context, listen: false),
+          ),
         ),
       ],
       child: MaterialApp(
-        title: 'wish',
+        title: 'wish_list',
         theme: appTheme,
         initialRoute: '/',
         home: HomeView(),
@@ -118,16 +185,15 @@ class App extends StatelessWidget {
         },
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
-            case '/collections/create':
-              return MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) {
-                  return CreateCollectionView();
-                },
-              );
-              break;
+            default:
+              return MaterialPageRoute(builder: (_) {
+                return Scaffold(
+                  body: Center(
+                    child: Text('No route defined for ${settings.name}'),
+                  ),
+                );
+              });
           }
-          return null;
         },
       ),
     );

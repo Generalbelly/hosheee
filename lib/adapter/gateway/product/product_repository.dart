@@ -1,94 +1,87 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:hosheee/domain/models/product.dart';
-import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:wish_list/adapter/gateway/product/firebase.dart';
+import 'package:wish_list/domain/models/product.dart';
+import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
-  DocumentSnapshot _lastVisible;
-  String _lastSearchQuery;
-  String _lastOrderBy;
-  bool _lastDescending;
+  ListProductsQueryManager _listQueryManager;
+  ListProductsByCollectionIdQueryManager _listByCollectionIdQueryManager;
 
-  CollectionReference getCollection(String userId) {
-    return FirebaseFirestore.instance.collection('users').doc(userId).collection("products");
+  ListProductsQueryManager get listQueryManager => _listQueryManager;
+  set listQueryManager(ListProductsQueryManager value) {
+    if (_listQueryManager != null) {
+      _listQueryManager.detachListeners();
+    }
+    _listQueryManager = value;
   }
 
-  Future<List<Product>> list(String userId, {String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}) async {
-    if (_lastSearchQuery != searchQuery || _lastOrderBy != orderBy || _lastDescending != descending) {
-      _lastVisible = null;
+  ListProductsByCollectionIdQueryManager get listByCollectionIdQueryManager => _listByCollectionIdQueryManager;
+  set listByCollectionIdQueryManager(ListProductsByCollectionIdQueryManager value) {
+    if (_listByCollectionIdQueryManager != null) {
+      _listByCollectionIdQueryManager.detachListeners();
     }
-    Query query;
-    if (searchQuery != null) {
-      query = getCollection(userId)
-          .orderBy(orderBy, descending: descending)
-          .startAt([searchQuery])
-          .endAt(['$searchQuery\uf8ff']);
-    } else {
-      query = getCollection(userId).orderBy(orderBy, descending: descending);
-    }
-    if (limit > 0) {
-      query = query.limit(limit);
-    }
-    if (_lastVisible != null) {
-      query = query.startAfter([_lastVisible]);
-    }
+    _listByCollectionIdQueryManager = value;
+  }
 
-    final querySnapshot = await query.get();
+  void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
+    final pqc = ListProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, limit);
+    print(userId);
+    print(collectionId);
+    print(descending);
+    print(limit);
+    if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isEqualTo(pqc)) {
+      print('first time or not equal');
+      listByCollectionIdQueryManager = pqc;
+    }
+    final query = listByCollectionIdQueryManager.query();
 
-    _lastOrderBy = orderBy;
-    _lastDescending = descending;
-    _lastSearchQuery = searchQuery;
+    final listener = query.snapshots().listen(listByCollectionIdQueryManager.getSnapshotHandler(() {
+      callback(listByCollectionIdQueryManager.getCombinedResult());
+    }));
+    print(listByCollectionIdQueryManager.accumulatedResult.length);
+    listByCollectionIdQueryManager.attachListener(listener);
+  }
 
-    if (querySnapshot.docs.length == 0) return List<Product>();
-    _lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-    return querySnapshot.docs.map((snapshot) => Product.fromMap(snapshot.data())).toList();
+  void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
+    final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, limit);
+    if (listQueryManager == null || !listQueryManager.isEqualTo(pqc)) {
+      listQueryManager = pqc;
+    }
+    final query = listQueryManager.query();
+
+    final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(() {
+      callback(listQueryManager.getCombinedResult());
+    }));
+    listQueryManager.attachListener(listener);
   }
 
   Future<Product> get(String userId, String productId) async {
-    final snapshot = await getCollection(userId).doc(productId).get();
+    final snapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection("products").doc(productId).get();
     if (!snapshot.exists) return null;
     return Product.fromMap(snapshot.data());
   }
 
-  Future<Product> add(String userId, Product product) {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        final coll = Product.fromMap(event.data());
-        return coll;
-      });
-      var data = product.toMap();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.set(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> add(String userId, Product product) async {
+    final doc = FirebaseFirestore.instance.collection('users').doc(userId).collection("products").doc(product.id);
+    var data = product.toMap();
+    data['createdAt'] = FieldValue.serverTimestamp();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.set(data);
   }
 
-  Future<Product> update(String userId, Product product) async {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        return Product.fromMap(event.data());
-      });
-      var data = product.toMap();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.update(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> update(String userId, Product product) async {
+    final doc = FirebaseFirestore.instance.collection('users').doc(userId).collection("products").doc(product.id);
+    var data = product.toMap();
+    data.removeWhere((key, value) => key == "createdAt");
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.update(data);
   }
 
-  Future<Product> delete(String userId, Product product) async {
-    await getCollection(userId).doc().delete();
-    return product;
+  Future<void> delete(String userId, Product product) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection("products").doc(product.id).delete();
   }
 
 

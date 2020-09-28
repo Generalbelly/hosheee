@@ -1,18 +1,16 @@
-import 'dart:async';
-import 'package:hosheee/domain/models/collection.dart';
+import 'package:wish_list/domain/models/collection.dart';
 
 abstract class CollectionRepository {
 
-  Future<List<Collection>> list(String userId, {String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0});
+  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0});
 
   Future<Collection> get(String userId, String collectionId);
 
-  Future<Collection> add(String userId, Collection coll);
+  Future<void> add(String userId, Collection collection);
 
-  Future<Collection> update(String userId, Collection coll);
+  Future<void> update(String userId, Collection collection);
 
-  Future<Collection> delete(String userId, Collection coll);
+  Future<void> delete(String userId, Collection collection);
 
   String nextIdentity();
-
 }

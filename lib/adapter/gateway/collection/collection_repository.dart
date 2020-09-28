@@ -6,18 +6,22 @@ import 'package:hosheee/domain/repositories/collection_repository.dart' as i_col
 
 class CollectionRepository implements i_collection_repository.CollectionRepository {
 
+  List<List<Collection>> _allCollections;
   DocumentSnapshot _lastVisible;
   String _lastSearchQuery;
   String _lastOrderBy;
   bool _lastDescending;
+  List<StreamSubscription> _listListeners = [];
 
   CollectionReference getCollection(String userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId).collection("collections");
   }
 
-  Future<List<Collection>> list(String userId, {String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}) async {
+  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     if (_lastSearchQuery != searchQuery || _lastOrderBy != orderBy || _lastDescending != descending) {
+      _allCollections = [];
       _lastVisible = null;
+      _listListeners.forEach((listListener) async { await listListener.cancel(); });
     }
     Query query;
     if (searchQuery != null) {
@@ -32,18 +36,55 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
       query = query.limit(limit);
     }
     if (_lastVisible != null) {
-      query = query.startAfter([_lastVisible]);
+      query = query.startAfter([_lastVisible.data()[orderBy]]);
     }
-
-    final querySnapshot = await query.get();
 
     _lastOrderBy = orderBy;
     _lastDescending = descending;
     _lastSearchQuery = searchQuery;
+    _lastVisible = null;
 
-    if (querySnapshot.docs.length == 0) return List<Collection>();
-    _lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-    return querySnapshot.docs.map((snapshot) => Collection.fromMap(snapshot.data())).toList();
+    final handler = (collectionsIndex, limit, descending) => (QuerySnapshot snapshot) {
+      if (snapshot.docChanges.length == 0) {
+        callback(_allCollections.expand((ps) => ps).toList());
+        return;
+      }
+      if (_lastVisible == null) {
+        _lastVisible = snapshot.docChanges[snapshot.docChanges.length - 1].doc;
+      }
+      var collections = List<Collection>();
+      if (_allCollections.length > collectionsIndex) {
+        collections = _allCollections[collectionsIndex];
+      }
+      snapshot.docChanges.forEach((docChange) {
+        final incomingCollection = Collection.fromMap(docChange.doc.data());
+        // print("collectionId:${incomingCollection.id}");
+        // print("createdAt:${incomingCollection.createdAt}");
+        // print("updatedAt:${incomingCollection.updatedAt}");
+        // print("oldIndex:${docChange.oldIndex}");
+        // print("newIndex:${docChange.newIndex}");
+        // print("newIndex:${docChange.type}");
+        if (docChange.type == DocumentChangeType.added) {
+          collections.insert(docChange.newIndex, incomingCollection);
+        }
+        if (docChange.type == DocumentChangeType.modified) {
+          final collectionIndex = collections.indexWhere((collection) => collection.id == incomingCollection.id);
+          collections[collectionIndex] = incomingCollection;
+        }
+        if (docChange.type == DocumentChangeType.removed) {
+          collections.removeWhere((collection) => collection.id == incomingCollection.id);
+        }
+      });
+      if (_allCollections.length > collectionsIndex) {
+        _allCollections[collectionsIndex] = collections;
+      } else {
+        _allCollections.add(collections);
+      }
+      callback(_allCollections.expand((ps) => ps).toList());
+      return;
+    };
+    final listener = query.snapshots().listen(handler(_allCollections.length, limit, descending));
+    _listListeners.add(listener);
   }
 
   Future<Collection> get(String userId, String collectionId) async {
@@ -52,44 +93,26 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     return Collection.fromMap(snapshot.data());
   }
 
-  Future<Collection> add(String userId, Collection coll) {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        final coll = Collection.fromMap(event.data());
-        return coll;
-      });
-      var data = coll.toMap();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.set(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> add(String userId, Collection collection) async {
+    final doc = getCollection(userId).doc(collection.id);
+    var data = collection.toMap();
+    data['createdAt'] = FieldValue.serverTimestamp();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.set(data);
   }
 
-  Future<Collection> update(String userId, Collection coll) async {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        return Collection.fromMap(event.data());
-      });
-      var data = coll.toMap();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.update(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> update(String userId, Collection collection) async {
+    final doc = getCollection(userId).doc(collection.id);
+    var data = collection.toMap();
+    data.removeWhere((key, value) => key == "createdAt");
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.update(data);
   }
 
-  Future<Collection> delete(String userId, Collection coll) async {
-    await getCollection(userId).doc().delete();
-    return coll;
+  Future<void> delete(String userId, Collection collection) async {
+    await getCollection(userId).doc(collection.id).delete();
   }
+
 
   String nextIdentity() {
     var uuid = Uuid();

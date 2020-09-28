@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/domain/models/collection.dart';
 import 'package:wish_list/ui/view_models/collection_view_model.dart';
-import 'package:wish_list/ui/view_models/collections_view_model.dart';
+import 'package:wish_list/ui/view_models/product_view_model.dart';
 import 'package:wish_list/ui/view_models/products_view_model.dart';
 import 'package:wish_list/ui/views/collection_view.dart';
-import 'package:wish_list/ui/views/products_view.dart';
+import 'package:wish_list/ui/views/product_view.dart';
 import 'package:wish_list/ui/views/progress_modal.dart';
 
-class CollectionsView extends StatelessWidget {
+class ProductsView extends StatelessWidget {
 
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -22,60 +21,62 @@ class CollectionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
     final productsViewModel = Provider.of<ProductsViewModel>(context);
-    if (collectionsViewModel.message != null) {
+    final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
+
+    if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, collectionsViewModel.message, (ctx) {
+        _showSnackBar(context, productsViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
         });
-        collectionsViewModel.message = null;
+        productsViewModel.message = null;
       });
     }
 
-    final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
-
-    final body = collectionsViewModel.collections.length > 0
+    final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
+    final body = productsViewModel.products.length > 0
         ?
     CustomScrollView(
-      controller: collectionsViewModel.scrollController,
+      controller: productsViewModel.scrollController,
       slivers: <Widget>[
         SliverGrid(
           delegate: SliverChildBuilderDelegate((c, i) {
-            final collection = collectionsViewModel.collections[i];
+            final product = productsViewModel.products[i];
             return GestureDetector(
-              child: collection.imageUrl != null ?
+              child: product.imageUrl != null
+                  ?
               Image.network(
-                collection.imageUrl,
+                product.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                   return Icon(Icons.error_outline);
                 },
-              ) :
+              )
+                  :
               Container(
                 alignment: Alignment.center,
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    collection.name,
+                    product.name,
                     style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
               ),
               onTap: () {
-                productsViewModel.collection = collection;
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsView()));
+                productViewModel.product = product;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
               },
             );
           },
-            childCount: collectionsViewModel.collections.length,
+            childCount: productsViewModel.products.length,
           ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
           ),
         ),
         SliverToBoxAdapter(
-            child: collectionsViewModel.requestStatusManager.isLoading()
+            child: productsViewModel.requestStatusManager.isLoading()
                 ?
             Container(
                 child: Center(
@@ -93,25 +94,26 @@ class CollectionsView extends StatelessWidget {
         :
     Container(
       child: Center(
-          child: Text("No collection saved yet."),
+        child: Text("No item saved yet."),
       ),
     );
     return Scaffold(
         appBar: AppBar(
+          title: Text(productsViewModel.collection.name),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.edit),
               onPressed: () {
-                collectionViewModel.collection = Collection(null);
+                collectionViewModel.collection = productsViewModel.collection;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
               },
             ),
           ],
         ),
         body: ProgressModal(
-          isLoading: collectionsViewModel.requestStatusManager.isLoading() &&
-          collectionsViewModel.collections.length == 0,
-          child: body));
+            isLoading: productsViewModel.requestStatusManager.isLoading() &&
+                productsViewModel.products.length == 0,
+            child: body));
   }
 }
 

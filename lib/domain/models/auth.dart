@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:hosheee/domain/models/user.dart';
+import 'package:wish_list/domain/models/user.dart';
 
 abstract class Auth {
   Future<User> signUpWithEmail(String email, String password);
@@ -15,5 +14,5 @@ abstract class Auth {
 
   Future<User> user();
 
-  StreamSubscription onAuthStateChanged(Function callback);
+  StreamSubscription onAuthStateChanged(Function(User) callback);
 }

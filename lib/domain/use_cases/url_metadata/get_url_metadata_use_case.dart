@@ -1,10 +1,9 @@
-import 'dart:async';
-import 'package:hosheee/domain/models/auth.dart';
-import 'package:hosheee/domain/models/exceptions/sign_in_required_exception.dart';
-import 'package:hosheee/domain/models/url_metadata.dart';
-import 'package:hosheee/domain/models/user.dart';
-import 'package:hosheee/domain/repositories/url_metadata_repository.dart';
-import 'package:hosheee/utils/helpers.dart';
+import 'package:wish_list/domain/models/auth.dart';
+import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
+import 'package:wish_list/domain/models/url_metadata.dart';
+import 'package:wish_list/domain/models/user.dart';
+import 'package:wish_list/domain/repositories/url_metadata_repository.dart';
+import 'package:wish_list/utils/helpers.dart';
 
 class GetUrlMetadataUseCaseRequest {
   String url;
