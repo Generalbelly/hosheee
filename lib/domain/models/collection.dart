@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:wish_list/domain/models/model.dart';
+import 'package:hosheee/domain/models/model.dart';
 
 class Collection implements Model {
   String id;

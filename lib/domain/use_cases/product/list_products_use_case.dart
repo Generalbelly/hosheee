@@ -1,9 +1,9 @@
-import 'package:wish_list/domain/models/auth.dart';
-import 'package:wish_list/domain/models/product.dart';
-import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/repositories/product_repository.dart';
-import 'package:wish_list/utils/helpers.dart';
+import 'package:hosheee/domain/models/auth.dart';
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/domain/models/exceptions/sign_in_required_exception.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/repositories/product_repository.dart';
+import 'package:hosheee/utils/helpers.dart';
 
 class ListProductsUseCaseRequest {
   String searchQuery;

@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
-import 'package:wish_list/ui/views/progress_modal.dart';
+import 'package:hosheee/ui/view_models/collection_view_model.dart';
+import 'package:hosheee/ui/views/progress_modal.dart';
 
 class CollectionView extends StatelessWidget {
 

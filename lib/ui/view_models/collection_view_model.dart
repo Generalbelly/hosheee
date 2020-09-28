@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:wish_list/domain/models/collection.dart';
-import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:wish_list/domain/use_cases/collection/delete_collection_use_case.dart';
-import 'package:wish_list/domain/use_cases/collection/update_collection_use_case.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
-import 'package:wish_list/utils/validator.dart';
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection/delete_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection/update_collection_use_case.dart';
+import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/utils/validator.dart';
 
 class CollectionViewModel extends ChangeNotifier {
 

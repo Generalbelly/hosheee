@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:wish_list/domain/models/collection.dart';
-import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
+import 'package:hosheee/ui/mixins/request_status_manager.dart';
 
 class CollectionsViewModel extends ChangeNotifier {
 

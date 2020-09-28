@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
-import 'package:wish_list/utils/validator.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/utils/validator.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
 
 class SignUpViewModel extends ChangeNotifier {
 

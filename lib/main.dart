@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:wish_list/adapter/gateway/auth.dart';
-import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
-import 'package:wish_list/adapter/gateway/product/product_repository.dart';
-import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
-import 'package:wish_list/domain/use_cases/collection/delete_collection_use_case.dart';
-import 'package:wish_list/domain/use_cases/collection/update_collection_use_case.dart';
-import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
-import 'package:wish_list/domain/use_cases/product/delete_product_use_case.dart';
-import 'package:wish_list/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
-import 'package:wish_list/domain/use_cases/product/list_products_use_case.dart';
-import 'package:wish_list/domain/use_cases/product/update_product_use_case.dart';
-import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
-import 'package:wish_list/ui/view_models/collections_view_model.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
-import 'package:wish_list/ui/view_models/product_view_model.dart';
-import 'package:wish_list/ui/view_models/products_view_model.dart';
-import 'package:wish_list/ui/view_models/recent_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
-import 'package:wish_list/common/theme.dart';
-import 'package:wish_list/domain/models/auth.dart' as i_auth;
-import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
-import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
-import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
-import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
-import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:wish_list/ui/views/create_product_view.dart';
-import 'package:wish_list/ui/views/home_view.dart';
-import 'package:wish_list/ui/views/sign_up_view.dart';
-import 'package:wish_list/ui/views/sign_in_view.dart';
+import 'package:hosheee/adapter/gateway/auth.dart';
+import 'package:hosheee/adapter/gateway/collection/collection_repository.dart';
+import 'package:hosheee/adapter/gateway/product/product_repository.dart';
+import 'package:hosheee/adapter/gateway/url_metadata/url_metadata_repository.dart';
+import 'package:hosheee/domain/use_cases/collection/delete_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection/update_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
+import 'package:hosheee/ui/view_models/collection_view_model.dart';
+import 'package:hosheee/ui/view_models/collections_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/product_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/view_models/recent_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
+import 'package:hosheee/common/theme.dart';
+import 'package:hosheee/domain/models/auth.dart' as i_auth;
+import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_in_use_case.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
+import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
+import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
+import 'package:hosheee/ui/views/create_product_view.dart';
+import 'package:hosheee/ui/views/home_view.dart';
+import 'package:hosheee/ui/views/sign_up_view.dart';
+import 'package:hosheee/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
   static const BUNDLE_ID_SUFFIX = String.fromEnvironment('BUNDLE_ID_SUFFIX');
@@ -174,7 +174,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'wish_list',
+        title: 'hosheee',
         theme: appTheme,
         initialRoute: '/',
         home: HomeView(),

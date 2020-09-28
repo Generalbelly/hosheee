@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
-import 'package:wish_list/ui/view_models/product_view_model.dart';
-import 'package:wish_list/ui/view_models/products_view_model.dart';
-import 'package:wish_list/ui/views/collection_view.dart';
-import 'package:wish_list/ui/views/product_view.dart';
-import 'package:wish_list/ui/views/progress_modal.dart';
+import 'package:hosheee/ui/view_models/collection_view_model.dart';
+import 'package:hosheee/ui/view_models/product_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/views/collection_view.dart';
+import 'package:hosheee/ui/views/product_view.dart';
+import 'package:hosheee/ui/views/progress_modal.dart';
 
 class ProductsView extends StatelessWidget {
 

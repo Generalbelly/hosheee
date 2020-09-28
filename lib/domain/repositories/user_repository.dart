@@ -1,4 +1,4 @@
-import 'package:wish_list/domain/models/user.dart';
+import 'package:hosheee/domain/models/user.dart';
 
 abstract class UserRepository {
 
