@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:wish_list/domain/models/collection.dart';
-import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
 
 class CollectionRepository implements i_collection_repository.CollectionRepository {
 

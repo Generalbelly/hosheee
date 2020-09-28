@@ -1,4 +1,4 @@
-import 'package:wish_list/domain/models/logger.dart';
+import 'package:hosheee/domain/models/logger.dart';
 
 class ValidationResult {
   String field;

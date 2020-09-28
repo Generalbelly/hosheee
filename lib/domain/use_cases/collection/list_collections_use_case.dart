@@ -1,9 +1,9 @@
-import 'package:wish_list/adapter/gateway/auth.dart';
-import 'package:wish_list/domain/models/collection.dart';
-import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/repositories/collection_repository.dart';
-import 'package:wish_list/utils/helpers.dart';
+import 'package:hosheee/adapter/gateway/auth.dart';
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/models/exceptions/sign_in_required_exception.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/repositories/collection_repository.dart';
+import 'package:hosheee/utils/helpers.dart';
 
 class ListCollectionsUseCaseRequest {
   ListCollectionsUseCaseRequest();

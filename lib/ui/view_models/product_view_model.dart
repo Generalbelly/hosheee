@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:wish_list/domain/models/product.dart';
-import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
-import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:wish_list/utils/validator.dart';
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
+import 'package:hosheee/utils/validator.dart';
 
 class ProductViewModel extends ChangeNotifier {
 

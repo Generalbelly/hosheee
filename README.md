@@ -1,4 +1,4 @@
-# wish_list
+# hosheee
 
 a simple wish list manager
 

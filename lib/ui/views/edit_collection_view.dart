@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
+import 'package:hosheee/ui/view_models/collection_view_model.dart';
 
 class EditCollectionView extends StatelessWidget {
 

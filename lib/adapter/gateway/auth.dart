@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:wish_list/domain/models/auth.dart' as i_auth;
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/models/exceptions/auth_exception.dart' as auth_exception;
+import 'package:hosheee/domain/models/auth.dart' as i_auth;
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/models/exceptions/auth_exception.dart' as auth_exception;
 
 class Auth implements i_auth.Auth {
 

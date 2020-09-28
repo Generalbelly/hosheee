@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
 
 class SignInView extends StatelessWidget {
 
@@ -43,7 +43,7 @@ class SignInView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'wish',
+                    'hosheee',
                     style: Theme
                         .of(context)
                         .textTheme

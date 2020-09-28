@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:wish_list/domain/models/user.dart';
+import 'package:hosheee/domain/models/user.dart';
 
 abstract class Auth {
   Future<User> signUpWithEmail(String email, String password);

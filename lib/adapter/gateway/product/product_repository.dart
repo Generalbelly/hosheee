@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:wish_list/domain/models/product.dart';
-import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
 
 class ProductRepository implements i_product_repository.ProductRepository {
 

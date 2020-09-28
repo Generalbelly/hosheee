@@ -1,5 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:wish_list/domain/models/logger.dart' as i_logger;
+import 'package:hosheee/domain/models/logger.dart' as i_logger;
 
 class Logger implements i_logger.Logger {
 

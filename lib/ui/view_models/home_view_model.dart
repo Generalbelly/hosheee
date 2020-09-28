@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wish_list/domain/models/auth.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
-import 'package:wish_list/ui/views/collections_view.dart';
-import 'package:wish_list/ui/views/recent_view.dart';
+import 'package:hosheee/domain/models/auth.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/ui/views/collections_view.dart';
+import 'package:hosheee/ui/views/recent_view.dart';
 
 class HomeViewModel extends ChangeNotifier with RequestStatusManager {
 
