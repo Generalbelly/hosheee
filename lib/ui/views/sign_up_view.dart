@@ -27,7 +27,7 @@ class SignUpView extends StatelessWidget {
     }
 
     return Scaffold(
-      body: ProgressModal(isLoading: signUpViewModel.requestStatusManager.isLoading(), child: Builder(
+      body: Builder(
         builder: (BuildContext context) {
           if (signUpViewModel.message != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,7 +37,7 @@ class SignUpView extends StatelessWidget {
               signUpViewModel.message = null;
             });
           }
-          return SingleChildScrollView(
+          return ProgressModal(isLoading: signUpViewModel.requestStatusManager.isLoading(), child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(24.0),
               child: Column(
@@ -96,9 +96,9 @@ class SignUpView extends StatelessWidget {
                 ],
               ),
             ),
-          );
+          ));
         },
-      ))
+      )
     );
   }
 }

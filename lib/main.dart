@@ -36,8 +36,7 @@ import 'package:hosheee/ui/views/sign_up_view.dart';
 import 'package:hosheee/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
-  static const BUNDLE_ID_SUFFIX = String.fromEnvironment('BUNDLE_ID_SUFFIX');
-  static const APP_ENV = String.fromEnvironment('APP_ENV');
+  static const BUILD_ENV = String.fromEnvironment('BUILD_ENV');
 }
 
 void main() async {

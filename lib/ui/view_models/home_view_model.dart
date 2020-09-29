@@ -30,6 +30,7 @@ class HomeViewModel extends ChangeNotifier {
   HomeViewModel(
     Auth auth,
   ) {
+    print("hosheee");
     _auth = auth;
     _auth.onAuthStateChanged(_handleAuthChange);
   }
@@ -42,9 +43,11 @@ class HomeViewModel extends ChangeNotifier {
       ];
       print(u.email);
     }
-    user = u;
     requestStatusManager.ok();
-    notifyListeners();
+    if ((user == null && u != null)||(user != null && u == null)) {
+      user = u;
+      notifyListeners();
+    }
   }
 
 }
