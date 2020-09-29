@@ -36,18 +36,18 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void _handleAuthChange(User u) {
-    if (user == null && u != null) {
+    if (user == null && u != null) { // sign-in, sign-up時
       contents = <Widget>[
         RecentView(),
         CollectionsView(),
       ];
-      print(u.email);
-    }
-    requestStatusManager.ok();
-    if ((user == null && u != null)||(user != null && u == null)) {
+      user = u;
+      notifyListeners();
+    } else if (user != null && u == null) { // sign-out時
       user = u;
       notifyListeners();
     }
+    requestStatusManager.ok();
   }
 
 }
