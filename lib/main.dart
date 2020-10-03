@@ -173,6 +173,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'hosheee',
         theme: appTheme,
         initialRoute: '/',
