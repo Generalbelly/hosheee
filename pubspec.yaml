@@ -91,4 +91,5 @@ flutter_icons:
 
 flutter_native_splash:
   image: "assets/images/icon.png"
+  ios: false
   color: "#ffffff"
