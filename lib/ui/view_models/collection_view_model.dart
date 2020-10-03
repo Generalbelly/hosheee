@@ -3,8 +3,8 @@ import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection/delete_collection_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection/update_collection_use_case.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
-import 'package:hosheee/utils/validator.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
+import 'package:hosheee/ui/common/validator.dart';
 
 class CollectionViewModel extends ChangeNotifier {
 

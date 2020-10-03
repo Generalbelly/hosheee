@@ -21,7 +21,9 @@ class SignInView extends StatelessWidget {
     final signInViewModel = Provider.of<SignInViewModel>(context);
     final homeViewModel = Provider.of<HomeViewModel>(context);
     if (homeViewModel.user != null) {
-      Navigator.pushReplacementNamed(context, '/');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/');
+      });
     }
 
     return Scaffold(

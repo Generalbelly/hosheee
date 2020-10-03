@@ -4,7 +4,7 @@ import 'package:hosheee/domain/models/auth.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/models/user.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
 import 'package:hosheee/ui/views/collections_view.dart';
 import 'package:hosheee/ui/views/recent_view.dart';
 

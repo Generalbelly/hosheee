@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
 
 class CollectionsViewModel extends ChangeNotifier {
 
@@ -40,13 +40,11 @@ class CollectionsViewModel extends ChangeNotifier {
     _listCollectionsUseCase.handle(ListCollectionsUseCaseRequest(
           (response) {
         message = response.message;
-        if (requestStatusManager.isLoading()) {
-          requestStatusManager.ok();
-        }
+        requestStatusManager.ok();
         collections = response.collections;
         notifyListeners();
       },
-      limit: 15,
+      limit: 20,
     ));
   }
 

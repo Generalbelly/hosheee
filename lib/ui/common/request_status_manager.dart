@@ -43,9 +43,9 @@ class RequestStatusManager {
 
 }
 
-class ImageLoadingStatusManager extends RequestStatusManager {
-  String url;
-
-  ImageLoadingStatusManager(this.url);
-
-}
+// class ImageLoadingStatusManager extends RequestStatusManager {
+//   String url;
+//
+//   ImageLoadingStatusManager(this.url);
+//
+// }

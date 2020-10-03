@@ -102,7 +102,7 @@ class ProductsView extends StatelessWidget {
           title: Text(productsViewModel.collection.name),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.edit),
+              icon: Icon(Icons.settings),
               onPressed: () {
                 collectionViewModel.collection = productsViewModel.collection;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));

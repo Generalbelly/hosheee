@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/user.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
-import 'package:hosheee/utils/validator.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
+import 'package:hosheee/ui/common/validator.dart';
 import 'package:hosheee/domain/use_cases/auth/sign_in_use_case.dart';
 
 class SignInViewModel extends ChangeNotifier {

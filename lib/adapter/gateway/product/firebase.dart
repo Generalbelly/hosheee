@@ -69,12 +69,12 @@ class ListProductsQueryManager extends QueryManager {
         var products = _retrieveResult(resultIndex);
         snapshot.docChanges.forEach((docChange) {
           final incomingProduct = Product.fromMap(docChange.doc.data());
-          print("productId:${incomingProduct.id}");
-          print("createdAt:${incomingProduct.createdAt}");
-          print("updatedAt:${incomingProduct.updatedAt}");
-          print("oldIndex:${docChange.oldIndex}");
-          print("newIndex:${docChange.newIndex}");
-          print("newIndex:${docChange.type}");
+          // print("productId:${incomingProduct.id}");
+          // print("createdAt:${incomingProduct.createdAt}");
+          // print("updatedAt:${incomingProduct.updatedAt}");
+          // print("oldIndex:${docChange.oldIndex}");
+          // print("newIndex:${docChange.newIndex}");
+          // print("newIndex:${docChange.type}");
           if (docChange.type == DocumentChangeType.added) {
             products.insert(docChange.newIndex, incomingProduct);
           }
@@ -166,8 +166,8 @@ class ListProductsByCollectionIdQueryManager extends QueryManager {
         var products = _retrieveResult(resultIndex);
         snapshot.docChanges.forEach((docChange) {
           final incomingProduct = Product.fromMap(docChange.doc.data());
-          print("productId:${incomingProduct.id}");
-          print("collectionId:${incomingProduct.collectionId}");
+          // print("productId:${incomingProduct.id}");
+          // print("collectionId:${incomingProduct.collectionId}");
           if (docChange.type == DocumentChangeType.added) {
             products.insert(docChange.newIndex, incomingProduct);
           }

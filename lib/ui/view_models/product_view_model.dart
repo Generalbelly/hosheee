@@ -4,8 +4,8 @@ import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/delete_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
-import 'package:hosheee/utils/validator.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
+import 'package:hosheee/ui/common/validator.dart';
 
 class ProductViewModel extends ChangeNotifier {
 

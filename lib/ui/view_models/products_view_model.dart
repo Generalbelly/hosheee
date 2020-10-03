@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
-import 'package:hosheee/ui/mixins/request_status_manager.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
 
 class ProductsViewModel extends ChangeNotifier {
 
