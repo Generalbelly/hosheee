@@ -30,24 +30,22 @@ class HomeViewModel extends ChangeNotifier {
   HomeViewModel(
     Auth auth,
   ) {
-    print("hosheee");
     _auth = auth;
     _auth.onAuthStateChanged(_handleAuthChange);
   }
 
   void _handleAuthChange(User u) {
+    requestStatusManager.ok();
     if (user == null && u != null) { // sign-in, sign-up時
       contents = <Widget>[
         RecentView(),
         CollectionsView(),
       ];
       user = u;
-      notifyListeners();
     } else if (user != null && u == null) { // sign-out時
       user = u;
-      notifyListeners();
     }
-    requestStatusManager.ok();
+    notifyListeners();
   }
 
 }

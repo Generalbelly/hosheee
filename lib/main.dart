@@ -176,8 +176,7 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'hosheee',
         theme: appTheme,
-        initialRoute: '/',
-        home: HomeView(),
+        home: SignInView(),
         routes: {
           '/sign-up': (context) => SignUpView(),
           '/sign-in': (context) => SignInView(),

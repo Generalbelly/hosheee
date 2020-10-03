@@ -44,9 +44,12 @@ class SignUpView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'wish list',
-                    style: Theme.of(context).textTheme.headline1,
+                  Padding(
+                    padding: EdgeInsets.only(top: 72.0),
+                    child: SizedBox(
+                      height: 100,
+                      child: Image.asset("assets/images/logo.png")
+                    ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(

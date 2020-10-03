@@ -13,7 +13,6 @@ class ProgressModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!isLoading) {
-      print("come");
       return child;
     }
     print("called");
