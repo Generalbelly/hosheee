@@ -23,7 +23,6 @@ class SignInView extends StatelessWidget {
     if (homeViewModel.user != null) {
       Navigator.pushReplacementNamed(context, '/');
     }
-    print("sign_in_view:build");
 
     return Scaffold(
       body: Builder(

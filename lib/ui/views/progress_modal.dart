@@ -15,7 +15,6 @@ class ProgressModal extends StatelessWidget {
     if (!isLoading) {
       return child;
     }
-    print("called");
     return new Stack(
       alignment: Alignment.center,
       children: [
