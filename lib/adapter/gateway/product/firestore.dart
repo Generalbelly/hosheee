@@ -1,23 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hosheee/adapter/gateway/firestore.dart';
 import 'package:hosheee/domain/models/model.dart';
-import 'dart:async';
 import 'package:hosheee/domain/models/product.dart';
-
-abstract class QueryManager {
-  DocumentSnapshot lastVisible;
-  List<StreamSubscription> _listeners = [];
-
-  bool isEqualTo(QueryManager qm);
-  List<Model> getCombinedResult();
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
-  Query query();
-  void detachListeners() {
-    _listeners.forEach((listListener) async { await listListener.cancel(); });
-  }
-  void attachListener(StreamSubscription listener) {
-    _listeners.add(listener);
-  }
-}
 
 class ListProductsQueryManager extends QueryManager {
   List<List<Product>> accumulatedResult = [];
@@ -29,9 +13,15 @@ class ListProductsQueryManager extends QueryManager {
 
   ListProductsQueryManager(this.userId, this.searchQuery, this.orderBy, this.descending, this.limit);
 
-  bool isEqualTo(QueryManager qm) {
+  bool isSubsequentTo(QueryManager qm) {
     if (qm is ListProductsQueryManager) {
-      return (userId == qm.userId && searchQuery == qm.searchQuery && orderBy == qm.orderBy && descending == qm.descending);
+      return (
+        userId == qm.userId &&
+        searchQuery == qm.searchQuery &&
+        orderBy == qm.orderBy &&
+        descending == qm.descending &&
+        limit > qm.limit
+      );
     }
     return false;
   }
@@ -126,9 +116,15 @@ class ListProductsByCollectionIdQueryManager extends QueryManager {
 
   ListProductsByCollectionIdQueryManager(this.userId, this.collectionId, this.orderBy, this.descending, this.limit);
 
-  bool isEqualTo(QueryManager qm) {
+  bool isSubsequentTo(QueryManager qm) {
     if (qm is ListProductsByCollectionIdQueryManager) {
-      return (userId == qm.userId && collectionId == qm.collectionId && orderBy == qm.orderBy && descending == qm.descending);
+      return (
+        userId == qm.userId &&
+        collectionId == qm.collectionId &&
+        orderBy == qm.orderBy &&
+        descending == qm.descending &&
+        limit > qm.limit
+      );
     }
     return false;
   }

@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:hosheee/adapter/gateway/product/firebase.dart';
+import 'package:hosheee/adapter/gateway/product/firestore.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
 
 class ProductRepository implements i_product_repository.ProductRepository {
 
   ListProductsQueryManager _listQueryManager;
-  ListProductsByCollectionIdQueryManager _listByCollectionIdQueryManager;
-
   ListProductsQueryManager get listQueryManager => _listQueryManager;
   set listQueryManager(ListProductsQueryManager value) {
     if (_listQueryManager != null) {
@@ -17,6 +15,8 @@ class ProductRepository implements i_product_repository.ProductRepository {
     }
     _listQueryManager = value;
   }
+
+  ListProductsByCollectionIdQueryManager _listByCollectionIdQueryManager;
 
   ListProductsByCollectionIdQueryManager get listByCollectionIdQueryManager => _listByCollectionIdQueryManager;
   set listByCollectionIdQueryManager(ListProductsByCollectionIdQueryManager value) {
@@ -28,12 +28,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, limit);
-    print(userId);
-    print(collectionId);
-    print(descending);
-    print(limit);
-    if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isEqualTo(pqc)) {
-      print('first time or not equal');
+    if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isSubsequentTo(pqc)) {
       listByCollectionIdQueryManager = pqc;
     }
     final query = listByCollectionIdQueryManager.query();
@@ -41,13 +36,12 @@ class ProductRepository implements i_product_repository.ProductRepository {
     final listener = query.snapshots().listen(listByCollectionIdQueryManager.getSnapshotHandler(() {
       callback(listByCollectionIdQueryManager.getCombinedResult());
     }));
-    print(listByCollectionIdQueryManager.accumulatedResult.length);
     listByCollectionIdQueryManager.attachListener(listener);
   }
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, limit);
-    if (listQueryManager == null || !listQueryManager.isEqualTo(pqc)) {
+    if (listQueryManager == null || !listQueryManager.isSubsequentTo(pqc)) {
       listQueryManager = pqc;
     }
     final query = listQueryManager.query();
