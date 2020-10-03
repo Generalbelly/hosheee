@@ -22,6 +22,9 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
 
   void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, limit);
+    if (listQueryManager != null && listQueryManager.isEqualTo(pqc)) {
+      return;
+    }
     if (listQueryManager == null || !listQueryManager.isSubsequentTo(pqc)) {
       listQueryManager = pqc;
     }

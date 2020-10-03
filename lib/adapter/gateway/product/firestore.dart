@@ -19,8 +19,20 @@ class ListProductsQueryManager extends QueryManager {
         userId == qm.userId &&
         searchQuery == qm.searchQuery &&
         orderBy == qm.orderBy &&
+        descending == qm.descending
+      );
+    }
+    return false;
+  }
+
+  bool isEqualTo(QueryManager qm) {
+    if (qm is ListProductsQueryManager) {
+      return (
+        userId == qm.userId &&
+        searchQuery == qm.searchQuery &&
+        orderBy == qm.orderBy &&
         descending == qm.descending &&
-        limit > qm.limit
+        limit == qm.limit
       );
     }
     return false;
@@ -122,8 +134,20 @@ class ListProductsByCollectionIdQueryManager extends QueryManager {
         userId == qm.userId &&
         collectionId == qm.collectionId &&
         orderBy == qm.orderBy &&
+        descending == qm.descending
+      );
+    }
+    return false;
+  }
+
+  bool isEqualTo(QueryManager qm) {
+    if (qm is ListProductsByCollectionIdQueryManager) {
+      return (
+        userId == qm.userId &&
+        collectionId == qm.collectionId &&
+        orderBy == qm.orderBy &&
         descending == qm.descending &&
-        limit > qm.limit
+        limit == qm.limit
       );
     }
     return false;

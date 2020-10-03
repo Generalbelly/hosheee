@@ -28,6 +28,9 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, limit);
+    if (listByCollectionIdQueryManager != null && listByCollectionIdQueryManager.isEqualTo(pqc)) {
+      return;
+    }
     if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isSubsequentTo(pqc)) {
       listByCollectionIdQueryManager = pqc;
     }
@@ -41,6 +44,9 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, limit);
+    if (listQueryManager != null && listQueryManager.isEqualTo(pqc)) {
+      return;
+    }
     if (listQueryManager == null || !listQueryManager.isSubsequentTo(pqc)) {
       listQueryManager = pqc;
     }

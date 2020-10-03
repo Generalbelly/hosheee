@@ -19,8 +19,20 @@ class ListCollectionsQueryManager extends QueryManager {
         userId == qm.userId &&
         searchQuery == qm.searchQuery &&
         orderBy == qm.orderBy &&
+        descending == qm.descending
+      );
+    }
+    return false;
+  }
+
+  bool isEqualTo(QueryManager qm) {
+    if (qm is ListCollectionsQueryManager) {
+      return (
+        userId == qm.userId &&
+        searchQuery == qm.searchQuery &&
+        orderBy == qm.orderBy &&
         descending == qm.descending &&
-        limit > qm.limit
+        limit == qm.limit
       );
     }
     return false;

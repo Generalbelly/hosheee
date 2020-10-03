@@ -7,6 +7,7 @@ abstract class QueryManager {
   List<StreamSubscription> _listeners = [];
 
   bool isSubsequentTo(QueryManager qm);
+  bool isEqualTo(QueryManager qm);
   List<Model> getCombinedResult();
   Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
   Query query();
