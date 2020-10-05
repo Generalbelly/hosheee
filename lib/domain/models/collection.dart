@@ -15,6 +15,7 @@ class Collection implements Model {
   Collection.fromMap(Map<String, dynamic> data)
     : id = data['id'],
       name = data['name'],
+      imageUrl = data['imageUrl'],
       createdAt = data['createdAt'],
       updatedAt = data['updatedAt'];
 

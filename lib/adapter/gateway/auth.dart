@@ -42,8 +42,7 @@ class Auth implements i_auth.Auth {
           message = 'The email is not valid.';
           break;
         case 'ERROR_WEAK_PASSWORD':
-          message =
-          'The password is not strong enough. It should be at least 6 characters.';
+          message = 'The password is not strong enough. It should be at least 6 characters.';
           break;
         case 'ERROR_EMAIL_ALREADY_IN_USE':
           message = 'The email is already registered';
@@ -53,7 +52,6 @@ class Auth implements i_auth.Auth {
           break;
         case 'ERROR_USER_NOT_FOUND':
           message = 'We could not find an account with the email.';
-          print(message);
           break;
         case 'ERROR_USER_DISABLED':
           message = 'User with the email has been disabled.';
