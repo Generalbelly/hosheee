@@ -13,7 +13,6 @@ class Product implements Model {
   String note;
   double price;
   String provider;
-  String collectionId;
   Timestamp createdAt;
   Timestamp updatedAt;
 
@@ -27,7 +26,6 @@ class Product implements Model {
     String note,
     double price,
     String provider,
-    String collectionId
   })
     : this.websiteUrl = websiteUrl,
       this.imageUrl = imageUrl,
@@ -36,8 +34,7 @@ class Product implements Model {
       // this.description = description,
       this.note = note,
       this.price = price,
-      this.provider = provider,
-      this.collectionId = collectionId;
+      this.provider = provider;
 
   Product.fromMap(Map<String, dynamic> data)
     : id = data['id'],
@@ -50,7 +47,6 @@ class Product implements Model {
       note = data['note'],
       price = data['price'],
       provider = data['provider'],
-      collectionId = data['collectionId'],
       createdAt = data['createdAt'],
       updatedAt = data['updatedAt'];
 
@@ -66,7 +62,6 @@ class Product implements Model {
       'note': note,
       'price': price,
       'provider': provider,
-      'collectionId': collectionId,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };

@@ -20,25 +20,25 @@ class RecentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productsViewModel = Provider.of<RecentViewModel>(context);
-    if (productsViewModel.message != null) {
+    final recentViewModel = Provider.of<RecentViewModel>(context);
+    if (recentViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, productsViewModel.message, (ctx) {
+        _showSnackBar(context, recentViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
         });
-        productsViewModel.message = null;
+        recentViewModel.message = null;
       });
     }
 
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
-    final body = productsViewModel.products.length > 0
+    final body = recentViewModel.products.length > 0
       ?
       CustomScrollView(
-        controller: productsViewModel.scrollController,
+        controller: recentViewModel.scrollController,
         slivers: <Widget>[
           SliverGrid(
             delegate: SliverChildBuilderDelegate((c, i) {
-              final product = productsViewModel.products[i];
+              final product = recentViewModel.products[i];
               return GestureDetector(
                 child: product.imageUrl != null
                   ?
@@ -66,14 +66,14 @@ class RecentView extends StatelessWidget {
                     },
               );
             },
-              childCount: productsViewModel.products.length,
+              childCount: recentViewModel.products.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
           ),
           SliverToBoxAdapter(
-            child: productsViewModel.requestStatusManager.isLoading()
+            child: recentViewModel.requestStatusManager.isLoading()
               ?
                 Container(
                     child: Center(
@@ -107,8 +107,8 @@ class RecentView extends StatelessWidget {
         ],
       ),
       body: ProgressModal(
-        isLoading: productsViewModel.requestStatusManager.isLoading() &&
-        productsViewModel.products.length == 0,
+        isLoading: recentViewModel.requestStatusManager.isLoading() &&
+        recentViewModel.products.length == 0,
         child: body));
   }
 }

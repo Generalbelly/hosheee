@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/ui/view_models/collection_view_model.dart';
 import 'package:hosheee/ui/view_models/collections_view_model.dart';
-import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:hosheee/ui/views/collection_view.dart';
-import 'package:hosheee/ui/views/products_view.dart';
+import 'package:hosheee/ui/views/collection_products_view.dart';
 import 'package:hosheee/ui/views/progress_modal.dart';
 
 class CollectionsView extends StatelessWidget {
@@ -23,7 +23,7 @@ class CollectionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
-    final productsViewModel = Provider.of<ProductsViewModel>(context);
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     if (collectionsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, collectionsViewModel.message, (ctx) {
@@ -100,8 +100,8 @@ class CollectionsView extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                productsViewModel.collection = collection;
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsView()));
+                collectionProductsViewModel.collection = collection;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
               },
             );
           },

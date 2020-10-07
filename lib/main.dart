@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hosheee/adapter/gateway/collection_product/collection_product_repository.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_add_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hosheee/adapter/gateway/auth.dart';
@@ -9,7 +14,6 @@ import 'package:hosheee/domain/use_cases/collection/delete_collection_use_case.d
 import 'package:hosheee/domain/use_cases/collection/update_collection_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/delete_product_use_case.dart';
-import 'package:hosheee/domain/use_cases/product/list_products_by_collection_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
@@ -17,7 +21,7 @@ import 'package:hosheee/ui/view_models/collection_view_model.dart';
 import 'package:hosheee/ui/view_models/collections_view_model.dart';
 import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
-import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:hosheee/ui/view_models/recent_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
@@ -29,6 +33,7 @@ import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
 import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
 import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
 import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
+import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
 import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
 import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:hosheee/ui/views/home_view.dart';
@@ -70,16 +75,25 @@ class App extends StatelessWidget {
         Provider<i_url_metadata_repository.UrlMetadataRepository>(
           create: (_) => UrlMetadataRepository(),
         ),
+        Provider<i_collection_product_repository.CollectionProductRepository>(
+          create: (_) => CollectionProductRepository(),
+        ),
         Provider<ListProductsUseCase>(
           create: (context) => ListProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
-        Provider<ListProductsByCollectionIdUseCase>(
-          create: (context) => ListProductsByCollectionIdUseCase(
+        Provider<ListCollectionProductsByCollectionIdUseCase>(
+          create: (context) => ListCollectionProductsByCollectionIdUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
-              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<BatchAddCollectionProductsUseCase>(
+          create: (context) => BatchAddCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
         ),
         Provider<AddCollectionUseCase>(
@@ -130,6 +144,24 @@ class App extends StatelessWidget {
               Provider.of<i_url_metadata_repository.UrlMetadataRepository>(context, listen: false),
           ),
         ),
+        Provider<BatchAddCollectionProductsUseCase>(
+          create: (context) => BatchAddCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<BatchDeleteCollectionProductsUseCase>(
+          create: (context) => BatchDeleteCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<GetProductUseCase>(
+          create: (context) => GetProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
         ChangeNotifierProvider<SignInViewModel>(
           create: (context) => SignInViewModel(Provider.of<SignInUseCase>(context, listen: false)),
         ),
@@ -148,17 +180,20 @@ class App extends StatelessWidget {
               Provider.of<AddProductUseCase>(context, listen: false),
               Provider.of<UpdateProductUseCase>(context, listen: false),
               Provider.of<DeleteProductUseCase>(context, listen: false),
-              Provider.of<GetUrlMetadataUseCase>(context, listen: false)
+              Provider.of<GetUrlMetadataUseCase>(context, listen: false),
+              Provider.of<GetProductUseCase>(context, listen: false)
           ),
         ),
         ChangeNotifierProvider<RecentViewModel>(
           create: (context) => RecentViewModel(
             Provider.of<ListProductsUseCase>(context, listen: false),
+            Provider.of<BatchAddCollectionProductsUseCase>(context, listen: false),
           ),
         ),
-        ChangeNotifierProvider<ProductsViewModel>(
-          create: (context) => ProductsViewModel(
-            Provider.of<ListProductsByCollectionIdUseCase>(context, listen: false),
+        ChangeNotifierProvider<CollectionProductsViewModel>(
+          create: (context) => CollectionProductsViewModel(
+            Provider.of<ListCollectionProductsByCollectionIdUseCase>(context, listen: false),
+            Provider.of<BatchDeleteCollectionProductsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<CollectionsViewModel>(

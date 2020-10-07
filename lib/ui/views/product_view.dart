@@ -159,24 +159,24 @@ class ProductView extends StatelessWidget {
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   readOnly: productViewModel.isReadOnly(),
                 ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Collection',
-                    hintText: 'Collection',
-                  ),
-                  value: productViewModel.product.collectionId,
-                  elevation: 16,
-                  onChanged: productViewModel.isReadOnly() ? null : (value) {
-                    productViewModel.setCollectionId(value);
-                  },
-                  items: collectionsViewModel.collections
-                      .map<DropdownMenuItem<String>>((Collection collection) {
-                    return DropdownMenuItem<String>(
-                      value: collection.id,
-                      child: Text(collection.name),
-                    );
-                  }).toList(),
-                ),
+                // DropdownButtonFormField<String>(
+                //   decoration: InputDecoration(
+                //     labelText: 'Collection',
+                //     hintText: 'Collection',
+                //   ),
+                //   value: productViewModel.product.collectionId,
+                //   elevation: 16,
+                //   onChanged: productViewModel.isReadOnly() ? null : (value) {
+                //     productViewModel.setCollectionId(value);
+                //   },
+                //   items: collectionsViewModel.collections
+                //       .map<DropdownMenuItem<String>>((Collection collection) {
+                //     return DropdownMenuItem<String>(
+                //       value: collection.id,
+                //       child: Text(collection.name),
+                //     );
+                //   }).toList(),
+                // ),
                 priceField,
                 SizedBox(
                   height: 24,

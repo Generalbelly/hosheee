@@ -16,35 +16,10 @@ class ProductRepository implements i_product_repository.ProductRepository {
     _listQueryManager = value;
   }
 
-  ListProductsByCollectionIdQueryManager _listByCollectionIdQueryManager;
-
-  ListProductsByCollectionIdQueryManager get listByCollectionIdQueryManager => _listByCollectionIdQueryManager;
-  set listByCollectionIdQueryManager(ListProductsByCollectionIdQueryManager value) {
-    if (_listByCollectionIdQueryManager != null) {
-      _listByCollectionIdQueryManager.detachListeners();
-    }
-    _listByCollectionIdQueryManager = value;
-  }
-
-  void listByCollectionId(String userId, String collectionId, Function(List<Product>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
-    final pqc = ListProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, limit);
-    if (listByCollectionIdQueryManager != null && listByCollectionIdQueryManager.isEqualTo(pqc)) {
-      return;
-    }
-    if (listByCollectionIdQueryManager == null || !listByCollectionIdQueryManager.isSubsequentTo(pqc)) {
-      listByCollectionIdQueryManager = pqc;
-    }
-    final query = listByCollectionIdQueryManager.query();
-
-    final listener = query.snapshots().listen(listByCollectionIdQueryManager.getSnapshotHandler(() {
-      callback(listByCollectionIdQueryManager.getCombinedResult());
-    }));
-    listByCollectionIdQueryManager.attachListener(listener);
-  }
-
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
     final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, limit);
     if (listQueryManager != null && listQueryManager.isEqualTo(pqc)) {
+      callback(listQueryManager.getCombinedResult());
       return;
     }
     if (listQueryManager == null || !listQueryManager.isSubsequentTo(pqc)) {

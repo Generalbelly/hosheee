@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
@@ -29,6 +30,7 @@ class ProductViewModel extends ChangeNotifier {
   UpdateProductUseCase _updateProductUseCase;
   DeleteProductUseCase _deleteProductUseCase;
   GetUrlMetadataUseCase _getUrlMetadataUseCase;
+  GetProductUseCase _getProductUseCase;
 
   bool _detailHidden = true;
   bool get detailHidden => _detailHidden;
@@ -51,11 +53,13 @@ class ProductViewModel extends ChangeNotifier {
     UpdateProductUseCase updateProductUseCase,
     DeleteProductUseCase deleteProductUseCase,
     GetUrlMetadataUseCase getUrlMetadataUseCase,
+    GetProductUseCase getProductUseCase,
   ) {
     _addProductUseCase = addProductUseCase;
     _updateProductUseCase = updateProductUseCase;
     _deleteProductUseCase = deleteProductUseCase;
     _getUrlMetadataUseCase = getUrlMetadataUseCase;
+    _getProductUseCase = getProductUseCase;
   }
 
   bool isReadOnly() {
@@ -98,7 +102,8 @@ class ProductViewModel extends ChangeNotifier {
   }
 
   void setCollectionId(String value) async {
-    _product.collectionId = value;
+    // _product.collectionId = value;
+    print('TODO: collectionID');
     notifyListeners();
   }
 
@@ -204,5 +209,14 @@ class ProductViewModel extends ChangeNotifier {
     }
   }
 
+  Future<Product> get(String productId) async {
+    message = null;
+    final response = await _getProductUseCase.handle(GetProductUseCaseRequest(productId));
+    message = response.message;
+    if (message != null) {
+      notifyListeners();
+    }
+    return response.product;
+  }
 }
 

@@ -45,10 +45,10 @@ class CollectionView extends StatelessWidget {
             collectionViewModel.message = null;
           });
         }
-        final imageField = collectionViewModel.collection.imageUrl != null ?
-        Image.network(collectionViewModel.collection.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-          return Icon(Icons.error_outline);
-        }) : SizedBox.shrink();
+        // final imageField = collectionViewModel.collection.imageUrl != null ?
+        // Image.network(collectionViewModel.collection.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+        //   return Icon(Icons.error_outline);
+        // }) : SizedBox.shrink();
 
         final setting = collectionViewModel.collection.id != null
             ?
@@ -96,7 +96,7 @@ class CollectionView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 setting,
-                imageField,
+                // imageField,
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name',
