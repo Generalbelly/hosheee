@@ -62,7 +62,6 @@ class CollectionProductsViewModel extends ChangeNotifier {
         if (requestStatusManager.isLoading()) {
           requestStatusManager.ok();
         }
-        print('called');
         collectionProducts = response.collectionProducts;
         if (collectionProducts.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
