@@ -11,18 +11,17 @@ class ListCollectionProductsByCollectionIdUseCaseRequest {
   String collectionId;
   String orderBy = 'createdAt';
   bool descending = true;
+  int startIndex = 0;
   int limit = 0;
   Function(ListCollectionProductsByCollectionIdUseCaseResponse) callback;
 
-  ListCollectionProductsByCollectionIdUseCaseRequest(this.collectionId, this.callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0}):
-    this.limit = limit,
-    this.descending = descending,
-    this.orderBy = orderBy;
+  ListCollectionProductsByCollectionIdUseCaseRequest(this.collectionId, this.callback, { this.orderBy, this.descending, this.startIndex, this.limit });
 
   Map<String, dynamic> toMap() {
     return {
       'orderBy': orderBy,
       'descending': descending,
+      'startIndex': startIndex,
       'limit': limit,
     };
   }
@@ -30,10 +29,11 @@ class ListCollectionProductsByCollectionIdUseCaseRequest {
 
 class ListCollectionProductsByCollectionIdUseCaseResponse {
   List<CollectionProduct> collectionProducts = [];
+  int startIndex = 0;
+  int limit = 0;
   String message;
 
-  ListCollectionProductsByCollectionIdUseCaseResponse({this.collectionProducts, String message})
-    : this.message = message;
+  ListCollectionProductsByCollectionIdUseCaseResponse({this.collectionProducts, this.startIndex, this.limit, this.message});
 }
 
 class ListCollectionProductsByCollectionIdUseCase {
@@ -54,10 +54,13 @@ class ListCollectionProductsByCollectionIdUseCase {
         user.id,
         request.collectionId,
         (collectionProducts) => request.callback(ListCollectionProductsByCollectionIdUseCaseResponse(
-            collectionProducts: collectionProducts,
+          collectionProducts: collectionProducts,
+          startIndex: request.startIndex,
+          limit: request.limit,
         )),
         orderBy: request.orderBy,
         descending: request.descending,
+        startIndex: request.startIndex,
         limit: request.limit,
       );
     } catch (e) {
@@ -66,6 +69,8 @@ class ListCollectionProductsByCollectionIdUseCase {
       });
       request.callback(ListCollectionProductsByCollectionIdUseCaseResponse(
           collectionProducts: [],
+          startIndex: request.startIndex,
+          limit: request.limit,
           message: e.toString()
       ));
     }

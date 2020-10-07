@@ -9,9 +9,10 @@ class ListCollectionsQueryManager extends QueryManager {
   String searchQuery;
   String orderBy;
   bool descending;
+  int startIndex;
   int limit;
 
-  ListCollectionsQueryManager(this.userId, this.searchQuery, this.orderBy, this.descending, this.limit);
+  ListCollectionsQueryManager(this.userId, this.searchQuery, this.orderBy, this.descending, this.startIndex, this.limit);
 
   bool isSubsequentTo(QueryManager qm) {
     if (qm is ListCollectionsQueryManager) {
@@ -19,7 +20,9 @@ class ListCollectionsQueryManager extends QueryManager {
         userId == qm.userId &&
         searchQuery == qm.searchQuery &&
         orderBy == qm.orderBy &&
-        descending == qm.descending
+        descending == qm.descending &&
+        startIndex > qm.startIndex &&
+        limit == qm.limit
       );
     }
     return false;
@@ -32,6 +35,7 @@ class ListCollectionsQueryManager extends QueryManager {
         searchQuery == qm.searchQuery &&
         orderBy == qm.orderBy &&
         descending == qm.descending &&
+        startIndex == qm.startIndex &&
         limit == qm.limit
       );
     }
@@ -54,15 +58,20 @@ class ListCollectionsQueryManager extends QueryManager {
     return collections;
   }
 
-  List<Collection> getCombinedResult() {
+  List<Collection> getAllResult() {
     return accumulatedResult.expand((ps) => ps).toList();
   }
 
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb) {
+  List<Collection> getResult(int startIndex, int limit) {
+    final index = startIndex == 0 ? 0 : startIndex / limit;
+    return accumulatedResult[index];
+  }
+
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<Collection>) cb) {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb();
+          cb([]);
           return;
         }
         if (lastVisible == null) {
@@ -89,7 +98,7 @@ class ListCollectionsQueryManager extends QueryManager {
           }
         });
         _upsertResult(resultIndex, collections);
-        cb();
+        cb(accumulatedResult[resultIndex]);
       };
     }(accumulatedResult.length);
   }

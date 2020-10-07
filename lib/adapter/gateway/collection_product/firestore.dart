@@ -4,14 +4,16 @@ import 'package:hosheee/domain/models/collection_product.dart';
 import 'package:hosheee/domain/models/model.dart';
 
 class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
+
   List<List<CollectionProduct>> accumulatedResult = [];
   String userId;
   String collectionId;
   String orderBy;
   bool descending;
+  int startIndex;
   int limit;
 
-  ListByCollectionProductsByCollectionIdQueryManager(this.userId, this.collectionId, this.orderBy, this.descending, this.limit);
+  ListByCollectionProductsByCollectionIdQueryManager(this.userId, this.collectionId, this.orderBy, this.descending, this.startIndex, this.limit);
 
   bool isSubsequentTo(QueryManager qm) {
     if (qm is ListByCollectionProductsByCollectionIdQueryManager) {
@@ -19,7 +21,9 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
         userId == qm.userId &&
         collectionId == qm.collectionId &&
         orderBy == qm.orderBy &&
-        descending == qm.descending
+        descending == qm.descending &&
+        startIndex > qm.startIndex &&
+        limit == qm.limit
       );
     }
     return false;
@@ -32,13 +36,14 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
         collectionId == qm.collectionId &&
         orderBy == qm.orderBy &&
         descending == qm.descending &&
+        startIndex == qm.startIndex &&
         limit == qm.limit
       );
     }
     return false;
   }
 
-  void _upsertResult(int resultIndex, List<Model> result) {
+  void _upsertResult(int resultIndex, List<CollectionProduct> result) {
     if (accumulatedResult.length > resultIndex) {
       accumulatedResult[resultIndex] = result;
     } else {
@@ -54,15 +59,20 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
     return collectionProducts;
   }
 
-  List<CollectionProduct> getCombinedResult() {
+  List<CollectionProduct> getAllResult() {
     return accumulatedResult.expand((ps) => ps).toList();
   }
 
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb) {
+  List<CollectionProduct> getResult(int startIndex, int limit) {
+    final index = startIndex == 0 ? 0 : startIndex / limit;
+    return accumulatedResult[index];
+  }
+
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<CollectionProduct>) cb) {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb();
+          cb([]);
           return;
         }
         if (lastVisible == null) {
@@ -89,7 +99,7 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
           }
         });
         _upsertResult(resultIndex, collectionProducts);
-        cb();
+        cb(accumulatedResult[resultIndex]);
       };
     }(accumulatedResult.length);
   }

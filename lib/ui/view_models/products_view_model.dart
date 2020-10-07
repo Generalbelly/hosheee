@@ -46,9 +46,13 @@ class ProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        products = response.products;
+        products.replaceRange(
+            response.startIndex,
+            response.startIndex+response.limit,
+            response.products);
         notifyListeners();
       },
+      startIndex: products.length,
       limit: 20,
     ));
   }

@@ -8,9 +8,11 @@ abstract class QueryManager {
 
   bool isSubsequentTo(QueryManager qm);
   bool isEqualTo(QueryManager qm);
-  List<Model> getCombinedResult();
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function cb);
+  List<Model> getAllResult();
+  List<Model> getResult(int startIndex, int limit);
+  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<Model>) cb);
   Query query();
+
   void detachListeners() {
     _listeners.forEach((listListener) async { await listListener.cancel(); });
   }

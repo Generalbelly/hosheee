@@ -3,7 +3,7 @@ import 'package:hosheee/domain/models/product.dart';
 
 abstract class ProductRepository {
 
-  void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0});
+  void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0});
 
   Future<Product> get(String userId, String productId);
 

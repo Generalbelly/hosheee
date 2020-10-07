@@ -4,7 +4,7 @@ import 'package:hosheee/domain/models/product.dart';
 
 abstract class CollectionProductRepository {
 
-  void listByCollectionId(String userId, String collectionId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int limit = 0});
+  void listByCollectionId(String userId, String collectionId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0});
 
   Future<void> add(String userId, CollectionProduct collectionProduct);
 

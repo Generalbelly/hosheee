@@ -20,20 +20,18 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     return FirebaseFirestore.instance.collection('users').doc(userId).collection("collections");
   }
 
-  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}) {
-    final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, limit);
-    if (listQueryManager != null && listQueryManager.isEqualTo(pqc)) {
-      callback(listQueryManager.getCombinedResult());
+  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, startIndex = 0, int limit = 0}) {
+    final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
+    if (listQueryManager != null && pqc.isEqualTo(listQueryManager)) {
+      callback(listQueryManager.getAllResult());
       return;
     }
-    if (listQueryManager == null || !listQueryManager.isSubsequentTo(pqc)) {
+    if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
       listQueryManager = pqc;
     }
     final query = listQueryManager.query();
 
-    final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(() {
-      callback(listQueryManager.getCombinedResult());
-    }));
+    final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(callback));
     listQueryManager.attachListener(listener);
   }
 

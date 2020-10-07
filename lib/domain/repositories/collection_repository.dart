@@ -2,7 +2,7 @@ import 'package:hosheee/domain/models/collection.dart';
 
 abstract class CollectionRepository {
 
-  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0});
+  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0});
 
   Future<Collection> get(String userId, String collectionId);
 

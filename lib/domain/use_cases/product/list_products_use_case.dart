@@ -9,20 +9,18 @@ class ListProductsUseCaseRequest {
   String searchQuery;
   String orderBy = 'createdAt';
   bool descending = true;
+  int startIndex = 0;
   int limit = 0;
   Function(ListProductsUseCaseResponse) callback;
 
-  ListProductsUseCaseRequest(this.callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int limit = 0}):
-    this.limit = limit,
-    this.descending = descending,
-    this.orderBy = orderBy,
-    this.searchQuery = searchQuery;
+  ListProductsUseCaseRequest(this.callback, {this.searchQuery, this.orderBy, this.descending, this.startIndex, this.limit});
 
   Map<String, dynamic> toMap() {
     return {
       'searchQuery': searchQuery,
       'orderBy': orderBy,
       'descending': descending,
+      'startIndex': startIndex,
       'limit': limit,
     };
   }
@@ -31,9 +29,10 @@ class ListProductsUseCaseRequest {
 class ListProductsUseCaseResponse {
   List<Product> products = [];
   String message;
+  int startIndex = 0;
+  int limit = 0;
 
-  ListProductsUseCaseResponse({this.products, String message})
-    : this.message = message;
+  ListProductsUseCaseResponse({this.products, this.message, this.startIndex, this.limit});
 }
 
 class ListProductsUseCase {
@@ -53,11 +52,14 @@ class ListProductsUseCase {
       _productRepository.list(
         user.id,
         (products) => request.callback(ListProductsUseCaseResponse(
-            products: products
+          products: products,
+          startIndex: request.startIndex,
+          limit: request.limit,
         )),
         searchQuery: request.searchQuery,
         orderBy: request.orderBy,
         descending: request.descending,
+        startIndex: request.startIndex,
         limit: request.limit,
       );
     } catch (e) {
@@ -65,8 +67,10 @@ class ListProductsUseCase {
         'request': request.toMap(),
       });
       request.callback(ListProductsUseCaseResponse(
-          products: [],
-          message: e.toString()
+        products: [],
+        message: e.toString(),
+        startIndex: request.startIndex,
+        limit: request.limit,
       ));
     }
   }
