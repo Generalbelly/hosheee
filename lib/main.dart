@@ -22,7 +22,7 @@ import 'package:hosheee/ui/view_models/collections_view_model.dart';
 import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
 import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
-import 'package:hosheee/ui/view_models/recent_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
 import 'package:hosheee/common/theme.dart';
@@ -184,8 +184,8 @@ class App extends StatelessWidget {
               Provider.of<GetProductUseCase>(context, listen: false)
           ),
         ),
-        ChangeNotifierProvider<RecentViewModel>(
-          create: (context) => RecentViewModel(
+        ChangeNotifierProvider<ProductsViewModel>(
+          create: (context) => ProductsViewModel(
             Provider.of<ListProductsUseCase>(context, listen: false),
             Provider.of<BatchAddCollectionProductsUseCase>(context, listen: false),
           ),

@@ -6,7 +6,7 @@ import 'package:hosheee/domain/use_cases/collection_product/batch_add_collection
 import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 
-class RecentViewModel extends ChangeNotifier {
+class ProductsViewModel extends ChangeNotifier {
 
   String message;
 
@@ -22,7 +22,7 @@ class RecentViewModel extends ChangeNotifier {
 
   List<String> selectedProductIds = [];
 
-  RecentViewModel(
+  ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
     BatchAddCollectionProductsUseCase batchAddCollectionProductsUseCase,
   ) {

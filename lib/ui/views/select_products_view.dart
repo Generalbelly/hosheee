@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hosheee/ui/view_models/recent_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:hosheee/ui/views/progress_modal.dart';
 
 class SelectProductsView extends StatelessWidget {
@@ -24,7 +24,7 @@ class SelectProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<RecentViewModel>(context);
+    final recentViewModel = Provider.of<ProductsViewModel>(context);
     if (recentViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, recentViewModel.message, (ctx) {

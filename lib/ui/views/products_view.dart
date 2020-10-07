@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
-import 'package:hosheee/ui/view_models/recent_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:hosheee/ui/views/product_view.dart';
 import 'package:hosheee/ui/views/progress_modal.dart';
 
-class RecentView extends StatelessWidget {
+class ProductsView extends StatelessWidget {
 
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -20,7 +20,7 @@ class RecentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<RecentViewModel>(context);
+    final recentViewModel = Provider.of<ProductsViewModel>(context);
     if (recentViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, recentViewModel.message, (ctx) {

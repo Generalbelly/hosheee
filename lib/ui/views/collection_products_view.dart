@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hosheee/ui/view_models/recent_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:hosheee/ui/views/select_products_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/ui/view_models/collection_view_model.dart';
@@ -23,7 +23,7 @@ class CollectionProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<RecentViewModel>(context);
+    final recentViewModel = Provider.of<ProductsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
 

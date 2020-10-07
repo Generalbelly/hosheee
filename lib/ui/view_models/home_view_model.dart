@@ -6,7 +6,7 @@ import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/models/user.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 import 'package:hosheee/ui/views/collections_view.dart';
-import 'package:hosheee/ui/views/recent_view.dart';
+import 'package:hosheee/ui/views/products_view.dart';
 
 class HomeViewModel extends ChangeNotifier {
 
@@ -38,7 +38,7 @@ class HomeViewModel extends ChangeNotifier {
     requestStatusManager.ok();
     if (user == null && u != null) { // sign-in, sign-up時
       contents = <Widget>[
-        RecentView(),
+        ProductsView(),
         CollectionsView(),
       ];
       user = u;
