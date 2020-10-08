@@ -24,17 +24,17 @@ class CollectionsViewModel extends ChangeNotifier {
       ) {
     _listCollectionsUseCase = listCollectionsUseCase;
     scrollController.addListener(_scrollListener);
-    listRecent();
+    list();
   }
 
   void _scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
-      listRecent();
+      list();
     }
   }
 
-  void listRecent() {
+  void list() {
     requestStatusManager.loading();
     notifyListeners();
     _listCollectionsUseCase.handle(ListCollectionsUseCaseRequest(

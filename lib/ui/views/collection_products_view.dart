@@ -23,7 +23,7 @@ class CollectionProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<ProductsViewModel>(context);
+    final productsViewModel = Provider.of<ProductsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
 
@@ -80,7 +80,7 @@ class CollectionProductsView extends StatelessWidget {
                   collectionProductsViewModel.onTapProduct(collectionProduct.id);
                 } else {
                   // すでにローカルにとってきてるデータをまずチェックする
-                  var product = recentViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
+                  var product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
                   if (product == null) {
                     product = await productViewModel.get(collectionProduct.productId);
                   }
@@ -162,7 +162,7 @@ class CollectionProductsView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          recentViewModel.selectedProductIds = [];
+          productsViewModel.selectedProductIds = [];
           Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
         },
         child: Icon(Icons.add),
