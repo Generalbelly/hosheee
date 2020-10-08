@@ -44,28 +44,11 @@ class CollectionsView extends StatelessWidget {
           delegate: SliverChildBuilderDelegate((c, i) {
             final collection = collectionsViewModel.collections[i];
             return GestureDetector(
+              key: Key(collection.id),
               child: collection.imageUrl != null ?
               Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                  // Container(
-                  //   child: ColorFiltered(
-                  //     colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.srcATop),
-                  //     child: Image.network(
-                  //       collection.imageUrl,
-                  //       fit: BoxFit.cover,
-                  //       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                  //         return Icon(Icons.error_outline);
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   child: Opacity(opacity: 0.8, child: Text(
-                  //     collection.name,
-                  //     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24.0),
-                  //   ))
-                  // ),
                   Container(
                     child: Image.network(
                       collection.imageUrl,

@@ -43,6 +43,7 @@ class SelectProductsView extends StatelessWidget {
             delegate: SliverChildBuilderDelegate((c, i) {
               final product = recentViewModel.products[i];
               return GestureDetector(
+                key: Key(product.id),
                 child: product.imageUrl != null
                   ? ColorFiltered(
                   colorFilter: ColorFilter.mode(Colors.black.withOpacity(
