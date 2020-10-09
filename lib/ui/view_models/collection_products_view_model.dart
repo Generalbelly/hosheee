@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/models/collection_product.dart';
+import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
@@ -14,7 +15,16 @@ class CollectionProductsViewModel extends ChangeNotifier {
   Collection get collection => _collection;
   set collection(Collection value) {
     _collection = value;
-    list();
+    collectionProducts = [];
+    listByCollectionId();
+  }
+
+  Product _product;
+  Product get product => _product;
+  set product(Product value) {
+    _product = value;
+    collectionProducts = [];
+    listByProductId();
   }
 
   List<CollectionProduct> collectionProducts = [];
@@ -47,11 +57,40 @@ class CollectionProductsViewModel extends ChangeNotifier {
   void _scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
-      list();
+      listByCollectionId();
     }
   }
 
-  void list() {
+  void listByCollectionId() {
+    requestStatusManager.loading();
+    message = null;
+    notifyListeners();
+    _listCollectionProductsUseCase.handle(ListCollectionProductsByCollectionIdUseCaseRequest(
+      collection.id,
+      (response) {
+        message = response.message;
+        requestStatusManager.ok();
+        for (var i = 0; i < response.collectionProducts.length; i++) {
+          final index = response.startIndex+i;
+          if (collectionProducts.length < index + 1) {
+            if (collectionProducts.indexWhere((collectionProduct) => collectionProduct.id == response.collectionProducts[i].id) == -1) {
+              collectionProducts.add(response.collectionProducts[i]);
+            }
+          } else {
+            collectionProducts[response.startIndex+i] = response.collectionProducts[i];
+          }
+        }
+        if (collectionProducts.length == 0 && !isActionBarHidden) {
+          _isActionBarHidden = true;
+        }
+        notifyListeners();
+      },
+      startIndex: collectionProducts.length,
+      limit: 15,
+    ));
+  }
+
+  void listByProductId() {
     requestStatusManager.loading();
     message = null;
     notifyListeners();

@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/domain/models/collection_product.dart';
 import 'package:hosheee/domain/models/product.dart';
-import 'package:hosheee/domain/use_cases/collection_product/batch_add_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 
@@ -14,7 +15,7 @@ class ProductsViewModel extends ChangeNotifier {
 
   ListProductsUseCase _listProductsUseCase;
 
-  BatchAddCollectionProductsUseCase _batchAddCollectionProductsUseCase;
+  BatchUpsertCollectionProductsUseCase _batchUpsertCollectionProductsUseCase;
 
   ScrollController scrollController = ScrollController();
 
@@ -24,10 +25,10 @@ class ProductsViewModel extends ChangeNotifier {
 
   ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
-    BatchAddCollectionProductsUseCase batchAddCollectionProductsUseCase,
+    BatchUpsertCollectionProductsUseCase batchUpsertCollectionProductsUseCase,
   ) {
     _listProductsUseCase = listProductsUseCase;
-    _batchAddCollectionProductsUseCase = batchAddCollectionProductsUseCase;
+    _batchUpsertCollectionProductsUseCase = batchUpsertCollectionProductsUseCase;
     scrollController.addListener(_scrollListener);
     list();
   }
@@ -72,14 +73,14 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onSaveInTheCollection(String collectionId) async {
+  Future<void> addCollectionProducts(Collection collection) async {
     final collectionProducts = selectedProductIds.map((selectedProductId) {
       final product = products.firstWhere((product) => product.id == selectedProductId, orElse: null);
-      return CollectionProduct(null, name: product.name, imageUrl: product.imageUrl, productId: product.id, collectionId: collectionId);
+      return CollectionProduct(null, name: product.name, imageUrl: product.imageUrl, productId: product.id, collectionId: collection.id);
     }).toList();
     message = null;
-    final response = await _batchAddCollectionProductsUseCase.handle(
-        BatchAddCollectionProductsUseCaseRequest(collectionProducts)
+    final response = await _batchUpsertCollectionProductsUseCase.handle(
+        BatchUpsertCollectionProductsUseCaseRequest(collectionProducts)
     );
     message = response.message;
     if (message != null) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
@@ -21,25 +22,26 @@ class ProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<ProductsViewModel>(context);
-    if (recentViewModel.message != null) {
+    final productsViewModel = Provider.of<ProductsViewModel>(context);
+    if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, recentViewModel.message, (ctx) {
+        _showSnackBar(context, productsViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
         });
-        recentViewModel.message = null;
+        productsViewModel.message = null;
       });
     }
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
 
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
-    final body = recentViewModel.products.length > 0
+    final body = productsViewModel.products.length > 0
       ?
       CustomScrollView(
-        controller: recentViewModel.scrollController,
+        controller: productsViewModel.scrollController,
         slivers: <Widget>[
           SliverGrid(
             delegate: SliverChildBuilderDelegate((c, i) {
-              final product = recentViewModel.products[i];
+              final product = productsViewModel.products[i];
               return GestureDetector(
                 key: Key(product.id),
                 child: product.imageUrl != null
@@ -64,18 +66,19 @@ class ProductsView extends StatelessWidget {
                     ),
                     onTap: () {
                       productViewModel.product = product;
+                      collectionProductsViewModel.product = product;
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                     },
               );
             },
-              childCount: recentViewModel.products.length,
+              childCount: productsViewModel.products.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
           ),
           SliverToBoxAdapter(
-            child: recentViewModel.requestStatusManager.isLoading()
+            child: productsViewModel.requestStatusManager.isLoading()
               ?
                 Container(
                     child: Center(
@@ -109,8 +112,8 @@ class ProductsView extends StatelessWidget {
         ],
       ),
       body: ProgressModal(
-        isLoading: recentViewModel.requestStatusManager.isLoading() &&
-        recentViewModel.products.length == 0,
+        isLoading: productsViewModel.requestStatusManager.isLoading() &&
+        productsViewModel.products.length == 0,
         child: body));
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hosheee/adapter/gateway/collection_product/collection_product_repository.dart';
-import 'package:hosheee/domain/use_cases/collection_product/batch_add_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
@@ -90,8 +90,8 @@ class App extends StatelessWidget {
               Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
         ),
-        Provider<BatchAddCollectionProductsUseCase>(
-          create: (context) => BatchAddCollectionProductsUseCase(
+        Provider<BatchUpsertCollectionProductsUseCase>(
+          create: (context) => BatchUpsertCollectionProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
@@ -144,8 +144,8 @@ class App extends StatelessWidget {
               Provider.of<i_url_metadata_repository.UrlMetadataRepository>(context, listen: false),
           ),
         ),
-        Provider<BatchAddCollectionProductsUseCase>(
-          create: (context) => BatchAddCollectionProductsUseCase(
+        Provider<BatchUpsertCollectionProductsUseCase>(
+          create: (context) => BatchUpsertCollectionProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
@@ -187,7 +187,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<ProductsViewModel>(
           create: (context) => ProductsViewModel(
             Provider.of<ListProductsUseCase>(context, listen: false),
-            Provider.of<BatchAddCollectionProductsUseCase>(context, listen: false),
+            Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<CollectionProductsViewModel>(
@@ -199,6 +199,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<CollectionsViewModel>(
           create: (context) => CollectionsViewModel(
             Provider.of<ListCollectionsUseCase>(context, listen: false),
+            Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<HomeViewModel>(

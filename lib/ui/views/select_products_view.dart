@@ -24,30 +24,30 @@ class SelectProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentViewModel = Provider.of<ProductsViewModel>(context);
-    if (recentViewModel.message != null) {
+    final productsViewModel = Provider.of<ProductsViewModel>(context);
+    if (productsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, recentViewModel.message, (ctx) {
+        _showSnackBar(context, productsViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
         });
-        recentViewModel.message = null;
+        productsViewModel.message = null;
       });
     }
 
-    final body = recentViewModel.products.length > 0
+    final body = productsViewModel.products.length > 0
       ?
       CustomScrollView(
-        controller: recentViewModel.scrollController,
+        controller: productsViewModel.scrollController,
         slivers: <Widget>[
           SliverGrid(
             delegate: SliverChildBuilderDelegate((c, i) {
-              final product = recentViewModel.products[i];
+              final product = productsViewModel.products[i];
               return GestureDetector(
                 key: Key(product.id),
                 child: product.imageUrl != null
                   ? ColorFiltered(
                   colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                      recentViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
+                      productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
                   ), BlendMode.srcATop),
                   child: Image.network(
                     product.imageUrl,
@@ -59,6 +59,9 @@ class SelectProductsView extends StatelessWidget {
                 )
                   :
                     Container(
+                      color: Colors.black.withOpacity(
+                        productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
+                      ),
                       alignment: Alignment.center,
                       child: Padding(
                         padding: EdgeInsets.all(16.0),
@@ -69,18 +72,18 @@ class SelectProductsView extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      recentViewModel.onTapProduct(product.id);
+                      productsViewModel.onTapProduct(product.id);
                     },
               );
             },
-              childCount: recentViewModel.products.length,
+              childCount: productsViewModel.products.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
           ),
           SliverToBoxAdapter(
-            child: recentViewModel.requestStatusManager.isLoading()
+            child: productsViewModel.requestStatusManager.isLoading()
               ?
                 Container(
                     child: Center(
@@ -107,15 +110,15 @@ class SelectProductsView extends StatelessWidget {
           FlatButton(
             child: Text('Save'),
             onPressed: () async {
-              await recentViewModel.onSaveInTheCollection(collection.id);
+              await productsViewModel.addCollectionProducts(collection);
               Navigator.pop(context);
             },
           ),
         ],
       ),
       body: ProgressModal(
-        isLoading: recentViewModel.requestStatusManager.isLoading() &&
-        recentViewModel.products.length == 0,
+        isLoading: productsViewModel.requestStatusManager.isLoading() &&
+        productsViewModel.products.length == 0,
         child: body));
   }
 }

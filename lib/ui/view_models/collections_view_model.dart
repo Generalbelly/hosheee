@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/models/collection_product.dart';
+import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 
 class CollectionsViewModel extends ChangeNotifier {
@@ -12,16 +15,22 @@ class CollectionsViewModel extends ChangeNotifier {
 
   ListCollectionsUseCase _listCollectionsUseCase;
 
+  BatchUpsertCollectionProductsUseCase _batchUpsertCollectionProductsUseCase;
+
   ScrollController collectionsViewScrollController = ScrollController();
 
   ScrollController productViewScrollController = ScrollController();
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
+  List<String> selectedCollectionIds = [];
+
   CollectionsViewModel(
-      ListCollectionsUseCase listCollectionsUseCase,
-      ) {
+    ListCollectionsUseCase listCollectionsUseCase,
+    BatchUpsertCollectionProductsUseCase batchUpsertCollectionProductsUseCase,
+  ) {
     _listCollectionsUseCase = listCollectionsUseCase;
+    _batchUpsertCollectionProductsUseCase = batchUpsertCollectionProductsUseCase;
     collectionsViewScrollController.addListener(_collectionsViewScrollListener);
     productViewScrollController.addListener(_productViewScrollListener);
     list();
@@ -63,6 +72,30 @@ class CollectionsViewModel extends ChangeNotifier {
       startIndex: collections.length,
       limit: 4,
     ));
+  }
+
+  void onTapCollection(String collectionId) async {
+    if (selectedCollectionIds.indexOf(collectionId) == -1) {
+      selectedCollectionIds.add(collectionId);
+    } else {
+      selectedCollectionIds.remove(collectionId);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addCollectionProducts(Product product) async {
+    final collectionProducts = selectedCollectionIds.map((selectedCollectionId) {
+      final collection = collections.firstWhere((collection) => collection.id == selectedCollectionId, orElse: null);
+      return CollectionProduct(null, name: product.name, imageUrl: product.imageUrl, productId: product.id, collectionId: collection.id);
+    }).toList();
+    message = null;
+    final response = await _batchUpsertCollectionProductsUseCase.handle(
+        BatchUpsertCollectionProductsUseCaseRequest(collectionProducts)
+    );
+    message = response.message;
+    if (message != null) {
+      notifyListeners();
+    }
   }
 
 }

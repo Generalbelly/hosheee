@@ -162,7 +162,7 @@ class CollectionProductsView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          productsViewModel.selectedProductIds = [];
+          productsViewModel.selectedProductIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.productId).toList();
           Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
         },
         child: Icon(Icons.add),

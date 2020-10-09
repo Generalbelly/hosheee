@@ -1,3 +1,4 @@
+import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -171,8 +173,10 @@ class ProductView extends StatelessWidget {
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
-                            Container(
-                              width: 100.0,
+                            ColorFiltered(
+                              colorFilter: ColorFilter.mode(Colors.black.withOpacity(
+                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                              ), BlendMode.srcATop),
                               child: Image.network(
                                 collection.imageUrl,
                                 fit: BoxFit.cover,
@@ -197,6 +201,9 @@ class ProductView extends StatelessWidget {
                           ],
                         ) :
                         Container(
+                          color: Colors.black.withOpacity(
+                            collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                          ),
                           width: 100.0,
                           alignment: Alignment.center,
                           child: Padding(
@@ -208,7 +215,7 @@ class ProductView extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          print('tapped');
+                          collectionsViewModel.onTapCollection(collection.id);
                         },
                       );
                     }).toList(),

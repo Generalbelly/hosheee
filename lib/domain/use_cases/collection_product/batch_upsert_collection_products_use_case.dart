@@ -7,10 +7,10 @@ import 'package:hosheee/domain/repositories/collection_product_repository.dart';
 import 'package:hosheee/domain/repositories/product_repository.dart';
 import 'package:hosheee/utils/helpers.dart';
 
-class BatchAddCollectionProductsUseCaseRequest {
+class BatchUpsertCollectionProductsUseCaseRequest {
   List<CollectionProduct> collectionProducts;
 
-  BatchAddCollectionProductsUseCaseRequest(this.collectionProducts);
+  BatchUpsertCollectionProductsUseCaseRequest(this.collectionProducts);
 
   Map<String, dynamic> toMap() {
     return {
@@ -19,22 +19,22 @@ class BatchAddCollectionProductsUseCaseRequest {
   }
 }
 
-class BatchAddCollectionProductsUseCaseResponse {
+class BatchUpsertCollectionProductsUseCaseResponse {
   String message;
 
-  BatchAddCollectionProductsUseCaseResponse({String message})
+  BatchUpsertCollectionProductsUseCaseResponse({String message})
     : this.message = message;
 }
 
-class BatchAddCollectionProductsUseCase {
+class BatchUpsertCollectionProductsUseCase {
 
   Auth _auth;
 
   CollectionProductRepository _collectionProductRepository;
 
-  BatchAddCollectionProductsUseCase(this._auth, this._collectionProductRepository);
+  BatchUpsertCollectionProductsUseCase(this._auth, this._collectionProductRepository);
 
-  Future<BatchAddCollectionProductsUseCaseResponse> handle(BatchAddCollectionProductsUseCaseRequest request) async {
+  Future<BatchUpsertCollectionProductsUseCaseResponse> handle(BatchUpsertCollectionProductsUseCaseRequest request) async {
     try {
       final user = await _auth.user();
       if (!(user is User)) {
@@ -47,12 +47,12 @@ class BatchAddCollectionProductsUseCase {
             return collectionProduct;
           }).toList()
       );
-      return BatchAddCollectionProductsUseCaseResponse();
+      return BatchUpsertCollectionProductsUseCaseResponse();
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return BatchAddCollectionProductsUseCaseResponse(message: e.toString());
+      return BatchUpsertCollectionProductsUseCaseResponse(message: e.toString());
     }
   }
 
