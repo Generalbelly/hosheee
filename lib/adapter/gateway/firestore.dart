@@ -8,9 +8,9 @@ abstract class QueryManager {
 
   bool isSubsequentTo(QueryManager qm);
   bool isEqualTo(QueryManager qm);
-  List<Model> getAllResult();
-  List<Model> getResult(int startIndex, int limit);
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<Model>) cb);
+  List<Model> all();
+  List<Model> getRange(int startIndex, int limit);
+  Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<Model>) cb);
   Query query();
 
   void detachListeners() {

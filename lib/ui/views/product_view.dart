@@ -159,6 +159,59 @@ class ProductView extends StatelessWidget {
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   readOnly: productViewModel.isReadOnly(),
                 ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 20.0),
+                  height: 200.0,
+                  child: ListView(
+                    controller: collectionsViewModel.scrollController,
+                    scrollDirection: Axis.horizontal,
+                    children: collectionsViewModel.collections.map((collection) {
+                      return GestureDetector(
+                        key: Key(collection.id),
+                        child: collection.imageUrl != null ?
+                        Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Container(
+                              child: Image.network(
+                                collection.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                                  return Icon(Icons.error_outline);
+                                },
+                              ),
+                            ),
+                            Container(
+                                child: Text(
+                                  collection.name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24.0,
+                                    backgroundColor: Colors.black.withOpacity(0.5),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                            ),
+                          ],
+                        ) :
+                        Container(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              collection.name,
+                              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          print('tapped');
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
                 // DropdownButtonFormField<String>(
                 //   decoration: InputDecoration(
                 //     labelText: 'Collection',

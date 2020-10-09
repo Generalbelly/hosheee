@@ -6,14 +6,19 @@ import 'package:hosheee/domain/repositories/collection_repository.dart';
 import 'package:hosheee/utils/helpers.dart';
 
 class ListCollectionsUseCaseRequest {
-  String searchQuery;
-  String orderBy = 'createdAt';
-  bool descending = true;
-  int limit = 0;
-  int startIndex = 0;
   Function(ListCollectionsUseCaseResponse) callback;
+  String searchQuery;
+  String orderBy;
+  bool descending;
+  int startIndex ;
+  int limit;
 
-  ListCollectionsUseCaseRequest(this.callback, {this.searchQuery, this.orderBy, this.descending, this.startIndex, this.limit});
+  ListCollectionsUseCaseRequest(this.callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}):
+    this.limit = limit,
+    this.descending = descending,
+    this.startIndex = startIndex,
+    this.orderBy = orderBy,
+    this.searchQuery = searchQuery;
 
   Map<String, dynamic> toMap() {
     return {

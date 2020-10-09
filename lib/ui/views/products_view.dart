@@ -9,6 +9,7 @@ import 'package:hosheee/ui/views/progress_modal.dart';
 class ProductsView extends StatelessWidget {
 
   _showSnackBar(BuildContext context, String message, Function cb) {
+    print(message);
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
       action: SnackBarAction(

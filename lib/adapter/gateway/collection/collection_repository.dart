@@ -23,7 +23,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
   void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, startIndex = 0, int limit = 0}) {
     final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
     if (listQueryManager != null && pqc.isEqualTo(listQueryManager)) {
-      callback(listQueryManager.getAllResult());
+      callback(listQueryManager.all());
       return;
     }
     if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
@@ -31,7 +31,7 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     }
     final query = listQueryManager.query();
 
-    final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(callback));
+    final listener = query.snapshots().listen(listQueryManager.createSnapshotHandler(callback));
     listQueryManager.attachListener(listener);
   }
 

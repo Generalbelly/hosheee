@@ -19,7 +19,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
     if (listQueryManager != null && pqc.isEqualTo(listQueryManager)) {
-      callback(listQueryManager.getResult(startIndex, limit));
+      callback(listQueryManager.getRange(startIndex, limit));
       return;
     }
     if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
@@ -27,7 +27,7 @@ class ProductRepository implements i_product_repository.ProductRepository {
     }
     final query = listQueryManager.query();
 
-    final listener = query.snapshots().listen(listQueryManager.getSnapshotHandler(callback));
+    final listener = query.snapshots().listen(listQueryManager.createSnapshotHandler(callback));
     listQueryManager.attachListener(listener);
   }
 

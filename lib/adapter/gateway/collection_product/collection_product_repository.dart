@@ -19,14 +19,14 @@ class CollectionProductRepository implements i_collection_product_repository.Col
   void listByCollectionId(String userId, String collectionId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListByCollectionProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, startIndex, limit);
     if (listCollectionProductsByCollectionIdQueryManager != null && listCollectionProductsByCollectionIdQueryManager.isEqualTo(pqc)) {
-      callback(listCollectionProductsByCollectionIdQueryManager.getResult(startIndex, limit));
+      callback(listCollectionProductsByCollectionIdQueryManager.getRange(startIndex, limit));
       return;
     }
     if (listCollectionProductsByCollectionIdQueryManager == null || !listCollectionProductsByCollectionIdQueryManager.isSubsequentTo(pqc)) {
       listCollectionProductsByCollectionIdQueryManager = pqc;
     }
     final query = listCollectionProductsByCollectionIdQueryManager.query();
-    final listener = query.snapshots().listen(listCollectionProductsByCollectionIdQueryManager.getSnapshotHandler(callback));
+    final listener = query.snapshots().listen(listCollectionProductsByCollectionIdQueryManager.createSnapshotHandler(callback));
     listCollectionProductsByCollectionIdQueryManager.attachListener(listener);
   }
 

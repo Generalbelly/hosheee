@@ -9,13 +9,17 @@ import 'package:hosheee/utils/helpers.dart';
 
 class ListCollectionProductsByCollectionIdUseCaseRequest {
   String collectionId;
-  String orderBy = 'createdAt';
-  bool descending = true;
-  int startIndex = 0;
-  int limit = 0;
+  String orderBy;
+  bool descending;
+  int startIndex;
+  int limit;
   Function(ListCollectionProductsByCollectionIdUseCaseResponse) callback;
 
-  ListCollectionProductsByCollectionIdUseCaseRequest(this.collectionId, this.callback, { this.orderBy, this.descending, this.startIndex, this.limit });
+  ListCollectionProductsByCollectionIdUseCaseRequest(this.collectionId, this.callback, { String orderBy, bool descending, int startIndex, int limit }):
+    this.orderBy = orderBy,
+    this.descending = descending,
+    this.startIndex = startIndex,
+    this.limit = limit;
 
   Map<String, dynamic> toMap() {
     return {

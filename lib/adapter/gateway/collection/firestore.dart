@@ -58,16 +58,16 @@ class ListCollectionsQueryManager extends QueryManager {
     return collections;
   }
 
-  List<Collection> getAllResult() {
+  List<Collection> all() {
     return accumulatedResult.expand((ps) => ps).toList();
   }
 
-  List<Collection> getResult(int startIndex, int limit) {
+  List<Collection> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
     return accumulatedResult[index];
   }
 
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<Collection>) cb) {
+  Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<Collection>) cb) {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {

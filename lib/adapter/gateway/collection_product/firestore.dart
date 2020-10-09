@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hosheee/adapter/gateway/firestore.dart';
 import 'package:hosheee/domain/models/collection_product.dart';
-import 'package:hosheee/domain/models/model.dart';
 
 class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
 
@@ -59,16 +58,16 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
     return collectionProducts;
   }
 
-  List<CollectionProduct> getAllResult() {
+  List<CollectionProduct> all() {
     return accumulatedResult.expand((ps) => ps).toList();
   }
 
-  List<CollectionProduct> getResult(int startIndex, int limit) {
+  List<CollectionProduct> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
     return accumulatedResult[index];
   }
 
-  Function(QuerySnapshot snapshot) getSnapshotHandler(Function(List<CollectionProduct>) cb) {
+  Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<CollectionProduct>) cb) {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {

@@ -7,13 +7,18 @@ import 'package:hosheee/utils/helpers.dart';
 
 class ListProductsUseCaseRequest {
   String searchQuery;
-  String orderBy = 'createdAt';
-  bool descending = true;
-  int startIndex = 0;
-  int limit = 0;
+  String orderBy;
+  bool descending;
+  int startIndex ;
+  int limit;
   Function(ListProductsUseCaseResponse) callback;
 
-  ListProductsUseCaseRequest(this.callback, {this.searchQuery, this.orderBy, this.descending, this.startIndex, this.limit});
+  ListProductsUseCaseRequest(this.callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}):
+    this.limit = limit,
+    this.descending = descending,
+    this.startIndex = startIndex,
+    this.orderBy = orderBy,
+    this.searchQuery = searchQuery;
 
   Map<String, dynamic> toMap() {
     return {
