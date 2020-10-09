@@ -2,7 +2,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/ui/view_models/collections_view_model.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
 import 'package:hosheee/ui/views/progress_modal.dart';
@@ -63,7 +62,7 @@ class ProductView extends StatelessWidget {
           ),
           initialValue: productViewModel.product.price != null ? productViewModel.product.price.toString() : null,
           inputFormatters: <TextInputFormatter>[
-            WhitelistingTextInputFormatter.digitsOnly
+            FilteringTextInputFormatter.digitsOnly,
           ],
           keyboardType: TextInputType.number,
           onChanged: (value) => productViewModel.setPrice(double.parse(value)),
