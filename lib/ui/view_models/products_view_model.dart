@@ -46,10 +46,13 @@ class ProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        if (products.length == 0) {
-          products.addAll(response.products);
-        } else {
-          for (var i = 0; i < response.products.length; i++) {
+        for (var i = 0; i < response.products.length; i++) {
+          final index = response.startIndex+i;
+          if (products.length < index + 1) {
+            if (products.indexWhere((product) => product.id == response.products[i].id) == -1) {
+              products.add(response.products[i]);
+            }
+          } else {
             products[response.startIndex+i] = response.products[i];
           }
         }

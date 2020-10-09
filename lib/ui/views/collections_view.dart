@@ -38,7 +38,7 @@ class CollectionsView extends StatelessWidget {
     final body = collectionsViewModel.collections.length > 0
         ?
     CustomScrollView(
-      controller: collectionsViewModel.scrollController,
+      controller: collectionsViewModel.collectionsViewScrollController,
       slivers: <Widget>[
         SliverGrid(
           delegate: SliverChildBuilderDelegate((c, i) {

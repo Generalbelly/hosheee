@@ -12,10 +12,9 @@ class CollectionsViewModel extends ChangeNotifier {
 
   ListCollectionsUseCase _listCollectionsUseCase;
 
-  ScrollController scrollController = ScrollController();
+  ScrollController collectionsViewScrollController = ScrollController();
 
-  // List<ImageLoadingStatusManager> imageLoadingStatusManagers = [];
-  // bool allImagesLoaded = false;
+  ScrollController productViewScrollController = ScrollController();
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
@@ -23,13 +22,21 @@ class CollectionsViewModel extends ChangeNotifier {
       ListCollectionsUseCase listCollectionsUseCase,
       ) {
     _listCollectionsUseCase = listCollectionsUseCase;
-    scrollController.addListener(_scrollListener);
+    collectionsViewScrollController.addListener(_collectionsViewScrollListener);
+    productViewScrollController.addListener(_productViewScrollListener);
     list();
   }
 
-  void _scrollListener() {
-    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-        !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
+  void _collectionsViewScrollListener() {
+    if (collectionsViewScrollController.offset >= collectionsViewScrollController.position.maxScrollExtent &&
+        !collectionsViewScrollController.position.outOfRange && !requestStatusManager.isLoading()) {
+      list();
+    }
+  }
+
+  void _productViewScrollListener() {
+    if (productViewScrollController.offset >= productViewScrollController.position.maxScrollExtent &&
+        !productViewScrollController.position.outOfRange && !requestStatusManager.isLoading()) {
       list();
     }
   }
@@ -41,17 +48,20 @@ class CollectionsViewModel extends ChangeNotifier {
           (response) {
         message = response.message;
         requestStatusManager.ok();
-        if (collections.length == 0) {
-          collections.addAll(response.collections);
-        } else {
-          for (var i = 0; i < response.collections.length; i++) {
+        for (var i = 0; i < response.collections.length; i++) {
+          final index = response.startIndex+i;
+          if (collections.length < index + 1) {
+            if (collections.indexWhere((collection) => collection.id == response.collections[i].id) == -1) {
+              collections.add(response.collections[i]);
+            }
+          } else {
             collections[response.startIndex+i] = response.collections[i];
           }
         }
         notifyListeners();
       },
       startIndex: collections.length,
-      limit: 20,
+      limit: 4,
     ));
   }
 

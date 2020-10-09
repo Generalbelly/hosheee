@@ -161,9 +161,9 @@ class ProductView extends StatelessWidget {
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 20.0),
-                  height: 200.0,
+                  height: 100.0,
                   child: ListView(
-                    controller: collectionsViewModel.scrollController,
+                    controller: collectionsViewModel.productViewScrollController,
                     scrollDirection: Axis.horizontal,
                     children: collectionsViewModel.collections.map((collection) {
                       return GestureDetector(
@@ -173,6 +173,7 @@ class ProductView extends StatelessWidget {
                           alignment: Alignment.center,
                           children: <Widget>[
                             Container(
+                              width: 100.0,
                               child: Image.network(
                                 collection.imageUrl,
                                 fit: BoxFit.cover,
@@ -182,26 +183,28 @@ class ProductView extends StatelessWidget {
                               ),
                             ),
                             Container(
-                                child: Text(
-                                  collection.name,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24.0,
-                                    backgroundColor: Colors.black.withOpacity(0.5),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                )
+                              width: 100.0,
+                              child: Text(
+                                collection.name,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.0,
+                                  backgroundColor: Colors.black.withOpacity(0.5),
+                                ),
+                                textAlign: TextAlign.center,
+                              )
                             ),
                           ],
                         ) :
                         Container(
+                          width: 100.0,
                           alignment: Alignment.center,
                           child: Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Text(
                               collection.name,
-                              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
+                              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
                             ),
                           ),
                         ),
@@ -212,24 +215,6 @@ class ProductView extends StatelessWidget {
                     }).toList(),
                   ),
                 ),
-                // DropdownButtonFormField<String>(
-                //   decoration: InputDecoration(
-                //     labelText: 'Collection',
-                //     hintText: 'Collection',
-                //   ),
-                //   value: productViewModel.product.collectionId,
-                //   elevation: 16,
-                //   onChanged: productViewModel.isReadOnly() ? null : (value) {
-                //     productViewModel.setCollectionId(value);
-                //   },
-                //   items: collectionsViewModel.collections
-                //       .map<DropdownMenuItem<String>>((Collection collection) {
-                //     return DropdownMenuItem<String>(
-                //       value: collection.id,
-                //       child: Text(collection.name),
-                //     );
-                //   }).toList(),
-                // ),
                 priceField,
                 SizedBox(
                   height: 24,

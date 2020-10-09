@@ -59,13 +59,14 @@ class CollectionProductsViewModel extends ChangeNotifier {
       collection.id,
       (response) {
         message = response.message;
-        if (requestStatusManager.isLoading()) {
-          requestStatusManager.ok();
-        }
-        if (collectionProducts.length == 0) {
-          collectionProducts.addAll(response.collectionProducts);
-        } else {
-          for (var i = 0; i < response.collectionProducts.length; i++) {
+        requestStatusManager.ok();
+        for (var i = 0; i < response.collectionProducts.length; i++) {
+          final index = response.startIndex+i;
+          if (collectionProducts.length < index + 1) {
+            if (collectionProducts.indexWhere((collectionProduct) => collectionProduct.id == response.collectionProducts[i].id) == -1) {
+              collectionProducts.add(response.collectionProducts[i]);
+            }
+          } else {
             collectionProducts[response.startIndex+i] = response.collectionProducts[i];
           }
         }
