@@ -41,10 +41,13 @@ class CollectionsViewModel extends ChangeNotifier {
           (response) {
         message = response.message;
         requestStatusManager.ok();
-        collections.replaceRange(
-            response.startIndex,
-            response.startIndex+response.limit,
-            response.collections);
+        if (collections.length == 0) {
+          collections.addAll(response.collections);
+        } else {
+          for (var i = 0; i < response.collections.length; i++) {
+            collections[response.startIndex+i] = response.collections[i];
+          }
+        }
         notifyListeners();
       },
       startIndex: collections.length,

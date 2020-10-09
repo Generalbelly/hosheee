@@ -62,10 +62,13 @@ class CollectionProductsViewModel extends ChangeNotifier {
         if (requestStatusManager.isLoading()) {
           requestStatusManager.ok();
         }
-        collectionProducts.replaceRange(
-            response.startIndex,
-            response.startIndex+response.limit,
-            response.collectionProducts);
+        if (collectionProducts.length == 0) {
+          collectionProducts.addAll(response.collectionProducts);
+        } else {
+          for (var i = 0; i < response.collectionProducts.length; i++) {
+            collectionProducts[response.startIndex+i] = response.collectionProducts[i];
+          }
+        }
         if (collectionProducts.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
         }
