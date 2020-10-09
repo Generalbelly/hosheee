@@ -3,6 +3,7 @@ import 'package:hosheee/adapter/gateway/collection_product/collection_product_re
 import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_product_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -86,6 +87,12 @@ class App extends StatelessWidget {
         ),
         Provider<ListCollectionProductsByCollectionIdUseCase>(
           create: (context) => ListCollectionProductsByCollectionIdUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionProductsByProductIdUseCase>(
+          create: (context) => ListCollectionProductsByProductIdUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
@@ -193,6 +200,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<CollectionProductsViewModel>(
           create: (context) => CollectionProductsViewModel(
             Provider.of<ListCollectionProductsByCollectionIdUseCase>(context, listen: false),
+            Provider.of<ListCollectionProductsByProductIdUseCase>(context, listen: false),
             Provider.of<BatchDeleteCollectionProductsUseCase>(context, listen: false),
           ),
         ),

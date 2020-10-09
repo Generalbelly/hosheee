@@ -5,6 +5,7 @@ import 'package:hosheee/domain/models/collection_product.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_product_id_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 
 class CollectionProductsViewModel extends ChangeNotifier {
@@ -31,7 +32,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   List<String> selectedCollectionProductIds = [];
 
-  ListCollectionProductsByCollectionIdUseCase _listCollectionProductsUseCase;
+  ListCollectionProductsByCollectionIdUseCase _listCollectionProductsByCollectionIdUseCase;
+  ListCollectionProductsByProductIdUseCase _listCollectionProductsByProductIdUseCase;
   BatchDeleteCollectionProductsUseCase _batchDeleteCollectionProductsUseCase;
 
   bool _isActionBarHidden = true;
@@ -47,9 +49,11 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   CollectionProductsViewModel(
     ListCollectionProductsByCollectionIdUseCase listCollectionProductsByCollectionIdUseCase,
+      ListCollectionProductsByProductIdUseCase listCollectionProductsByProductIdUseCase,
     BatchDeleteCollectionProductsUseCase batchDeleteCollectionProductsUseCase,
   ) {
-    _listCollectionProductsUseCase = listCollectionProductsByCollectionIdUseCase;
+    _listCollectionProductsByCollectionIdUseCase = listCollectionProductsByCollectionIdUseCase;
+    _listCollectionProductsByProductIdUseCase = listCollectionProductsByProductIdUseCase;
     _batchDeleteCollectionProductsUseCase = batchDeleteCollectionProductsUseCase;
     scrollController.addListener(_scrollListener);
   }
@@ -65,7 +69,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
     requestStatusManager.loading();
     message = null;
     notifyListeners();
-    _listCollectionProductsUseCase.handle(ListCollectionProductsByCollectionIdUseCaseRequest(
+    _listCollectionProductsByCollectionIdUseCase.handle(ListCollectionProductsByCollectionIdUseCaseRequest(
       collection.id,
       (response) {
         message = response.message;
@@ -91,11 +95,12 @@ class CollectionProductsViewModel extends ChangeNotifier {
   }
 
   void listByProductId() {
+    print('called');
     requestStatusManager.loading();
     message = null;
     notifyListeners();
-    _listCollectionProductsUseCase.handle(ListCollectionProductsByCollectionIdUseCaseRequest(
-      collection.id,
+    _listCollectionProductsByProductIdUseCase.handle(ListCollectionProductsByProductIdUseCaseRequest(
+      product.id,
       (response) {
         message = response.message;
         requestStatusManager.ok();
@@ -109,6 +114,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
             collectionProducts[response.startIndex+i] = response.collectionProducts[i];
           }
         }
+        print(collectionProducts);
         if (collectionProducts.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
         }

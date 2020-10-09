@@ -16,6 +16,15 @@ class CollectionProductRepository implements i_collection_product_repository.Col
     _listCollectionProductsByCollectionIdQueryManager = value;
   }
 
+  ListByCollectionProductsByProductIdQueryManager _listCollectionProductsByProductIdQueryManager;
+  ListByCollectionProductsByProductIdQueryManager get listCollectionProductsByProductIdQueryManager => _listCollectionProductsByProductIdQueryManager;
+  set listCollectionProductsByProductIdQueryManager(ListByCollectionProductsByProductIdQueryManager value) {
+    if (_listCollectionProductsByProductIdQueryManager != null) {
+      _listCollectionProductsByProductIdQueryManager.detachListeners();
+    }
+    _listCollectionProductsByProductIdQueryManager = value;
+  }
+
   void listByCollectionId(String userId, String collectionId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListByCollectionProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, startIndex, limit);
     if (listCollectionProductsByCollectionIdQueryManager != null && listCollectionProductsByCollectionIdQueryManager.isEqualTo(pqc)) {
@@ -28,6 +37,20 @@ class CollectionProductRepository implements i_collection_product_repository.Col
     final query = listCollectionProductsByCollectionIdQueryManager.query();
     final listener = query.snapshots().listen(listCollectionProductsByCollectionIdQueryManager.createSnapshotHandler(callback));
     listCollectionProductsByCollectionIdQueryManager.attachListener(listener);
+  }
+
+  void listByProductId(String userId, String productId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
+    final pqc = ListByCollectionProductsByProductIdQueryManager(userId, productId, orderBy, descending, startIndex, limit);
+    if (listCollectionProductsByProductIdQueryManager != null && listCollectionProductsByProductIdQueryManager.isEqualTo(pqc)) {
+      callback(listCollectionProductsByProductIdQueryManager.getRange(startIndex, limit));
+      return;
+    }
+    if (listCollectionProductsByProductIdQueryManager == null || !listCollectionProductsByProductIdQueryManager.isSubsequentTo(pqc)) {
+      listCollectionProductsByProductIdQueryManager = pqc;
+    }
+    final query = listCollectionProductsByProductIdQueryManager.query();
+    final listener = query.snapshots().listen(listCollectionProductsByProductIdQueryManager.createSnapshotHandler(callback));
+    listCollectionProductsByProductIdQueryManager.attachListener(listener);
   }
 
   Future<void> add(String userId, CollectionProduct collectionProduct) async {

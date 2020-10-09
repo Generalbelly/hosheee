@@ -7,15 +7,15 @@ import 'package:hosheee/domain/repositories/collection_product_repository.dart';
 import 'package:hosheee/domain/repositories/product_repository.dart';
 import 'package:hosheee/utils/helpers.dart';
 
-class ListCollectionProductsByCollectionIdUseCaseRequest {
-  String collectionId;
+class ListCollectionProductsByProductIdUseCaseRequest {
+  String productId;
   String orderBy;
   bool descending;
   int startIndex;
   int limit;
-  Function(ListCollectionProductsByCollectionIdUseCaseResponse) callback;
+  Function(ListCollectionProductsByProductIdUseCaseResponse) callback;
 
-  ListCollectionProductsByCollectionIdUseCaseRequest(this.collectionId, this.callback, { String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0 }):
+  ListCollectionProductsByProductIdUseCaseRequest(this.productId, this.callback, { String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0 }):
     this.orderBy = orderBy,
     this.descending = descending,
     this.startIndex = startIndex,
@@ -31,33 +31,33 @@ class ListCollectionProductsByCollectionIdUseCaseRequest {
   }
 }
 
-class ListCollectionProductsByCollectionIdUseCaseResponse {
+class ListCollectionProductsByProductIdUseCaseResponse {
   List<CollectionProduct> collectionProducts = [];
   int startIndex = 0;
   int limit = 0;
   String message;
 
-  ListCollectionProductsByCollectionIdUseCaseResponse({this.collectionProducts, this.startIndex, this.limit, this.message});
+  ListCollectionProductsByProductIdUseCaseResponse({this.collectionProducts, this.startIndex, this.limit, this.message});
 }
 
-class ListCollectionProductsByCollectionIdUseCase {
+class ListCollectionProductsByProductIdUseCase {
 
   Auth _auth;
 
   CollectionProductRepository _collectionProductRepository;
 
-  ListCollectionProductsByCollectionIdUseCase(this._auth, this._collectionProductRepository);
+  ListCollectionProductsByProductIdUseCase(this._auth, this._collectionProductRepository);
 
-  void handle(ListCollectionProductsByCollectionIdUseCaseRequest request) async {
+  void handle(ListCollectionProductsByProductIdUseCaseRequest request) async {
     try {
       final user = await _auth.user();
       if (!(user is User)) {
         throw SignInRequiredException();
       }
-      _collectionProductRepository.listByCollectionId(
+      _collectionProductRepository.listByProductId(
         user.id,
-        request.collectionId,
-        (collectionProducts) => request.callback(ListCollectionProductsByCollectionIdUseCaseResponse(
+        request.productId,
+        (collectionProducts) => request.callback(ListCollectionProductsByProductIdUseCaseResponse(
           collectionProducts: collectionProducts,
           startIndex: request.startIndex,
           limit: request.limit,
@@ -71,7 +71,7 @@ class ListCollectionProductsByCollectionIdUseCase {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      request.callback(ListCollectionProductsByCollectionIdUseCaseResponse(
+      request.callback(ListCollectionProductsByProductIdUseCaseResponse(
           collectionProducts: [],
           startIndex: request.startIndex,
           limit: request.limit,

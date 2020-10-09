@@ -57,7 +57,6 @@ class ProductRepository implements i_product_repository.ProductRepository {
     await FirebaseFirestore.instance.collection('users').doc(userId).collection("products").doc(product.id).delete();
   }
 
-
   String nextIdentity() {
     var uuid = Uuid();
     return uuid.v4();
