@@ -224,22 +224,17 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
   }
 
   Query query() {
-    try {
-      var query = FirebaseFirestore.instance.collection('users').doc(userId).collection('collection_products')
-          .where('productId', isEqualTo: productId)
-          .orderBy(orderBy, descending: descending);
-      if (limit > 0) {
-        query = query.limit(limit);
-      }
-      if (lastVisible != null) {
-        query = query.startAfter([lastVisible.data()[orderBy]]);
-      }
-
-      lastVisible = null;
-      return query;
-    } catch (e) {
-      throw e;
+    var query = FirebaseFirestore.instance.collection('users').doc(userId).collection('collection_products')
+        .where('productId', isEqualTo: productId)
+        .orderBy(orderBy, descending: descending);
+    if (limit > 0) {
+      query = query.limit(limit);
     }
+    if (lastVisible != null) {
+      query = query.startAfter([lastVisible.data()[orderBy]]);
+    }
+    lastVisible = null;
+    return query;
   }
 
 }
