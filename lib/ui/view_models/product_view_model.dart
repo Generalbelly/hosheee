@@ -32,12 +32,12 @@ class ProductViewModel extends ChangeNotifier {
   GetUrlMetadataUseCase _getUrlMetadataUseCase;
   GetProductUseCase _getProductUseCase;
 
-  bool _detailHidden = true;
-  bool get detailHidden => _detailHidden;
-  set detailHidden(bool value) {
-    _detailHidden = value;
-    notifyListeners();
-  }
+  // bool _detailHidden = true;
+  // bool get detailHidden => _detailHidden;
+  // set detailHidden(bool value) {
+  //   _detailHidden = value;
+  //   notifyListeners();
+  // }
 
   bool _isEditing = false;
   bool get isEditing => _isEditing;

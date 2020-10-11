@@ -36,6 +36,7 @@ class ProductView extends StatelessWidget {
                 productViewModel.isEditing = true;
               } else {
                 await productViewModel.save();
+                await collectionsViewModel.addCollectionProducts(productViewModel.product);
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
             },
@@ -55,21 +56,6 @@ class ProductView extends StatelessWidget {
         final imageField = productViewModel.product.imageUrl != null ? Image.network(productViewModel.product.imageUrl, fit: BoxFit.cover, errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
           return Icon(Icons.error_outline);
         }) : SizedBox.shrink();
-
-        final priceField = productViewModel.detailHidden ? SizedBox.shrink() : TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Price',
-            hintText: 'Price',
-            errorText: productViewModel.errors['price'],
-          ),
-          initialValue: productViewModel.product.price != null ? productViewModel.product.price.toString() : null,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          keyboardType: TextInputType.number,
-          onChanged: (value) => productViewModel.setPrice(double.parse(value)),
-          readOnly: productViewModel.isReadOnly(),
-        );
 
         final setting = productViewModel.product.id != null ? Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -103,6 +89,121 @@ class ProductView extends StatelessWidget {
           padding: EdgeInsets.only(top: 24.0),
           child: SizedBox.shrink(),
         );
+
+        Widget productCollectionsField;
+        if (productViewModel.isReadOnly()) {
+          if (collectionProductsViewModel.collectionProducts.length == 0) {
+            productCollectionsField = SizedBox.shrink();
+          } else {
+            productCollectionsField = Container(
+              margin: EdgeInsets.symmetric(vertical: 20.0),
+              height: 100.0,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: collectionProductsViewModel.collectionProducts.map((collection) {
+                  if (collection.imageUrl != null) {
+                    return Container(
+                        key: Key(collection.id),
+                        width: 100.0,
+                        child: Image.network(
+                          collection.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                            return Icon(Icons.error_outline);
+                          },
+                        )
+                    );
+                  }
+                  return Container(
+                    key: Key(collection.id),
+                    color: Colors.black.withOpacity(
+                      collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                    ),
+                    width: 100.0,
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        collection.name,
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              )
+            );
+          }
+        } else {
+          productCollectionsField = SizedBox.shrink();
+        }
+
+        Widget collectionsField;
+        if (productViewModel.isReadOnly()) {
+          collectionsField = SizedBox.shrink();
+        } else {
+          collectionsField = Container(
+            margin: EdgeInsets.symmetric(vertical: 20.0),
+            height: 100.0,
+            child: ListView(
+              controller: collectionsViewModel.productViewScrollController,
+              scrollDirection: Axis.horizontal,
+              children: collectionsViewModel.collections.map((collection) {
+                return GestureDetector(
+                  key: Key(collection.id),
+                  child: collection.imageUrl != null ?
+                  Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      ColorFiltered(
+                        colorFilter: ColorFilter.mode(Colors.black.withOpacity(
+                          collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                        ), BlendMode.srcATop),
+                        child: Image.network(
+                          collection.imageUrl,
+                          fit: BoxFit.cover,
+                          width: 100.0,
+                          errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                            return Icon(Icons.error_outline);
+                          },
+                        ),
+                      ),
+                      Container(
+                          width: 100.0,
+                          child: Text(
+                            collection.name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.0,
+                              backgroundColor: Colors.black.withOpacity(0.5),
+                            ),
+                            textAlign: TextAlign.center,
+                          )
+                      ),
+                    ],
+                  ) :
+                  Container(
+                    color: Colors.black.withOpacity(
+                      collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                    ),
+                    width: 100.0,
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        collection.name,
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    collectionsViewModel.onTapCollection(collection.id);
+                  },
+                );
+              }).toList(),
+            ),
+          );
+        }
 
         return ProgressModal(
           isLoading: productViewModel.requestStatusManager.isLoading(),
@@ -160,78 +261,32 @@ class ProductView extends StatelessWidget {
                   onChanged: (value) => productViewModel.setWebsiteUrl(value),
                   readOnly: productViewModel.isReadOnly(),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20.0),
-                  height: 100.0,
-                  child: ListView(
-                    controller: collectionsViewModel.productViewScrollController,
-                    scrollDirection: Axis.horizontal,
-                    children: collectionsViewModel.collections.map((collection) {
-                      return GestureDetector(
-                        key: Key(collection.id),
-                        child: collection.imageUrl != null ?
-                        Stack(
-                          alignment: Alignment.center,
-                          children: <Widget>[
-                            ColorFiltered(
-                              colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
-                              ), BlendMode.srcATop),
-                              child: Image.network(
-                                collection.imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                                  return Icon(Icons.error_outline);
-                                },
-                              ),
-                            ),
-                            Container(
-                              width: 100.0,
-                              child: Text(
-                                collection.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.0,
-                                  backgroundColor: Colors.black.withOpacity(0.5),
-                                ),
-                                textAlign: TextAlign.center,
-                              )
-                            ),
-                          ],
-                        ) :
-                        Container(
-                          color: Colors.black.withOpacity(
-                            collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
-                          ),
-                          width: 100.0,
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Text(
-                              collection.name,
-                              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          collectionsViewModel.onTapCollection(collection.id);
-                        },
-                      );
-                    }).toList(),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Price',
+                    hintText: 'Price',
+                    errorText: productViewModel.errors['price'],
                   ),
+                  initialValue: productViewModel.product.price != null ? productViewModel.product.price.toString() : null,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) => productViewModel.setPrice(double.parse(value)),
+                  readOnly: productViewModel.isReadOnly(),
                 ),
-                priceField,
-                SizedBox(
-                  height: 24,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    child: productViewModel.detailHidden ? Text('More') : Text('Less'),
-                    onPressed: () => productViewModel.detailHidden = !productViewModel.detailHidden,
-                  ),
-                ),
+                productCollectionsField,
+                collectionsField,
+                // SizedBox(
+                //   height: 24,
+                // ),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: FlatButton(
+                //     child: productViewModel.detailHidden ? Text('More') : Text('Less'),
+                //     onPressed: () => productViewModel.detailHidden = !productViewModel.detailHidden,
+                //   ),
+                // ),
               ],
             ),
           ),
