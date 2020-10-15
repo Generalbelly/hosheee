@@ -4,28 +4,36 @@ import 'package:hosheee/domain/models/model.dart';
 class CollectionProduct implements Model {
 
   String id;
-  String imageUrl;
-  String name;
+  String productImageUrl;
+  String productName;
+  String collectionImageUrl;
+  String collectionName;
   String productId;
   String collectionId;
   Timestamp createdAt;
   Timestamp updatedAt;
 
   CollectionProduct(this.id, {
-    String name,
-    String imageUrl,
+    String productName,
+    String productImageUrl,
+    String collectionName,
+    String collectionImageUrl,
     String productId,
     String collectionId,
   }):
-      this.name = name,
-      this.imageUrl = imageUrl,
+      this.productName = productName,
+      this.productImageUrl = productImageUrl,
+      this.collectionName = collectionName,
+      this.collectionImageUrl = collectionImageUrl,
       this.productId = productId,
       this.collectionId = collectionId;
 
   CollectionProduct.fromMap(Map<String, dynamic> data)
     : id = data['id'],
-      imageUrl = data['imageUrl'],
-      name = data['name'],
+      productImageUrl = data['productImageUrl'],
+      productName = data['productName'],
+      collectionImageUrl = data['collectionImageUrl'],
+      collectionName = data['collectionName'],
       productId = data['productId'],
       collectionId = data['collectionId'],
       createdAt = data['createdAt'],
@@ -34,8 +42,10 @@ class CollectionProduct implements Model {
   Map<String, dynamic> toMap() =>
     {
       'id': id,
-      'name': name,
-      'imageUrl': imageUrl,
+      'productName': productName,
+      'productImageUrl': productImageUrl,
+      'collectionName': collectionName,
+      'collectionImageUrl': collectionImageUrl,
       'productId': productId,
       'collectionId': collectionId,
       'createdAt': createdAt,

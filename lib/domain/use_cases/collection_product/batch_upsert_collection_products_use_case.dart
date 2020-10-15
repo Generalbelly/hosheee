@@ -40,10 +40,10 @@ class BatchUpsertCollectionProductsUseCase {
       if (!(user is User)) {
         throw SignInRequiredException();
       }
-      await _collectionProductRepository.batchAdd(
+      await _collectionProductRepository.batchUpsert(
           user.id,
           request.collectionProducts.map((collectionProduct) {
-            collectionProduct.id = _collectionProductRepository.nextIdentity();
+            collectionProduct.id = _collectionProductRepository.nextIdentity(collectionProduct.collectionId, collectionProduct.productId);
             return collectionProduct;
           }).toList()
       );

@@ -64,7 +64,7 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
 
   List<CollectionProduct> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
-    return accumulatedResult[index];
+    return all().getRange(index, limit);
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<CollectionProduct>) cb) {
@@ -184,7 +184,7 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
 
   List<CollectionProduct> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
-    return accumulatedResult[index];
+    return all().getRange(index, limit);
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<CollectionProduct>) cb) {

@@ -41,6 +41,11 @@ class CollectionsView extends StatelessWidget {
       controller: collectionsViewModel.collectionsViewScrollController,
       slivers: <Widget>[
         SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+          ),
           delegate: SliverChildBuilderDelegate((c, i) {
             final collection = collectionsViewModel.collections[i];
             return GestureDetector(
@@ -50,29 +55,37 @@ class CollectionsView extends StatelessWidget {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Container(
-                    child: Image.network(
-                      collection.imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                        return Icon(Icons.error_outline);
-                      },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      child: Image.network(
+                        collection.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                          return Icon(Icons.error_outline);
+                        },
+                      ),
                     ),
                   ),
                   Container(
-                      child: Text(
-                        collection.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24.0,
-                          backgroundColor: Colors.black.withOpacity(0.5),
-                        ),
-                        textAlign: TextAlign.center,
-                      )
+                    padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                    child: Text(
+                      collection.name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.0,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    color: Colors.black.withOpacity(0.5),
                   ),
                 ],
               ) :
               Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                  borderRadius: BorderRadius.all(Radius.circular(20))
+                ),
                 alignment: Alignment.center,
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
@@ -88,10 +101,7 @@ class CollectionsView extends StatelessWidget {
               },
             );
           },
-            childCount: collectionsViewModel.collections.length,
-          ),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          childCount: collectionsViewModel.collections.length,
           ),
         ),
         SliverToBoxAdapter(

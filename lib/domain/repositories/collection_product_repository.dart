@@ -10,10 +10,10 @@ abstract class CollectionProductRepository {
 
   Future<void> add(String userId, CollectionProduct collectionProduct);
 
-  Future<void> batchAdd(String userId, List<CollectionProduct> collectionProducts);
+  Future<void> batchUpsert(String userId, List<CollectionProduct> collectionProducts);
 
   Future<void> batchDelete(String userId, List<CollectionProduct> collectionProducts);
 
-  String nextIdentity();
+  String nextIdentity(String collectionId, String productId);
 
 }

@@ -11,6 +11,8 @@ class ProductsViewModel extends ChangeNotifier {
 
   String message;
 
+  List<List<Product>> accumulatedResult = [];
+
   List<Product> products = [];
 
   ListProductsUseCase _listProductsUseCase;
@@ -45,17 +47,15 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
     _listProductsUseCase.handle(ListProductsUseCaseRequest(
       (response) {
+        print('ListProductsUseCaseCallback');
         message = response.message;
         requestStatusManager.ok();
-        for (var i = 0; i < response.products.length; i++) {
-          final index = response.startIndex+i;
-          if (products.length < index + 1) {
-            if (products.indexWhere((product) => product.id == response.products[i].id) == -1) {
-              products.add(response.products[i]);
-            }
-          } else {
-            products[response.startIndex+i] = response.products[i];
-          }
+        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        if (accumulatedResult.length > index) {
+          accumulatedResult[index] = response.products;
+          products = accumulatedResult.expand((ps) => ps).toList();
+        } else {
+          accumulatedResult.add(response.products);
         }
         notifyListeners();
       },
@@ -73,10 +73,16 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addCollectionProducts(Collection collection) async {
+  Future<void> saveCollectionProducts(Collection collection) async {
     final collectionProducts = selectedProductIds.map((selectedProductId) {
       final product = products.firstWhere((product) => product.id == selectedProductId, orElse: null);
-      return CollectionProduct(null, name: product.name, imageUrl: product.imageUrl, productId: product.id, collectionId: collection.id);
+      return CollectionProduct(null,
+          collectionName: collection.name,
+          collectionImageUrl: collection.imageUrl,
+          productName: product.name,
+          productImageUrl: product.imageUrl,
+          productId: product.id,
+          collectionId: collection.id);
     }).toList();
     message = null;
     final response = await _batchUpsertCollectionProductsUseCase.handle(

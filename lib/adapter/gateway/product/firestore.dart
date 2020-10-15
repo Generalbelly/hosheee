@@ -63,7 +63,7 @@ class ListProductsQueryManager extends QueryManager {
 
   List<Product> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
-    return all().getRange(startIndex, limit);
+    return all().getRange(index, limit);
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<Product>) cb) {

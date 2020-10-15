@@ -47,58 +47,65 @@ class CollectionProductsView extends StatelessWidget {
         //   child: actionBar,
         // ),
         SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+          ),
           delegate: SliverChildBuilderDelegate((c, i) {
             final collectionProduct = collectionProductsViewModel.collectionProducts[i];
             return GestureDetector(
-              child: collectionProduct.imageUrl != null
-                  ?
-              ColorFiltered(
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                  collectionProductsViewModel.selectedCollectionProductIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
-                ), BlendMode.srcATop),
-                child: Image.network(
-                  collectionProduct.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                    return Icon(Icons.error_outline);
-                  },
-                ),
-              )
-                  :
-              Container(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    collectionProduct.name,
-                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
+              child: collectionProduct.productImageUrl != null ?
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(
+                      collectionProductsViewModel.selectedCollectionProductIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
+                    ), BlendMode.srcATop),
+                    child: Image.network(
+                      collectionProduct.productImageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                        return Icon(Icons.error_outline);
+                      },
+                    ),
+                  ),
+                ) :
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                  ),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      collectionProduct.productName,
+                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
+                    ),
                   ),
                 ),
-              ),
-              onTap: () async {
-                if (!collectionProductsViewModel.isActionBarHidden) {
-                  collectionProductsViewModel.onTapProduct(collectionProduct.id);
-                } else {
-                  // すでにローカルにとってきてるデータをまずチェックする
-                  var product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
-                  if (product == null) {
-                    product = await productViewModel.get(collectionProduct.productId);
+                onTap: () async {
+                  if (!collectionProductsViewModel.isActionBarHidden) {
+                    collectionProductsViewModel.onTapProduct(collectionProduct.id);
+                  } else {
+                    // すでにローカルにとってきてるデータをまずチェックする
+                    var product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
+                    if (product == null) {
+                      product = await productViewModel.get(collectionProduct.productId);
+                    }
+                    productViewModel.product = product;
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                   }
-                  productViewModel.product = product;
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
+                },
+                onLongPress: () {
+                  if (collectionProductsViewModel.isActionBarHidden) {
+                    collectionProductsViewModel.isActionBarHidden = false;
+                  }
                 }
-              },
-              onLongPress: () {
-                if (collectionProductsViewModel.isActionBarHidden) {
-                  collectionProductsViewModel.isActionBarHidden = false;
-                }
-              }
             );
           },
             childCount: collectionProductsViewModel.collectionProducts.length,
-          ),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
           ),
         ),
         SliverToBoxAdapter(

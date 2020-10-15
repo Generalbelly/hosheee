@@ -40,41 +40,48 @@ class ProductsView extends StatelessWidget {
         controller: productsViewModel.scrollController,
         slivers: <Widget>[
           SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+            ),
             delegate: SliverChildBuilderDelegate((c, i) {
               final product = productsViewModel.products[i];
               return GestureDetector(
                 key: Key(product.id),
-                child: product.imageUrl != null
-                  ?
-                    Image.network(
+                child: product.imageUrl != null ?
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    child: Image.network(
                       product.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                         return Icon(Icons.error_outline);
                       },
-                    )
-                  :
-                    Container(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          product.name,
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
-                        ),
+                    ),
+                  ) :
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        product.name,
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
                       ),
                     ),
-                    onTap: () {
-                      productViewModel.product = product;
-                      collectionProductsViewModel.product = product;
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
-                    },
+                  ),
+                  onTap: () {
+                    productViewModel.product = product;
+                    collectionProductsViewModel.product = product;
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
+                  },
               );
             },
               childCount: productsViewModel.products.length,
-            ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
             ),
           ),
           SliverToBoxAdapter(

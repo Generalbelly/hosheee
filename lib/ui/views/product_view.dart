@@ -36,7 +36,7 @@ class ProductView extends StatelessWidget {
                 productViewModel.isEditing = true;
               } else {
                 await productViewModel.save();
-                await collectionsViewModel.addCollectionProducts(productViewModel.product);
+                await collectionsViewModel.saveCollectionProducts(productViewModel.product);
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
             },
@@ -90,23 +90,28 @@ class ProductView extends StatelessWidget {
           child: SizedBox.shrink(),
         );
 
-        Widget productCollectionsField;
+        Widget collectionProductsField;
         if (productViewModel.isReadOnly()) {
           if (collectionProductsViewModel.collectionProducts.length == 0) {
-            productCollectionsField = SizedBox.shrink();
+            collectionProductsField = SizedBox.shrink();
           } else {
-            productCollectionsField = Container(
+            collectionProductsField = Container(
               margin: EdgeInsets.symmetric(vertical: 20.0),
               height: 100.0,
-              child: ListView(
+              child: ListView.separated(
+                itemCount: collectionProductsViewModel.collectionProducts.length,
                 scrollDirection: Axis.horizontal,
-                children: collectionProductsViewModel.collectionProducts.map((collection) {
-                  if (collection.imageUrl != null) {
+                separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: 4,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  final collectionProduct = collectionProductsViewModel.collectionProducts[index];
+                  if (collectionProduct.productImageUrl != null) {
                     return Container(
-                        key: Key(collection.id),
+                        key: Key(collectionProduct.id),
                         width: 100.0,
                         child: Image.network(
-                          collection.imageUrl,
+                          collectionProduct.productImageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                             return Icon(Icons.error_outline);
@@ -115,26 +120,26 @@ class ProductView extends StatelessWidget {
                     );
                   }
                   return Container(
-                    key: Key(collection.id),
+                    key: Key(collectionProduct.id),
                     color: Colors.black.withOpacity(
-                      collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                      collectionsViewModel.selectedCollectionIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
                     ),
                     width: 100.0,
                     alignment: Alignment.center,
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        collection.name,
+                        collectionProduct.productName,
                         style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
                       ),
                     ),
                   );
-                }).toList(),
+                },
               )
             );
           }
         } else {
-          productCollectionsField = SizedBox.shrink();
+          collectionProductsField = SizedBox.shrink();
         }
 
         Widget collectionsField;
@@ -144,11 +149,15 @@ class ProductView extends StatelessWidget {
           collectionsField = Container(
             margin: EdgeInsets.symmetric(vertical: 20.0),
             height: 100.0,
-            child: ListView(
-              controller: collectionsViewModel.productViewScrollController,
-              scrollDirection: Axis.horizontal,
-              children: collectionsViewModel.collections.map((collection) {
-                return GestureDetector(
+            child: ListView.separated(
+                itemCount: collectionsViewModel.collections.length,
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: 4,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  final collection = collectionsViewModel.collections[index];
+                  return GestureDetector(
                   key: Key(collection.id),
                   child: collection.imageUrl != null ?
                   Stack(
@@ -158,33 +167,41 @@ class ProductView extends StatelessWidget {
                         colorFilter: ColorFilter.mode(Colors.black.withOpacity(
                           collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
                         ), BlendMode.srcATop),
-                        child: Image.network(
-                          collection.imageUrl,
-                          fit: BoxFit.cover,
-                          width: 100.0,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                            return Icon(Icons.error_outline);
-                          },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          child: Image.network(
+                            collection.imageUrl,
+                            fit: BoxFit.cover,
+                            width: 100.0,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                              return Icon(Icons.error_outline);
+                            },
+                          ),
                         ),
                       ),
                       Container(
-                          width: 100.0,
-                          child: Text(
-                            collection.name,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0,
-                              backgroundColor: Colors.black.withOpacity(0.5),
-                            ),
-                            textAlign: TextAlign.center,
-                          )
+                        padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                        width: 100.0,
+                        child: Text(
+                          collection.name,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.0,
+                            backgroundColor: Colors.black.withOpacity(0.5),
+                          ),
+                          textAlign: TextAlign.center,
+                        )
                       ),
                     ],
                   ) :
                   Container(
-                    color: Colors.black.withOpacity(
-                      collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(
+                        collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                      ),
+                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     width: 100.0,
                     alignment: Alignment.center,
@@ -200,9 +217,9 @@ class ProductView extends StatelessWidget {
                     collectionsViewModel.onTapCollection(collection.id);
                   },
                 );
-              }).toList(),
-            ),
-          );
+                }
+              ),
+            );
         }
 
         return ProgressModal(
@@ -275,7 +292,7 @@ class ProductView extends StatelessWidget {
                   onChanged: (value) => productViewModel.setPrice(double.parse(value)),
                   readOnly: productViewModel.isReadOnly(),
                 ),
-                productCollectionsField,
+                collectionProductsField,
                 collectionsField,
                 // SizedBox(
                 //   height: 24,

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hosheee/adapter/gateway/collection_product/firestore.dart';
 import 'package:hosheee/domain/models/collection_product.dart';
-import 'package:uuid/uuid.dart';
 import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
 
 class CollectionProductRepository implements i_collection_product_repository.CollectionProductRepository {
@@ -61,7 +60,7 @@ class CollectionProductRepository implements i_collection_product_repository.Col
     await doc.set(data);
   }
 
-  Future<void> batchAdd(String userId, List<CollectionProduct> collectionProducts) async {
+  Future<void> batchUpsert(String userId, List<CollectionProduct> collectionProducts) async {
     final batch = FirebaseFirestore.instance.batch();
     collectionProducts.forEach((collectionProduct) {
       final doc = FirebaseFirestore.instance.collection('users').doc(userId).collection('collection_products').doc(collectionProduct.id);
@@ -86,9 +85,8 @@ class CollectionProductRepository implements i_collection_product_repository.Col
     await batch.commit();
   }
 
-  String nextIdentity() {
-    var uuid = Uuid();
-    return uuid.v4();
+  String nextIdentity(String collectionId, String productId) {
+    return collectionId + '_' + productId;
   }
 
 }

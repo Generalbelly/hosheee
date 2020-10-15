@@ -12,11 +12,16 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   String message;
 
+  List<List<CollectionProduct>> accumulatedResult = [];
+
+  List<CollectionProduct> collectionProducts = [];
+
   Collection _collection;
   Collection get collection => _collection;
   set collection(Collection value) {
     _collection = value;
     collectionProducts = [];
+    selectedCollectionProductIds = [];
     listByCollectionId();
   }
 
@@ -25,10 +30,9 @@ class CollectionProductsViewModel extends ChangeNotifier {
   set product(Product value) {
     _product = value;
     collectionProducts = [];
+    selectedCollectionProductIds = [];
     listByProductId();
   }
-
-  List<CollectionProduct> collectionProducts = [];
 
   List<String> selectedCollectionProductIds = [];
 
@@ -74,15 +78,12 @@ class CollectionProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        for (var i = 0; i < response.collectionProducts.length; i++) {
-          final index = response.startIndex+i;
-          if (collectionProducts.length < index + 1) {
-            if (collectionProducts.indexWhere((collectionProduct) => collectionProduct.id == response.collectionProducts[i].id) == -1) {
-              collectionProducts.add(response.collectionProducts[i]);
-            }
-          } else {
-            collectionProducts[response.startIndex+i] = response.collectionProducts[i];
-          }
+        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        if (accumulatedResult.length > index) {
+          accumulatedResult[index] = response.collectionProducts;
+          collectionProducts = accumulatedResult.expand((ps) => ps).toList();
+        } else {
+          accumulatedResult.add(response.collectionProducts);
         }
         if (collectionProducts.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
@@ -95,7 +96,6 @@ class CollectionProductsViewModel extends ChangeNotifier {
   }
 
   void listByProductId() {
-    print('called');
     requestStatusManager.loading();
     message = null;
     notifyListeners();
@@ -104,24 +104,20 @@ class CollectionProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        for (var i = 0; i < response.collectionProducts.length; i++) {
-          final index = response.startIndex+i;
-          if (collectionProducts.length < index + 1) {
-            if (collectionProducts.indexWhere((collectionProduct) => collectionProduct.id == response.collectionProducts[i].id) == -1) {
-              collectionProducts.add(response.collectionProducts[i]);
-            }
-          } else {
-            collectionProducts[response.startIndex+i] = response.collectionProducts[i];
-          }
+        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        if (accumulatedResult.length > index) {
+          accumulatedResult[index] = response.collectionProducts;
+          collectionProducts = accumulatedResult.expand((ps) => ps).toList();
+        } else {
+          accumulatedResult.add(response.collectionProducts);
         }
-        print(collectionProducts);
         if (collectionProducts.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
         }
         notifyListeners();
       },
       startIndex: collectionProducts.length,
-      limit: 15,
+      limit: 20,
     ));
   }
 

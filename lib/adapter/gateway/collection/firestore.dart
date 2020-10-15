@@ -64,7 +64,7 @@ class ListCollectionsQueryManager extends QueryManager {
 
   List<Collection> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
-    return accumulatedResult[index];
+    return all().getRange(index, limit);
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<Collection>) cb) {

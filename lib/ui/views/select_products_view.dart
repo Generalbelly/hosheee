@@ -40,47 +40,56 @@ class SelectProductsView extends StatelessWidget {
         controller: productsViewModel.scrollController,
         slivers: <Widget>[
           SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+            ),
             delegate: SliverChildBuilderDelegate((c, i) {
               final product = productsViewModel.products[i];
               return GestureDetector(
                 key: Key(product.id),
-                child: product.imageUrl != null
-                  ? ColorFiltered(
-                  colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                      productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
-                  ), BlendMode.srcATop),
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                      return Icon(Icons.error_outline);
-                    },
-                  ),
-                )
-                  :
-                    Container(
+                child: product.imageUrl != null ?
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(Colors.black.withOpacity(
+                        productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
+                      ), BlendMode.srcATop),
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                          return Icon(Icons.error_outline);
+                        },
+                      ),
+                    ),
+                  ) :
+                  Container(
+                    decoration: BoxDecoration(
                       color: Colors.black.withOpacity(
                         productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
                       ),
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          product.name,
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
-                        ),
+                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        product.name,
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16.0),
                       ),
                     ),
-                    onTap: () {
-                      productsViewModel.onTapProduct(product.id);
-                    },
+                  ),
+                  onTap: () {
+                    productsViewModel.onTapProduct(product.id);
+                  },
               );
             },
               childCount: productsViewModel.products.length,
             ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
+
           ),
           SliverToBoxAdapter(
             child: productsViewModel.requestStatusManager.isLoading()
@@ -110,7 +119,7 @@ class SelectProductsView extends StatelessWidget {
           FlatButton(
             child: Text('Save'),
             onPressed: () async {
-              await productsViewModel.addCollectionProducts(collection);
+              await productsViewModel.saveCollectionProducts(collection);
               Navigator.pop(context);
             },
           ),
