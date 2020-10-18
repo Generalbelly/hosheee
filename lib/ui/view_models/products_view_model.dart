@@ -13,7 +13,9 @@ class ProductsViewModel extends ChangeNotifier {
 
   List<List<Product>> accumulatedResult = [];
 
-  List<Product> products = [];
+  List<Product> get products {
+    return accumulatedResult.expand((ps) => ps).toList();
+  }
 
   ListProductsUseCase _listProductsUseCase;
 
@@ -53,7 +55,6 @@ class ProductsViewModel extends ChangeNotifier {
         final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.products;
-          products = accumulatedResult.expand((ps) => ps).toList();
         } else {
           accumulatedResult.add(response.products);
         }

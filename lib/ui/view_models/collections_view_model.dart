@@ -13,7 +13,9 @@ class CollectionsViewModel extends ChangeNotifier {
 
   List<List<Collection>> accumulatedResult = [];
 
-  List<Collection> collections = [];
+  List<Collection> get collections {
+    return accumulatedResult.expand((ps) => ps).toList();
+  }
 
   ListCollectionsUseCase _listCollectionsUseCase;
 
@@ -62,7 +64,6 @@ class CollectionsViewModel extends ChangeNotifier {
         final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collections;
-          collections = accumulatedResult.expand((ps) => ps).toList();
         } else {
           accumulatedResult.add(response.collections);
         }

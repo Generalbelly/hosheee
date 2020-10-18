@@ -14,13 +14,15 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   List<List<CollectionProduct>> accumulatedResult = [];
 
-  List<CollectionProduct> collectionProducts = [];
+  List<CollectionProduct> get collectionProducts {
+    return accumulatedResult.expand((ps) => ps).toList();
+  }
 
   Collection _collection;
   Collection get collection => _collection;
   set collection(Collection value) {
     _collection = value;
-    collectionProducts = [];
+    accumulatedResult = [];
     selectedCollectionProductIds = [];
     listByCollectionId();
   }
@@ -29,7 +31,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
   Product get product => _product;
   set product(Product value) {
     _product = value;
-    collectionProducts = [];
+    accumulatedResult = [];
     selectedCollectionProductIds = [];
     listByProductId();
   }
@@ -81,7 +83,6 @@ class CollectionProductsViewModel extends ChangeNotifier {
         final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collectionProducts;
-          collectionProducts = accumulatedResult.expand((ps) => ps).toList();
         } else {
           accumulatedResult.add(response.collectionProducts);
         }
@@ -107,7 +108,6 @@ class CollectionProductsViewModel extends ChangeNotifier {
         final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collectionProducts;
-          collectionProducts = accumulatedResult.expand((ps) => ps).toList();
         } else {
           accumulatedResult.add(response.collectionProducts);
         }
