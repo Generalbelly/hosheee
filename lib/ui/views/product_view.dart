@@ -106,12 +106,12 @@ class ProductView extends StatelessWidget {
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   final collectionProduct = collectionProductsViewModel.collectionProducts[index];
-                  if (collectionProduct.productImageUrl != null) {
+                  if (collectionProduct.collectionImageUrl != null) {
                     return Container(
                         key: Key(collectionProduct.id),
                         width: 100.0,
                         child: Image.network(
-                          collectionProduct.productImageUrl,
+                          collectionProduct.collectionImageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                             return Icon(Icons.error_outline);
@@ -129,7 +129,7 @@ class ProductView extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        collectionProduct.productName,
+                        collectionProduct.collectionName,
                         style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
                       ),
                     ),

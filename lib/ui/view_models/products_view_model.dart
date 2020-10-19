@@ -52,7 +52,7 @@ class ProductsViewModel extends ChangeNotifier {
         print('ListProductsUseCaseCallback');
         message = response.message;
         requestStatusManager.ok();
-        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.products;
         } else {

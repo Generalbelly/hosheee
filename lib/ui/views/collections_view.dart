@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/collection.dart';
 import 'package:hosheee/ui/view_models/collection_view_model.dart';
@@ -34,6 +35,7 @@ class CollectionsView extends StatelessWidget {
     }
 
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
+    final productsViewModel = Provider.of<ProductsViewModel>(context, listen: false);
 
     final body = collectionsViewModel.collections.length > 0
         ?
@@ -96,6 +98,7 @@ class CollectionsView extends StatelessWidget {
                 ),
               ),
               onTap: () {
+                productsViewModel.selectedProductIds = [];
                 collectionProductsViewModel.collection = collection;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
               },
@@ -132,6 +135,7 @@ class CollectionsView extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
+                productsViewModel.selectedProductIds = [];
                 collectionViewModel.collection = Collection(null);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
               },

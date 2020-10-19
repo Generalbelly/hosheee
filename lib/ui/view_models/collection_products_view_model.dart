@@ -24,6 +24,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
     _collection = value;
     accumulatedResult = [];
     selectedCollectionProductIds = [];
+    notifyListeners();
     listByCollectionId();
   }
 
@@ -33,6 +34,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
     _product = value;
     accumulatedResult = [];
     selectedCollectionProductIds = [];
+    notifyListeners();
     listByProductId();
   }
 
@@ -80,7 +82,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collectionProducts;
         } else {
@@ -105,7 +107,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
       (response) {
         message = response.message;
         requestStatusManager.ok();
-        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collectionProducts;
         } else {

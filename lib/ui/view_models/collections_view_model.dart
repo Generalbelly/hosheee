@@ -61,7 +61,7 @@ class CollectionsViewModel extends ChangeNotifier {
           (response) {
         message = response.message;
         requestStatusManager.ok();
-        final index = response.startIndex == 0 ? 0 : response.startIndex / response.limit;
+        final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
         if (accumulatedResult.length > index) {
           accumulatedResult[index] = response.collections;
         } else {
@@ -80,10 +80,12 @@ class CollectionsViewModel extends ChangeNotifier {
     } else {
       selectedCollectionIds.remove(collectionId);
     }
+    print(selectedCollectionIds);
     notifyListeners();
   }
 
   Future<void> saveCollectionProducts(Product product) async {
+    print(selectedCollectionIds);
     final collectionProducts = selectedCollectionIds.map((selectedCollectionId) {
       final collection = collections.firstWhere((collection) => collection.id == selectedCollectionId, orElse: null);
       return CollectionProduct(null,

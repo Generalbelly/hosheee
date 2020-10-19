@@ -9,6 +9,8 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
     final resp = await callable.call(<String, dynamic>{
       'url': url,
     });
+    final data = resp.data;
+    data['url'] = url;
     return resp.data != null ? UrlMetadata.fromMap(resp.data) : null;
   }
 
