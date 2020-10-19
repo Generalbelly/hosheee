@@ -27,6 +27,7 @@ class CollectionProductsView extends StatelessWidget {
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
 
+    print(collectionProductsViewModel.message);
     if (collectionProductsViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, collectionProductsViewModel.message, (ctx) {
@@ -38,7 +39,7 @@ class CollectionProductsView extends StatelessWidget {
 
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
-    final scrollView = collectionProductsViewModel.collectionProducts.length > 0
+    final content = collectionProductsViewModel.collectionProducts.length > 0
         ?
     CustomScrollView(
       controller: collectionProductsViewModel.scrollController,
@@ -165,7 +166,7 @@ class CollectionProductsView extends StatelessWidget {
       body: ProgressModal(
         isLoading: collectionProductsViewModel.requestStatusManager.isLoading() &&
             collectionProductsViewModel.collectionProducts.length == 0,
-        child: scrollView,
+        child: content,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

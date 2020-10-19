@@ -84,12 +84,12 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
         var collectionProducts = _retrieveResult(resultIndex);
         snapshot.docChanges.forEach((docChange) {
           final incomingData = CollectionProduct.fromMap(docChange.doc.data());
-          // print("collectionProductId:${incomingProduct.id}");
-          // print("createdAt:${incomingProduct.createdAt}");
-          // print("updatedAt:${incomingProduct.updatedAt}");
-          // print("oldIndex:${docChange.oldIndex}");
-          // print("newIndex:${docChange.newIndex}");
-          // print("newIndex:${docChange.type}");
+          print("collectionProductId:${incomingData.id}");
+          print("createdAt:${incomingData.createdAt}");
+          print("updatedAt:${incomingData.updatedAt}");
+          print("oldIndex:${docChange.oldIndex}");
+          print("newIndex:${docChange.newIndex}");
+          print("newIndex:${docChange.type}");
           if (docChange.type == DocumentChangeType.added) {
             collectionProducts.insert(docChange.newIndex, incomingData);
           }
@@ -141,12 +141,12 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
   bool isSubsequentTo(QueryManager qm) {
     if (qm is ListByCollectionProductsByProductIdQueryManager) {
       return (
-          userId == qm.userId &&
-              productId == qm.productId &&
-              orderBy == qm.orderBy &&
-              descending == qm.descending &&
-              startIndex > qm.startIndex &&
-              limit == qm.limit
+        userId == qm.userId &&
+        productId == qm.productId &&
+        orderBy == qm.orderBy &&
+        descending == qm.descending &&
+        startIndex > qm.startIndex &&
+        limit == qm.limit
       );
     }
     return false;
@@ -155,12 +155,12 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
   bool isEqualTo(QueryManager qm) {
     if (qm is ListByCollectionProductsByProductIdQueryManager) {
       return (
-          userId == qm.userId &&
-              productId == qm.productId &&
-              orderBy == qm.orderBy &&
-              descending == qm.descending &&
-              startIndex == qm.startIndex &&
-              limit == qm.limit
+        userId == qm.userId &&
+        productId == qm.productId &&
+        orderBy == qm.orderBy &&
+        descending == qm.descending &&
+        startIndex == qm.startIndex &&
+        limit == qm.limit
       );
     }
     return false;
@@ -188,7 +188,11 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
 
   List<CollectionProduct> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
-    return all().getRange(index, limit);
+    final allItems = all();
+    if (allItems.length < limit) {
+      return allItems.getRange(index, allItems.length);
+    }
+    return allItems.getRange(index, limit);
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<CollectionProduct>) cb) {
