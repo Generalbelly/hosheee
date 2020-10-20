@@ -24,16 +24,7 @@ class CollectionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
-    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
-    if (collectionsViewModel.message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, collectionsViewModel.message, (ctx) {
-          Scaffold.of(ctx).hideCurrentSnackBar();
-        });
-        collectionsViewModel.message = null;
-      });
-    }
-
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: false);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
     final productsViewModel = Provider.of<ProductsViewModel>(context, listen: false);
 
@@ -142,10 +133,23 @@ class CollectionsView extends StatelessWidget {
             ),
           ],
         ),
-        body: ProgressModal(
-          isLoading: collectionsViewModel.requestStatusManager.isLoading() &&
-          collectionsViewModel.collections.length == 0,
-          child: body));
+        body: Builder(
+          builder: (BuildContext context) {
+            if (collectionsViewModel.message != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _showSnackBar(context, collectionsViewModel.message, (ctx) {
+                  Scaffold.of(ctx).hideCurrentSnackBar();
+                });
+                collectionsViewModel.message = null;
+              });
+            }
+            return ProgressModal(
+                isLoading: collectionsViewModel.requestStatusManager.isLoading() &&
+                    collectionsViewModel.collections.length == 0,
+                child: body);
+          },
+        )
+    );
   }
 }
 

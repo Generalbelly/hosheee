@@ -25,15 +25,6 @@ class SelectProductsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
-    if (productsViewModel.message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, productsViewModel.message, (ctx) {
-          Scaffold.of(ctx).hideCurrentSnackBar();
-        });
-        productsViewModel.message = null;
-      });
-    }
-
     final body = productsViewModel.products.length > 0
       ?
       CustomScrollView(
@@ -125,10 +116,24 @@ class SelectProductsView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(
-        isLoading: productsViewModel.requestStatusManager.isLoading() &&
-        productsViewModel.products.length == 0,
-        child: body));
+      body: Builder(
+        builder: (BuildContext context) {
+          if (productsViewModel.message != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSnackBar(context, productsViewModel.message, (ctx) {
+                Scaffold.of(ctx).hideCurrentSnackBar();
+              });
+              productsViewModel.message = null;
+            });
+          }
+          return ProgressModal(
+            isLoading: productsViewModel.requestStatusManager.isLoading() &&
+            productsViewModel.products.length == 0,
+            child: body
+          );
+        },
+      ),
+    );
   }
 }
 

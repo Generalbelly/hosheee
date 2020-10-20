@@ -24,19 +24,10 @@ class ProductsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
-    if (productsViewModel.message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, productsViewModel.message, (ctx) {
-          Scaffold.of(ctx).hideCurrentSnackBar();
-        });
-        productsViewModel.message = null;
-      });
-    }
-    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
-    final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
-
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: false);
+    final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
-    final body = productsViewModel.products.length > 0
+    final content = productsViewModel.products.length > 0
       ?
       CustomScrollView(
         controller: productsViewModel.scrollController,
@@ -122,10 +113,23 @@ class ProductsView extends StatelessWidget {
           ),
         ],
       ),
-      body: ProgressModal(
-        isLoading: productsViewModel.requestStatusManager.isLoading() &&
-        productsViewModel.products.length == 0,
-        child: body));
+      body: Builder(
+        builder: (BuildContext context) {
+          if (productsViewModel.message != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSnackBar(context, productsViewModel.message, (ctx) {
+                Scaffold.of(ctx).hideCurrentSnackBar();
+              });
+              productsViewModel.message = null;
+            });
+          }
+          return ProgressModal(
+              isLoading: productsViewModel.requestStatusManager.isLoading() &&
+                  productsViewModel.products.length == 0,
+              child: content);
+        },
+      )
+    );
   }
 }
 

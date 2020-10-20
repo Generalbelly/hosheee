@@ -27,16 +27,6 @@ class CollectionProductsView extends StatelessWidget {
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
 
-    print(collectionProductsViewModel.message);
-    if (collectionProductsViewModel.message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, collectionProductsViewModel.message, (ctx) {
-          Scaffold.of(ctx).hideCurrentSnackBar();
-        });
-        collectionProductsViewModel.message = null;
-      });
-    }
-
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
     final content = collectionProductsViewModel.collectionProducts.length > 0
@@ -163,10 +153,23 @@ class CollectionProductsView extends StatelessWidget {
                 ),
               ],
         ),
-      body: ProgressModal(
-        isLoading: collectionProductsViewModel.requestStatusManager.isLoading() &&
-            collectionProductsViewModel.collectionProducts.length == 0,
-        child: content,
+      body: Builder(
+        builder: (BuildContext context) {
+          print(collectionProductsViewModel.message);
+          if (collectionProductsViewModel.message != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSnackBar(context, collectionProductsViewModel.message, (ctx) {
+                Scaffold.of(ctx).hideCurrentSnackBar();
+              });
+              collectionProductsViewModel.message = null;
+            });
+          }
+          return ProgressModal(
+            isLoading: collectionProductsViewModel.requestStatusManager.isLoading() &&
+                collectionProductsViewModel.collectionProducts.length == 0,
+            child: content,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
