@@ -65,10 +65,12 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
   List<CollectionProduct> getRange(int startIndex, int limit) {
     final index = startIndex == 0 ? 0 : startIndex / limit;
     final allItems = all();
+    print(allItems);
+    print(allItems.length);
     if (allItems.length < limit) {
-      return allItems.getRange(index, allItems.length);
+      return allItems.getRange(index, allItems.length).toList();
     }
-    return allItems.getRange(index, limit);
+    return allItems.getRange(index, limit).toList();
   }
 
   Function(QuerySnapshot snapshot) createSnapshotHandler(Function(List<CollectionProduct>) cb) {
