@@ -33,70 +33,73 @@ class CollectionsView extends StatelessWidget {
     CustomScrollView(
       controller: collectionsViewModel.collectionsViewScrollController,
       slivers: <Widget>[
-        SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-          ),
-          delegate: SliverChildBuilderDelegate((c, i) {
-            final collection = collectionsViewModel.collections[i];
-            return GestureDetector(
-              key: Key(collection.id),
-              child: collection.imageUrl != null ?
-              Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Container(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      child: Image.network(
-                        collection.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                          return Icon(Icons.error_outline);
-                        },
+        SliverPadding(
+          padding: EdgeInsets.all(8),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+            ),
+            delegate: SliverChildBuilderDelegate((c, i) {
+              final collection = collectionsViewModel.collections[i];
+              return GestureDetector(
+                key: Key(collection.id),
+                child: collection.imageUrl != null ?
+                Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        child: Image.network(
+                          collection.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                            return Icon(Icons.error_outline);
+                          },
+                        ),
                       ),
                     ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                      child: Text(
+                        collection.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                  ],
+                ) :
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: Text(
                       collection.name,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24.0,
-                      ),
-                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
                     ),
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ],
-              ) :
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(20))
-                ),
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    collection.name,
-                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
                   ),
                 ),
-              ),
-              onTap: () {
-                productsViewModel.selectedProductIds = [];
-                collectionProductsViewModel.collection = collection;
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
-              },
-            );
-          },
-          childCount: collectionsViewModel.collections.length,
-          ),
+                onTap: () {
+                  productsViewModel.selectedProductIds = [];
+                  collectionProductsViewModel.collection = collection;
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
+                },
+              );
+            },
+              childCount: collectionsViewModel.collections.length,
+            ),
+          )
         ),
         SliverToBoxAdapter(
             child: collectionsViewModel.requestStatusManager.isLoading()

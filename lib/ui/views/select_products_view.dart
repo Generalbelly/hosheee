@@ -30,17 +30,19 @@ class SelectProductsView extends StatelessWidget {
       CustomScrollView(
         controller: productsViewModel.scrollController,
         slivers: <Widget>[
-          SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-            ),
-            delegate: SliverChildBuilderDelegate((c, i) {
-              final product = productsViewModel.products[i];
-              return GestureDetector(
-                key: Key(product.id),
-                child: product.imageUrl != null ?
+          SliverPadding(
+            padding: EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              delegate: SliverChildBuilderDelegate((c, i) {
+                final product = productsViewModel.products[i];
+                return GestureDetector(
+                  key: Key(product.id),
+                  child: product.imageUrl != null ?
                   ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: ColorFiltered(
@@ -58,11 +60,11 @@ class SelectProductsView extends StatelessWidget {
                   ) :
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(
-                        productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
-                      ),
-                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
+                        color: Colors.black.withOpacity(
+                          productsViewModel.selectedProductIds.indexOf(product.id) > -1 ? 0.3 : 0,
+                        ),
+                        border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     alignment: Alignment.center,
                     child: Padding(
@@ -76,11 +78,12 @@ class SelectProductsView extends StatelessWidget {
                   onTap: () {
                     productsViewModel.onTapProduct(product.id);
                   },
-              );
-            },
-              childCount: productsViewModel.products.length,
-            ),
+                );
+              },
+                childCount: productsViewModel.products.length,
+              ),
 
+            ),
           ),
           SliverToBoxAdapter(
             child: productsViewModel.requestStatusManager.isLoading()

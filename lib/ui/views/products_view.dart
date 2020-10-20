@@ -32,17 +32,19 @@ class ProductsView extends StatelessWidget {
       CustomScrollView(
         controller: productsViewModel.scrollController,
         slivers: <Widget>[
-          SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-            ),
-            delegate: SliverChildBuilderDelegate((c, i) {
-              final product = productsViewModel.products[i];
-              return GestureDetector(
-                key: Key(product.id),
-                child: product.imageUrl != null ?
+          SliverPadding(
+            padding: EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              delegate: SliverChildBuilderDelegate((c, i) {
+                final product = productsViewModel.products[i];
+                return GestureDetector(
+                  key: Key(product.id),
+                  child: product.imageUrl != null ?
                   ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: Image.network(
@@ -55,8 +57,8 @@ class ProductsView extends StatelessWidget {
                   ) :
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
+                        border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     alignment: Alignment.center,
                     child: Padding(
@@ -73,9 +75,10 @@ class ProductsView extends StatelessWidget {
                     collectionProductsViewModel.product = product;
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                   },
-              );
-            },
-              childCount: productsViewModel.products.length,
+                );
+              },
+                childCount: productsViewModel.products.length,
+              ),
             ),
           ),
           SliverToBoxAdapter(
