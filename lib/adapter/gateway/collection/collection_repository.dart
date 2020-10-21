@@ -22,11 +22,15 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
 
   void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, startIndex = 0, int limit = 0}) {
     final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
-    if (listQueryManager != null && pqc.isEqualTo(listQueryManager)) {
-      callback(listQueryManager.all());
-      return;
-    }
-    if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
+    if (listQueryManager != null) {
+      if (pqc.isEqualTo(listQueryManager)) {
+        callback(listQueryManager.getRange(startIndex, limit));
+        return;
+      }
+      if (pqc.isSubsequentTo(listQueryManager)) {
+        listQueryManager.startIndex = pqc.startIndex;
+      }
+    } else if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
       listQueryManager = pqc;
     }
     final query = listQueryManager.query();

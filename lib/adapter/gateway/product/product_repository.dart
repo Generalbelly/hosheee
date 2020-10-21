@@ -18,11 +18,15 @@ class ProductRepository implements i_product_repository.ProductRepository {
 
   void list(String userId, Function(List<Product>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListProductsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
-    if (listQueryManager != null && pqc.isEqualTo(listQueryManager)) {
-      callback(listQueryManager.getRange(startIndex, limit));
-      return;
-    }
-    if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
+    if (listQueryManager != null) {
+      if (pqc.isEqualTo(listQueryManager)) {
+        callback(listQueryManager.getRange(startIndex, limit));
+        return;
+      }
+      if (pqc.isSubsequentTo(listQueryManager)) {
+        listQueryManager.startIndex = pqc.startIndex;
+      }
+    } else if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
       listQueryManager = pqc;
     }
     final query = listQueryManager.query();

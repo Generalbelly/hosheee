@@ -63,7 +63,7 @@ class ListCollectionsQueryManager extends QueryManager {
   }
 
   List<Collection> getRange(int startIndex, int limit) {
-    final index = startIndex == 0 ? 0 : startIndex / limit;
+    final index = startIndex == 0 ? 0 : startIndex ~/ limit;
     return accumulatedResult[index];
   }
 
@@ -71,7 +71,8 @@ class ListCollectionsQueryManager extends QueryManager {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb([]);
+          _upsertResult(resultIndex, List<Collection>());
+          cb(accumulatedResult[resultIndex]);
           return;
         }
         if (lastVisible == null) {

@@ -69,7 +69,7 @@ class CollectionsViewModel extends ChangeNotifier {
         }
         notifyListeners();
       },
-      startIndex: collections.length,
+      startIndex: accumulatedResult.length == 0 ? 0 : (accumulatedResult.where((result) => result.length > 0).length * 20).toInt(),
       limit: 20,
     ));
   }

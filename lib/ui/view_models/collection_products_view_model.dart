@@ -93,8 +93,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
         }
         notifyListeners();
       },
-      startIndex: collectionProducts.length,
-      limit: 15,
+      startIndex: accumulatedResult.length == 0 ? 0 : (accumulatedResult.where((result) => result.length > 0).length * 20).toInt(),
+      limit: 20,
     ));
   }
 

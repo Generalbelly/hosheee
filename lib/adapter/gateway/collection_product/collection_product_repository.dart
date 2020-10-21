@@ -26,11 +26,15 @@ class CollectionProductRepository implements i_collection_product_repository.Col
 
   void listByCollectionId(String userId, String collectionId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListByCollectionProductsByCollectionIdQueryManager(userId, collectionId, orderBy, descending, startIndex, limit);
-    if (listCollectionProductsByCollectionIdQueryManager != null && pqc.isEqualTo(listCollectionProductsByCollectionIdQueryManager)) {
-      callback(listCollectionProductsByCollectionIdQueryManager.getRange(startIndex, limit));
-      return;
-    }
-    if (listCollectionProductsByCollectionIdQueryManager == null || !pqc.isSubsequentTo(listCollectionProductsByCollectionIdQueryManager)) {
+    if (listCollectionProductsByCollectionIdQueryManager != null) {
+      if (pqc.isEqualTo(listCollectionProductsByCollectionIdQueryManager)) {
+        callback(listCollectionProductsByCollectionIdQueryManager.getRange(startIndex, limit));
+        return;
+      }
+      if (pqc.isSubsequentTo(listCollectionProductsByCollectionIdQueryManager)) {
+        listCollectionProductsByCollectionIdQueryManager.startIndex = pqc.startIndex;
+      }
+    } else if (listCollectionProductsByCollectionIdQueryManager == null || !pqc.isSubsequentTo(listCollectionProductsByCollectionIdQueryManager)) {
       listCollectionProductsByCollectionIdQueryManager = pqc;
     }
     final query = listCollectionProductsByCollectionIdQueryManager.query();
@@ -41,11 +45,15 @@ class CollectionProductRepository implements i_collection_product_repository.Col
 
   void listByProductId(String userId, String productId, Function(List<CollectionProduct>) callback, {String orderBy = 'createdAt', bool descending = true, int startIndex = 0, int limit = 0}) {
     final pqc = ListByCollectionProductsByProductIdQueryManager(userId, productId, orderBy, descending, startIndex, limit);
-    if (listCollectionProductsByProductIdQueryManager != null && pqc.isEqualTo(listCollectionProductsByProductIdQueryManager)) {
-      callback(listCollectionProductsByProductIdQueryManager.getRange(startIndex, limit));
-      return;
-    }
-    if (listCollectionProductsByProductIdQueryManager == null || !pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
+    if (listCollectionProductsByProductIdQueryManager != null) {
+      if (pqc.isEqualTo(listCollectionProductsByProductIdQueryManager)) {
+        callback(listCollectionProductsByProductIdQueryManager.getRange(startIndex, limit));
+        return;
+      }
+      if (pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
+        listCollectionProductsByProductIdQueryManager.startIndex = pqc.startIndex;
+      }
+    } else if (listCollectionProductsByProductIdQueryManager == null || !pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
       listCollectionProductsByProductIdQueryManager = pqc;
     }
     final query = listCollectionProductsByProductIdQueryManager.query();

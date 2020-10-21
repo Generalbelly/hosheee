@@ -62,7 +62,7 @@ class ListProductsQueryManager extends QueryManager {
   }
 
   List<Product> getRange(int startIndex, int limit) {
-    final index = startIndex == 0 ? 0 : startIndex / limit;
+    final index = startIndex == 0 ? 0 : startIndex ~/ limit;
     return accumulatedResult[index];
   }
 
@@ -70,7 +70,8 @@ class ListProductsQueryManager extends QueryManager {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb([]);
+          _upsertResult(resultIndex, List<Product>());
+          cb(accumulatedResult[resultIndex]);
           return;
         }
         if (lastVisible == null) {
