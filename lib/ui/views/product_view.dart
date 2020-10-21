@@ -33,6 +33,7 @@ class ProductView extends StatelessWidget {
             child: productViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
             onPressed: () async {
               if (productViewModel.isReadOnly()) {
+                collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
                 productViewModel.isEditing = true;
               } else {
                 await productViewModel.save();
