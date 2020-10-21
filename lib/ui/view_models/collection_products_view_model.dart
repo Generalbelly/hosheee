@@ -21,21 +21,25 @@ class CollectionProductsViewModel extends ChangeNotifier {
   Collection _collection;
   Collection get collection => _collection;
   set collection(Collection value) {
+    if (_collection.id != value.id) {
+      accumulatedResult = [];
+      selectedCollectionProductIds = [];
+    }
     _collection = value;
-    accumulatedResult = [];
-    selectedCollectionProductIds = [];
-    notifyListeners();
     listByCollectionId();
+    notifyListeners();
   }
 
   Product _product;
   Product get product => _product;
   set product(Product value) {
+    if (_product.id != value.id) {
+      accumulatedResult = [];
+      selectedCollectionProductIds = [];
+    }
     _product = value;
-    accumulatedResult = [];
-    selectedCollectionProductIds = [];
-    notifyListeners();
     listByProductId();
+    notifyListeners();
   }
 
   List<String> selectedCollectionProductIds = [];

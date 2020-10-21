@@ -107,16 +107,35 @@ class ProductView extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   final collectionProduct = collectionProductsViewModel.collectionProducts[index];
                   if (collectionProduct.collectionImageUrl != null) {
-                    return Container(
-                        key: Key(collectionProduct.id),
-                        width: 100.0,
-                        child: Image.network(
-                          collectionProduct.collectionImageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                            return Icon(Icons.error_outline);
-                          },
-                        )
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        Container(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            child: Image.network(
+                              collectionProduct.collectionImageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                                return Icon(Icons.error_outline);
+                              },
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                          child: Text(
+                            collectionProduct.collectionName,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
                     );
                   }
                   return Container(
