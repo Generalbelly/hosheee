@@ -104,7 +104,7 @@ class SelectProductsView extends StatelessWidget {
       :
         Container(
           child: Center(
-            child: Text("No item saved yet."),
+            child: Text("No items saved yet."),
           ),
         );
     return Scaffold(
