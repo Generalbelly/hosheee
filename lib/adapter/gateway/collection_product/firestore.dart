@@ -80,12 +80,6 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
         var collectionProducts = _retrieveResult(resultIndex);
         snapshot.docChanges.forEach((docChange) {
           final incomingData = CollectionProduct.fromMap(docChange.doc.data());
-          print("collectionProductId:${incomingData.id}");
-          print("createdAt:${incomingData.createdAt}");
-          print("updatedAt:${incomingData.updatedAt}");
-          print("oldIndex:${docChange.oldIndex}");
-          print("newIndex:${docChange.newIndex}");
-          print("newIndex:${docChange.type}");
           if (docChange.type == DocumentChangeType.added) {
             collectionProducts.insert(docChange.newIndex, incomingData);
           }

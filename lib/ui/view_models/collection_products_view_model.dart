@@ -24,8 +24,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
     _collection = value;
     accumulatedResult = [];
     selectedCollectionProductIds = [];
-    listByCollectionId();
     notifyListeners();
+    listByCollectionId();
   }
 
   Product _product;
@@ -34,8 +34,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
     _product = value;
     accumulatedResult = [];
     selectedCollectionProductIds = [];
-    listByProductId();
     notifyListeners();
+    listByProductId();
   }
 
   List<String> selectedCollectionProductIds = [];
