@@ -49,7 +49,6 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
     _listProductsUseCase.handle(ListProductsUseCaseRequest(
       (response) {
-        print('ListProductsUseCaseCallback');
         message = response.message;
         requestStatusManager.ok();
         final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
