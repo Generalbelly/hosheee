@@ -117,6 +117,7 @@ class ProductView extends StatelessWidget {
                             child: Image.network(
                               collectionProduct.collectionImageUrl,
                               fit: BoxFit.cover,
+                              width: 100.0,
                               errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
                                 return Icon(Icons.error_outline);
                               },

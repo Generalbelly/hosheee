@@ -63,7 +63,7 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
   }
 
   List<CollectionProduct> getRange(int startIndex, int limit) {
-    final index = startIndex == 0 ? 0 : startIndex / limit;
+    final index = startIndex == 0 ? 0 : startIndex ~/ limit;
     return accumulatedResult[index];
   }
 
@@ -71,7 +71,8 @@ class ListByCollectionProductsByCollectionIdQueryManager extends QueryManager {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb([]);
+          _upsertResult(resultIndex, List<CollectionProduct>());
+          cb(accumulatedResult[resultIndex]);
           return;
         }
         if (lastVisible == null) {
@@ -177,7 +178,7 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
   }
 
   List<CollectionProduct> getRange(int startIndex, int limit) {
-    final index = startIndex == 0 ? 0 : startIndex / limit;
+    final index = startIndex == 0 ? 0 : startIndex ~/ limit;
     return accumulatedResult[index];
   }
 
@@ -185,7 +186,8 @@ class ListByCollectionProductsByProductIdQueryManager extends QueryManager {
     return (int resultIndex) {
       return (QuerySnapshot snapshot) {
         if (snapshot.docChanges.length == 0) {
-          cb([]);
+          _upsertResult(resultIndex, List<CollectionProduct>());
+          cb(accumulatedResult[resultIndex]);
           return;
         }
         if (lastVisible == null) {
