@@ -155,7 +155,6 @@ class CollectionProductsView extends StatelessWidget {
         ),
       body: Builder(
         builder: (BuildContext context) {
-          print(collectionProductsViewModel.message);
           if (collectionProductsViewModel.message != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, collectionProductsViewModel.message, (ctx) {

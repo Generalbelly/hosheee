@@ -80,12 +80,10 @@ class CollectionsViewModel extends ChangeNotifier {
     } else {
       selectedCollectionIds.remove(collectionId);
     }
-    print(selectedCollectionIds);
     notifyListeners();
   }
 
   Future<void> saveCollectionProducts(Product product) async {
-    print(selectedCollectionIds);
     final collectionProducts = selectedCollectionIds.map((selectedCollectionId) {
       final collection = collections.firstWhere((collection) => collection.id == selectedCollectionId, orElse: null);
       return CollectionProduct(null,
