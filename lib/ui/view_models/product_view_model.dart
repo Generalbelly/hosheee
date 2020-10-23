@@ -136,14 +136,14 @@ class ProductViewModel extends ChangeNotifier {
       message = response.message;
       final urlMetadata = response.urlMetadata;
       if (urlMetadata != null) {
-        _product.name = urlMetadata.title;
+        _product.name = urlMetadata.title ?? '';
         // _product.videoUrl = urlMetadata.video;
         // _product.title = urlMetadata.title;
         // _product.description = urlMetadata.description;
-        _product.note = urlMetadata.description;
-        _product.websiteUrl = urlMetadata.url;
-        _product.imageUrl = urlMetadata.image;
-        _product.provider = urlMetadata.publisher;
+        _product.note = urlMetadata.description ?? '';
+        _product.websiteUrl = urlMetadata.url ?? '';
+        _product.imageUrl = urlMetadata.image ?? '';
+        _product.provider = urlMetadata.publisher ?? '';
       }
       requestStatusManager.ok();
       notifyListeners();
