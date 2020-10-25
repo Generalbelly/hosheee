@@ -23,8 +23,6 @@ class CollectionsViewModel extends ChangeNotifier {
 
   ScrollController collectionsViewScrollController = ScrollController();
 
-  ScrollController productViewScrollController = ScrollController();
-
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
   List<String> selectedCollectionIds = [];
@@ -36,20 +34,18 @@ class CollectionsViewModel extends ChangeNotifier {
     _listCollectionsUseCase = listCollectionsUseCase;
     _batchUpsertCollectionProductsUseCase = batchUpsertCollectionProductsUseCase;
     collectionsViewScrollController.addListener(_collectionsViewScrollListener);
-    productViewScrollController.addListener(_productViewScrollListener);
     list();
+  }
+
+  @override
+  void dispose() {
+    collectionsViewScrollController.dispose();
+    super.dispose();
   }
 
   void _collectionsViewScrollListener() {
     if (collectionsViewScrollController.offset >= collectionsViewScrollController.position.maxScrollExtent &&
         !collectionsViewScrollController.position.outOfRange && !requestStatusManager.isLoading()) {
-      list();
-    }
-  }
-
-  void _productViewScrollListener() {
-    if (productViewScrollController.offset >= productViewScrollController.position.maxScrollExtent &&
-        !productViewScrollController.position.outOfRange && !requestStatusManager.isLoading()) {
       list();
     }
   }

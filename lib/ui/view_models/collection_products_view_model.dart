@@ -66,6 +66,13 @@ class CollectionProductsViewModel extends ChangeNotifier {
     scrollController.addListener(_scrollListener);
   }
 
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+
   void _scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {

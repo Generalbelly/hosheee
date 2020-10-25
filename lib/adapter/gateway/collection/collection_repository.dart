@@ -26,11 +26,12 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
       if (pqc.isEqualTo(listQueryManager)) {
         callback(listQueryManager.getRange(startIndex, limit));
         return;
-      }
-      if (pqc.isSubsequentTo(listQueryManager)) {
+      } else if (pqc.isSubsequentTo(listQueryManager)) {
         listQueryManager.startIndex = pqc.startIndex;
+      } else {
+        listQueryManager = pqc;
       }
-    } else if (listQueryManager == null || !pqc.isSubsequentTo(listQueryManager)) {
+    } else {
       listQueryManager = pqc;
     }
     final query = listQueryManager.query();
