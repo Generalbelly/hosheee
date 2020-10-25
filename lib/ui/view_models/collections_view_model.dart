@@ -21,7 +21,7 @@ class CollectionsViewModel extends ChangeNotifier {
 
   BatchUpsertCollectionProductsUseCase _batchUpsertCollectionProductsUseCase;
 
-  ScrollController collectionsViewScrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
@@ -33,19 +33,19 @@ class CollectionsViewModel extends ChangeNotifier {
   ) {
     _listCollectionsUseCase = listCollectionsUseCase;
     _batchUpsertCollectionProductsUseCase = batchUpsertCollectionProductsUseCase;
-    collectionsViewScrollController.addListener(_collectionsViewScrollListener);
+    scrollController.addListener(_scrollListener);
     list();
   }
 
   @override
   void dispose() {
-    collectionsViewScrollController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
-  void _collectionsViewScrollListener() {
-    if (collectionsViewScrollController.offset >= collectionsViewScrollController.position.maxScrollExtent &&
-        !collectionsViewScrollController.position.outOfRange && !requestStatusManager.isLoading()) {
+  void _scrollListener() {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange && !requestStatusManager.isLoading()) {
       list();
     }
   }
