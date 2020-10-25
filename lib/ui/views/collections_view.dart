@@ -31,7 +31,7 @@ class CollectionsView extends StatelessWidget {
     final body = collectionsViewModel.collections.length > 0
         ?
     CustomScrollView(
-      controller: collectionsViewModel.collectionsViewScrollController,
+      controller: collectionsViewModel.scrollController,
       slivers: <Widget>[
         SliverPadding(
           padding: EdgeInsets.all(8),
