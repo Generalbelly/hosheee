@@ -50,6 +50,7 @@ class ProductsViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _bannerAd?.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
