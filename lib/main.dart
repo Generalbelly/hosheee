@@ -1,4 +1,6 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:hosheee/ad_manager.dart';
 import 'package:hosheee/adapter/gateway/collection_product/collection_product_repository.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
@@ -49,6 +51,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Provider.debugCheckInvalidValueType = null;
   await Firebase.initializeApp();
+  await FirebaseAdMob.instance.initialize(appId: AdManager.appId);
   runApp(App());
 }
 

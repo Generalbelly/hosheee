@@ -1,3 +1,5 @@
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:hosheee/ad_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
@@ -27,6 +29,8 @@ class ProductsViewModel extends ChangeNotifier {
 
   List<String> selectedProductIds = [];
 
+  BannerAd _bannerAd;
+
   ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
     BatchUpsertCollectionProductsUseCase batchUpsertCollectionProductsUseCase,
@@ -35,6 +39,24 @@ class ProductsViewModel extends ChangeNotifier {
     _batchUpsertCollectionProductsUseCase = batchUpsertCollectionProductsUseCase;
     scrollController.addListener(_scrollListener);
     list();
+
+    _bannerAd = BannerAd(
+      adUnitId: AdManager.bannerAdUnitId,
+      size: AdSize.banner,
+    );
+    _loadBannerAd();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd
+      ..load()
+      ..show(anchorType: AnchorType.bottom);
   }
 
   void _scrollListener() {
