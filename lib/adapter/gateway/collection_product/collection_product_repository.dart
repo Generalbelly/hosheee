@@ -50,11 +50,12 @@ class CollectionProductRepository implements i_collection_product_repository.Col
       if (pqc.isEqualTo(listCollectionProductsByProductIdQueryManager)) {
         callback(listCollectionProductsByProductIdQueryManager.getRange(startIndex, limit));
         return;
-      }
-      if (pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
+      } else if (pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
         listCollectionProductsByProductIdQueryManager.startIndex = pqc.startIndex;
+      } else {
+        listCollectionProductsByProductIdQueryManager = pqc;
       }
-    } else if (listCollectionProductsByProductIdQueryManager == null || !pqc.isSubsequentTo(listCollectionProductsByProductIdQueryManager)) {
+    } else {
       listCollectionProductsByProductIdQueryManager = pqc;
     }
     final query = listCollectionProductsByProductIdQueryManager.query();
