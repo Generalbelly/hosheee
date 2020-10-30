@@ -1,49 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hosheee/adapter/gateway/collection/firestore.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import 'package:wish_list/domain/models/collection.dart';
-import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
 
 class CollectionRepository implements i_collection_repository.CollectionRepository {
 
-  DocumentSnapshot _lastVisible;
-  String _lastSearchQuery;
-  String _lastOrderBy;
-  bool _lastDescending;
+  ListCollectionsQueryManager _listQueryManager;
+  ListCollectionsQueryManager get listQueryManager => _listQueryManager;
+  set listQueryManager(ListCollectionsQueryManager value) {
+    if (_listQueryManager != null) {
+      _listQueryManager.detachListeners();
+    }
+    _listQueryManager = value;
+  }
 
   CollectionReference getCollection(String userId) {
     return FirebaseFirestore.instance.collection('users').doc(userId).collection("collections");
   }
 
-  Future<List<Collection>> list(String userId, {String searchQuery, String orderBy = 'createdAt', bool descending = false, int limit = 0}) async {
-    if (_lastSearchQuery != searchQuery || _lastOrderBy != orderBy || _lastDescending != descending) {
-      _lastVisible = null;
-    }
-    Query query;
-    if (searchQuery != null) {
-      query = getCollection(userId)
-          .orderBy(orderBy, descending: descending)
-          .startAt([searchQuery])
-          .endAt(['$searchQuery\uf8ff']);
+  void list(String userId, Function(List<Collection>) callback, {String searchQuery, String orderBy = 'createdAt', bool descending = true, startIndex = 0, int limit = 0}) {
+    final pqc = ListCollectionsQueryManager(userId, searchQuery, orderBy, descending, startIndex, limit);
+    if (listQueryManager != null) {
+      if (pqc.isEqualTo(listQueryManager)) {
+        callback(listQueryManager.getRange(startIndex, limit));
+        return;
+      } else if (pqc.isSubsequentTo(listQueryManager)) {
+        listQueryManager.startIndex = pqc.startIndex;
+      } else {
+        listQueryManager = pqc;
+      }
     } else {
-      query = getCollection(userId).orderBy(orderBy, descending: descending);
+      listQueryManager = pqc;
     }
-    if (limit > 0) {
-      query = query.limit(limit);
-    }
-    if (_lastVisible != null) {
-      query = query.startAfter([_lastVisible]);
-    }
+    final query = listQueryManager.query();
 
-    final querySnapshot = await query.get();
-
-    _lastOrderBy = orderBy;
-    _lastDescending = descending;
-    _lastSearchQuery = searchQuery;
-
-    if (querySnapshot.docs.length == 0) return List<Collection>();
-    _lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-    return querySnapshot.docs.map((snapshot) => Collection.fromMap(snapshot.data())).toList();
+    final listener = query.snapshots().listen(listQueryManager.createSnapshotHandler(callback));
+    listQueryManager.attachListener(listener);
   }
 
   Future<Collection> get(String userId, String collectionId) async {
@@ -52,44 +46,26 @@ class CollectionRepository implements i_collection_repository.CollectionReposito
     return Collection.fromMap(snapshot.data());
   }
 
-  Future<Collection> add(String userId, Collection coll) {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        final coll = Collection.fromMap(event.data());
-        return coll;
-      });
-      var data = coll.toMap();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.set(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> add(String userId, Collection collection) async {
+    final doc = getCollection(userId).doc(collection.id);
+    var data = collection.toMap();
+    data['createdAt'] = FieldValue.serverTimestamp();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.set(data);
   }
 
-  Future<Collection> update(String userId, Collection coll) async {
-    return Future(() async {
-      final doc = getCollection(userId).doc();
-      StreamSubscription streamSubscription;
-      streamSubscription = doc.snapshots().listen((event) {
-        streamSubscription.cancel();
-        return Collection.fromMap(event.data());
-      });
-      var data = coll.toMap();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      await doc.update(data);
-    }).timeout(Duration(seconds: 30), onTimeout: () {
-      return null;
-    });
+  Future<void> update(String userId, Collection collection) async {
+    final doc = getCollection(userId).doc(collection.id);
+    var data = collection.toMap();
+    data.removeWhere((key, value) => key == "createdAt");
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await doc.update(data);
   }
 
-  Future<Collection> delete(String userId, Collection coll) async {
-    await getCollection(userId).doc().delete();
-    return coll;
+  Future<void> delete(String userId, Collection collection) async {
+    await getCollection(userId).doc(collection.id).delete();
   }
+
 
   String nextIdentity() {
     var uuid = Uuid();

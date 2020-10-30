@@ -1,10 +1,9 @@
-import 'dart:async';
-import 'package:wish_list/domain/models/auth.dart';
-import 'package:wish_list/domain/models/product.dart';
-import 'package:wish_list/domain/models/exceptions/sign_in_required_exception.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/repositories/product_repository.dart';
-import 'package:wish_list/utils/helpers.dart';
+import 'package:hosheee/domain/models/auth.dart';
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/domain/models/exceptions/sign_in_required_exception.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/repositories/product_repository.dart';
+import 'package:hosheee/utils/helpers.dart';
 
 class AddProductUseCaseRequest {
   Product product;
@@ -19,10 +18,9 @@ class AddProductUseCaseRequest {
 }
 
 class AddProductUseCaseResponse {
-  Product product;
   String message;
 
-  AddProductUseCaseResponse(this.product, {String message})
+  AddProductUseCaseResponse({String message})
     : this.message = message;
 }
 
@@ -37,19 +35,20 @@ class AddProductUseCase {
   Future<AddProductUseCaseResponse> handle(AddProductUseCaseRequest request) async {
     try {
       final user = await _auth.user();
-      if (user is User) {
-        final product = await _productRepository.add(
-            user.id,
-            Product(_productRepository.nextIdentity(), request.product.name)
-        );
-        return AddProductUseCaseResponse(product);
+      if (!(user is User)) {
+        throw SignInRequiredException();
       }
-      throw SignInRequiredException();
+      request.product.id = _productRepository.nextIdentity();
+      await _productRepository.add(
+          user.id,
+          request.product
+      );
+      return AddProductUseCaseResponse();
     } catch (e) {
       logger().error(e.toString(), {
         'request': request.toMap(),
       });
-      return AddProductUseCaseResponse(null, message: e.toString());
+      return AddProductUseCaseResponse(message: e.toString());
     }
   }
 

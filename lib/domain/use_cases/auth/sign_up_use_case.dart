@@ -1,5 +1,5 @@
-import 'package:wish_list/domain/models/auth.dart';
-import 'package:wish_list/utils/helpers.dart';
+import 'package:hosheee/domain/models/auth.dart';
+import 'package:hosheee/utils/helpers.dart';
 
 class SignUpUseCaseRequest {
   String email;

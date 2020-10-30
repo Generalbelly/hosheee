@@ -11,14 +11,14 @@ class UrlMetadata {
 
   UrlMetadata.fromMap(Map<dynamic, dynamic> data)
     :
-      lang = data['lang'] ?? '',
-      author = data['author'] ?? '',
-      title = data['title'] ?? '',
-      publisher = data['publisher'] ?? '',
-      image = data['image'] ?? '',
-      description = data['description'] ?? '',
-      logo = data['logo'] ?? '',
-      url = data['url'] ?? '',
-      video = data['video'] ?? '';
+      lang = data['lang'],
+      author = data['author'],
+      title = data['title'],
+      publisher = data['publisher'],
+      image = data['image'],
+      description = data['description'],
+      logo = data['logo'],
+      url = data['url'],
+      video = data['video'];
 
 }

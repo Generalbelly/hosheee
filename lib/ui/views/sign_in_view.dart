@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
+import 'package:hosheee/ui/views/progress_modal.dart';
 
 class SignInView extends StatelessWidget {
 
@@ -32,25 +33,27 @@ class SignInView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, signInViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
-                signInViewModel.message = null;
               });
+              signInViewModel.message = null;
             });
           }
-          return Center(
+          return ProgressModal(isLoading: signInViewModel.requestStatusManager.isLoading(), child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(35.0),
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'wish',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headline1,
+                  Padding(
+                    padding: EdgeInsets.only(top: 72.0),
+                    child: SizedBox(
+                      height: 100,
+                      child: Image.asset("assets/images/logo.png")
+                    ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Email',
                       hintText: 'Email',
                       errorText: signInViewModel.emailErrorMessage,
                     ),
@@ -58,6 +61,7 @@ class SignInView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password',
                       hintText: 'Password',
                       errorText: signInViewModel.passwordErrorMessage,
                     ),
@@ -87,8 +91,8 @@ class SignInView extends StatelessWidget {
                 ],
               ),
             ),
-          );
-        },
+          ));
+        }
       )
     );
   }

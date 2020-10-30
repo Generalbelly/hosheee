@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
+import 'package:hosheee/ui/views/progress_modal.dart';
 
 class SignUpView extends StatelessWidget {
 
@@ -32,22 +33,27 @@ class SignUpView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, signUpViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
-                signUpViewModel.message = null;
               });
+              signUpViewModel.message = null;
             });
           }
-          return Center(
+          return ProgressModal(isLoading: signUpViewModel.requestStatusManager.isLoading(), child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(35.0),
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'wish',
-                    style: Theme.of(context).textTheme.headline1,
+                  Padding(
+                    padding: EdgeInsets.only(top: 72.0),
+                    child: SizedBox(
+                      height: 100,
+                      child: Image.asset("assets/images/logo.png")
+                    ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Email',
                       hintText: 'Email',
                       errorText: signUpViewModel.emailErrorMessage,
                     ),
@@ -55,6 +61,7 @@ class SignUpView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password',
                       hintText: 'Password',
                       errorText: signUpViewModel.passwordErrorMessage,
                     ),
@@ -63,6 +70,7 @@ class SignUpView extends StatelessWidget {
                   ),
                   TextFormField(
                     decoration: InputDecoration(
+                      labelText: 'Password Confirmation',
                       hintText: 'Password Confirmation',
                     ),
                     onChanged: (value) => signUpViewModel.passwordConfirmation = value,
@@ -91,7 +99,7 @@ class SignUpView extends StatelessWidget {
                 ],
               ),
             ),
-          );
+          ));
         },
       )
     );

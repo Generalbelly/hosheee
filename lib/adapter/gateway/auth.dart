@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:wish_list/domain/models/auth.dart' as i_auth;
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/models/exceptions/auth_exception.dart' as auth_exception;
+import 'package:hosheee/domain/models/auth.dart' as i_auth;
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/models/exceptions/auth_exception.dart' as auth_exception;
 
 class Auth implements i_auth.Auth {
 
@@ -42,8 +42,7 @@ class Auth implements i_auth.Auth {
           message = 'The email is not valid.';
           break;
         case 'ERROR_WEAK_PASSWORD':
-          message =
-          'The password is not strong enough. It should be at least 6 characters.';
+          message = 'The password is not strong enough. It should be at least 6 characters.';
           break;
         case 'ERROR_EMAIL_ALREADY_IN_USE':
           message = 'The email is already registered';
@@ -53,7 +52,6 @@ class Auth implements i_auth.Auth {
           break;
         case 'ERROR_USER_NOT_FOUND':
           message = 'We could not find an account with the email.';
-          print(message);
           break;
         case 'ERROR_USER_DISABLED':
           message = 'User with the email has been disabled.';
@@ -89,7 +87,7 @@ class Auth implements i_auth.Auth {
     return firebaseUser != null ? _createUserFrom(firebaseUser) : null;
   }
 
-  StreamSubscription onAuthStateChanged(Function callback) {
+  StreamSubscription onAuthStateChanged(Function(User) callback) {
     return _auth.authStateChanges().listen((firebase_auth.User firebaseUser) {
       var user;
       if (firebaseUser != null) {

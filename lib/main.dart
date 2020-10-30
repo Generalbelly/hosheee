@@ -1,41 +1,57 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:hosheee/ad_manager.dart';
+import 'package:hosheee/adapter/gateway/collection_product/collection_product_repository.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_product_id_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:wish_list/adapter/gateway/auth.dart';
-import 'package:wish_list/adapter/gateway/collection/collection_repository.dart';
-import 'package:wish_list/adapter/gateway/product/product_repository.dart';
-import 'package:wish_list/adapter/gateway/url_metadata/url_metadata_repository.dart';
-import 'package:wish_list/domain/use_cases/product/add_product_use_case.dart';
-import 'package:wish_list/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
-import 'package:wish_list/ui/view_models/collection_view_model.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
-import 'package:wish_list/ui/view_models/product_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_in_view_model.dart';
-import 'package:wish_list/ui/view_models/sign_up_view_model.dart';
-import 'package:wish_list/common/theme.dart';
-import 'package:wish_list/domain/models/auth.dart' as i_auth;
-import 'package:wish_list/domain/use_cases/collection/list_collections_use_case.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_in_use_case.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
-import 'package:wish_list/domain/repositories/collection_repository.dart' as i_collection_repository;
-import 'package:wish_list/domain/repositories/product_repository.dart' as i_product_repository;
-import 'package:wish_list/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
-import 'package:wish_list/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:wish_list/ui/views/create_collection_view.dart';
-import 'package:wish_list/ui/views/create_product_view.dart';
-import 'package:wish_list/ui/views/home_view.dart';
-import 'package:wish_list/ui/views/sign_up_view.dart';
-import 'package:wish_list/ui/views/sign_in_view.dart';
+import 'package:hosheee/adapter/gateway/auth.dart';
+import 'package:hosheee/adapter/gateway/collection/collection_repository.dart';
+import 'package:hosheee/adapter/gateway/product/product_repository.dart';
+import 'package:hosheee/adapter/gateway/url_metadata/url_metadata_repository.dart';
+import 'package:hosheee/domain/use_cases/collection/delete_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/collection/update_collection_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/add_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/delete_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
+import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
+import 'package:hosheee/ui/view_models/collection_view_model.dart';
+import 'package:hosheee/ui/view_models/collections_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/product_view_model.dart';
+import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
+import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
+import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
+import 'package:hosheee/common/theme.dart';
+import 'package:hosheee/domain/models/auth.dart' as i_auth;
+import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_in_use_case.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:hosheee/domain/repositories/collection_repository.dart' as i_collection_repository;
+import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
+import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
+import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
+import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
+import 'package:hosheee/ui/views/create_product_view.dart';
+import 'package:hosheee/ui/views/home_view.dart';
+import 'package:hosheee/ui/views/sign_up_view.dart';
+import 'package:hosheee/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
-  static const BUNDLE_ID_SUFFIX = String.fromEnvironment('BUNDLE_ID_SUFFIX');
-  static const APP_ENV = String.fromEnvironment('APP_ENV');
+  static const BUILD_ENV = String.fromEnvironment('BUILD_ENV');
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Provider.debugCheckInvalidValueType = null;
   await Firebase.initializeApp();
+  await FirebaseAdMob.instance.initialize(appId: AdManager.appId);
   runApp(App());
 }
 
@@ -63,14 +79,53 @@ class App extends StatelessWidget {
         Provider<i_url_metadata_repository.UrlMetadataRepository>(
           create: (_) => UrlMetadataRepository(),
         ),
-        Provider<ListCollectionsUseCase>(
-          create: (context) => ListCollectionsUseCase(
+        Provider<i_collection_product_repository.CollectionProductRepository>(
+          create: (_) => CollectionProductRepository(),
+        ),
+        Provider<ListProductsUseCase>(
+          create: (context) => ListProductsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
-              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionProductsByCollectionIdUseCase>(
+          create: (context) => ListCollectionProductsByCollectionIdUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionProductsByProductIdUseCase>(
+          create: (context) => ListCollectionProductsByProductIdUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<BatchUpsertCollectionProductsUseCase>(
+          create: (context) => BatchUpsertCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
           ),
         ),
         Provider<AddCollectionUseCase>(
           create: (context) => AddCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<UpdateCollectionUseCase>(
+          create: (context) => UpdateCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteCollectionUseCase>(
+          create: (context) => DeleteCollectionUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
+          ),
+        ),
+        Provider<ListCollectionsUseCase>(
+          create: (context) => ListCollectionsUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_collection_repository.CollectionRepository>(context, listen: false),
           ),
@@ -81,10 +136,40 @@ class App extends StatelessWidget {
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
+        Provider<UpdateProductUseCase>(
+          create: (context) => UpdateProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<DeleteProductUseCase>(
+          create: (context) => DeleteProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
+          ),
+        ),
         Provider<GetUrlMetadataUseCase>(
           create: (context) => GetUrlMetadataUseCase(
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_url_metadata_repository.UrlMetadataRepository>(context, listen: false),
+          ),
+        ),
+        Provider<BatchUpsertCollectionProductsUseCase>(
+          create: (context) => BatchUpsertCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<BatchDeleteCollectionProductsUseCase>(
+          create: (context) => BatchDeleteCollectionProductsUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_collection_product_repository.CollectionProductRepository>(context, listen: false),
+          ),
+        ),
+        Provider<GetProductUseCase>(
+          create: (context) => GetProductUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<SignInViewModel>(
@@ -95,20 +180,48 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<CollectionViewModel>(
           create: (context) => CollectionViewModel(
-              Provider.of<ListCollectionsUseCase>(context, listen: false),
-              Provider.of<AddCollectionUseCase>(context, listen: false)),
+              Provider.of<AddCollectionUseCase>(context, listen: false),
+              Provider.of<UpdateCollectionUseCase>(context, listen: false),
+              Provider.of<DeleteCollectionUseCase>(context, listen: false)
+          ),
         ),
         ChangeNotifierProvider<ProductViewModel>(
           create: (context) => ProductViewModel(
               Provider.of<AddProductUseCase>(context, listen: false),
-              Provider.of<GetUrlMetadataUseCase>(context, listen: false)),
+              Provider.of<UpdateProductUseCase>(context, listen: false),
+              Provider.of<DeleteProductUseCase>(context, listen: false),
+              Provider.of<GetUrlMetadataUseCase>(context, listen: false),
+              Provider.of<GetProductUseCase>(context, listen: false)
+          ),
+        ),
+        ChangeNotifierProvider<ProductsViewModel>(
+          create: (context) => ProductsViewModel(
+            Provider.of<ListProductsUseCase>(context, listen: false),
+            Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<CollectionProductsViewModel>(
+          create: (context) => CollectionProductsViewModel(
+            Provider.of<ListCollectionProductsByCollectionIdUseCase>(context, listen: false),
+            Provider.of<ListCollectionProductsByProductIdUseCase>(context, listen: false),
+            Provider.of<BatchDeleteCollectionProductsUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<CollectionsViewModel>(
+          create: (context) => CollectionsViewModel(
+            Provider.of<ListCollectionsUseCase>(context, listen: false),
+            Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider<HomeViewModel>(
-          create: (context) => HomeViewModel(Provider.of<i_auth.Auth>(context, listen: false)),
+          create: (context) => HomeViewModel(
+              Provider.of<i_auth.Auth>(context, listen: false),
+          ),
         ),
       ],
       child: MaterialApp(
-        title: 'wish',
+        debugShowCheckedModeBanner: false,
+        title: 'hosheee',
         theme: appTheme,
         initialRoute: '/',
         home: HomeView(),
@@ -119,16 +232,15 @@ class App extends StatelessWidget {
         },
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
-            case '/collections/create':
-              return MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) {
-                  return CreateCollectionView();
-                },
-              );
-              break;
+            default:
+              return MaterialPageRoute(builder: (_) {
+                return Scaffold(
+                  body: Center(
+                    child: Text('No route defined for ${settings.name}'),
+                  ),
+                );
+              });
           }
-          return null;
         },
       ),
     );

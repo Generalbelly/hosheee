@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish_list/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/views/progress_modal.dart';
 
 class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     final homeViewModel = Provider.of<HomeViewModel>(context);
-    if (!homeViewModel.isInitial() && homeViewModel.user == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacementNamed(context, '/sign-in');
-      });
-    }
     return Scaffold(
-      body: Center(
-        child: homeViewModel.contents.elementAt(homeViewModel.selectedIndex),
+      body: Builder(
+        builder: (BuildContext context) {
+          if (homeViewModel.requestStatusManager.isOk() && homeViewModel.user == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/sign-in');
+            });
+          }
+          return ProgressModal(
+            isLoading: homeViewModel.requestStatusManager.isLoading(),
+            child: Center(
+              child: IndexedStack(
+                index: homeViewModel.selectedIndex,
+                children: homeViewModel.contents,
+              ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

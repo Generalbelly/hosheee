@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:wish_list/utils/validator.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
+import 'package:hosheee/ui/common/validator.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/domain/use_cases/auth/sign_up_use_case.dart';
 
 class SignUpViewModel extends ChangeNotifier {
 
@@ -20,6 +21,8 @@ class SignUpViewModel extends ChangeNotifier {
   User user;
 
   SignUpUseCase _signUpUseCase;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
 
   SignUpViewModel(this._signUpUseCase);
 
@@ -72,16 +75,18 @@ class SignUpViewModel extends ChangeNotifier {
   submit() async {
     final emailValid = validateEmail();
     final passwordValid = validatePassword();
-    user = null;
-    message = null;
-    if (emailValid && passwordValid) {
+    if (emailValid && passwordValid && !requestStatusManager.isLoading()) {
+      user = null;
+      message = null;
+      requestStatusManager.loading();
       resetErrorMessages();
       final signUpUseCaseResponse = await _signUpUseCase.handle(
           SignUpUseCaseRequest(_email, _password));
       user = signUpUseCaseResponse.user;
       message = signUpUseCaseResponse.message;
+      requestStatusManager.ok();
+      notifyListeners();
     }
-    notifyListeners();
   }
 
 }

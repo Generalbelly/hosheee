@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wish_list/domain/models/auth.dart';
-import 'package:wish_list/domain/models/user.dart';
-import 'package:wish_list/ui/mixins/request_status_manager.dart';
-import 'package:wish_list/ui/views/collections_view.dart';
-import 'package:wish_list/ui/views/recent_view.dart';
+import 'package:hosheee/domain/models/auth.dart';
+import 'package:hosheee/domain/models/collection.dart';
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/domain/models/user.dart';
+import 'package:hosheee/ui/common/request_status_manager.dart';
+import 'package:hosheee/ui/views/collections_view.dart';
+import 'package:hosheee/ui/views/products_view.dart';
 
-class HomeViewModel extends ChangeNotifier with RequestStatusManager {
+class HomeViewModel extends ChangeNotifier {
 
+  List<Widget> contents = [];
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
   set selectedIndex(int value) {
@@ -16,30 +19,34 @@ class HomeViewModel extends ChangeNotifier with RequestStatusManager {
   }
 
   Auth _auth;
-
   User user;
+  List<Product> products = [];
+  List<Collection> collections = [];
 
-  HomeViewModel(Auth auth) {
+  String message;
+
+  RequestStatusManager requestStatusManager = RequestStatusManager();
+
+  HomeViewModel(
+    Auth auth,
+  ) {
     _auth = auth;
     _auth.onAuthStateChanged(_handleAuthChange);
   }
 
-  void _handleAuthChange(dynamic u) {
-    user = u;
-    if (user != null) {
-      print(user.email);
-      print("authenticated");
-    } else {
-      print("not authenticated");
+  void _handleAuthChange(User u) {
+    requestStatusManager.ok();
+    if (user == null && u != null) { // sign-in, sign-up時
+      contents = <Widget>[
+        ProductsView(),
+        CollectionsView(),
+      ];
+      user = u;
+    } else if (user != null && u == null) { // sign-out時
+      user = u;
     }
-    ok();
     notifyListeners();
   }
-
-  final List<Widget> contents = <Widget>[
-    RecentView(),
-    CollectionsView(),
-  ];
 
 }
 
