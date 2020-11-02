@@ -57,7 +57,7 @@ class ProductsViewModel extends ChangeNotifier {
   void _loadBannerAd() {
     _bannerAd
       ..load()
-      ..show(anchorType: AnchorType.bottom);
+      ..show(anchorType: AnchorType.bottom, anchorOffset: 75);
   }
 
   void _scrollListener() {
