@@ -31,11 +31,11 @@ class HomeView extends StatelessWidget {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            title: Text('Recent'),
+            label: 'Recent',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.apps),
-            title: Text('Folders'),
+            label: 'Folders',
           ),
         ],
         currentIndex: homeViewModel.selectedIndex,

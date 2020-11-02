@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:hosheee/domain/models/collection_product.dart';
-import 'package:hosheee/domain/models/product.dart';
 
 abstract class CollectionProductRepository {
 

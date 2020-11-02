@@ -1,10 +1,8 @@
 import 'package:hosheee/domain/models/auth.dart';
 import 'package:hosheee/domain/models/collection_product.dart';
-import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/models/exceptions/sign_in_required_exception.dart';
 import 'package:hosheee/domain/models/user.dart';
 import 'package:hosheee/domain/repositories/collection_product_repository.dart';
-import 'package:hosheee/domain/repositories/product_repository.dart';
 import 'package:hosheee/utils/helpers.dart';
 
 class ListCollectionProductsByCollectionIdUseCaseRequest {
