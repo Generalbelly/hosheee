@@ -21,7 +21,7 @@ class CollectionView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Item'),
+        title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Folder'),
         actions: <Widget>[
           FlatButton(
             child: collectionViewModel.isReadOnly() ? Text('Edit') : Text('Save'),

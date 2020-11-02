@@ -35,7 +35,7 @@ class HomeView extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.apps),
-            title: Text('Collections'),
+            title: Text('Folders'),
           ),
         ],
         currentIndex: homeViewModel.selectedIndex,
