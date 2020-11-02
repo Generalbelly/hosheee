@@ -10,9 +10,21 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
       'url': url,
     });
     if (resp.data != null) {
-      final data = resp.data;
+      var data = resp.data;
+      var fetchUrlMetadataUsingPuppeteerNeeded = data['image'] == null || data['title'] == null || data['description'] == null;
+      if (!fetchUrlMetadataUsingPuppeteerNeeded && data['image'] != null) {
+        RegExp exp = new RegExp(r"(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)");
+        fetchUrlMetadataUsingPuppeteerNeeded = !exp.hasMatch(data['image'].toString());
+      }
+      if (fetchUrlMetadataUsingPuppeteerNeeded) {
+        final callable = CloudFunctions(region: 'asia-northeast1').getHttpsCallable(functionName: 'fetchUrlMetadataUsingPuppeteer');
+        final resp = await callable.call(<String, dynamic>{
+          'url': url,
+        });
+        data = resp.data;
+      }
       data['url'] = url;
-      return UrlMetadata.fromMap(resp.data);
+      return UrlMetadata.fromMap(data);
     }
     return null;
   }
