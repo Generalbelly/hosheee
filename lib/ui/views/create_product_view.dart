@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
 import 'package:hosheee/ui/views/product_view.dart';
@@ -19,11 +20,12 @@ class CreateProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
+    final homeViewModel = Provider.of<HomeViewModel>(context);
 
     final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
       appBar: AppBar(
-        title: Text('New Product'),
+        title: Text('New Item'),
         actions: <Widget>[
           FlatButton(
             child: Text('Skip'),
@@ -44,59 +46,62 @@ class CreateProductView extends StatelessWidget {
           });
         }
         return ProgressModal(
-          isLoading: productViewModel.requestStatusManager.isLoading(),
-          child: Center(
-          child: Container(
-            padding: EdgeInsets.all(24.0),
-            child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Website URL',
-                    hintText: 'Website URL',
-                    errorText: productViewModel.errors['websiteUrl'],
-                  ),
-                  initialValue: productViewModel.product.websiteUrl,
-                  onChanged: (value) => productViewModel.setWebsiteUrl(value),
-                  onEditingComplete: () async {
-                    if (await productViewModel.fillWithMetadata()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductView(),
-                        ),
-                      );
-                    }
-                  },
+            isLoading: productViewModel.requestStatusManager.isLoading(),
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Website URL',
+                        hintText: 'Website URL',
+                        errorText: productViewModel.errors['websiteUrl'],
+                      ),
+                      initialValue: productViewModel.product.websiteUrl,
+                      onChanged: (value) => productViewModel.setWebsiteUrl(value),
+                      onEditingComplete: () async {
+                        if (await productViewModel.fillWithMetadata()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductView(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FlatButton(
+                        color: nextButtonColor,
+                        child: Text('Next'),
+                        onPressed:  () async {
+                          if (await productViewModel.fillWithMetadata()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductView(),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 24,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: FlatButton(
-                    color: nextButtonColor,
-                    child: Text('Next'),
-                    onPressed:  () async {
-                      if (await productViewModel.fillWithMetadata()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductView(),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
+              ),
+            )
         );
       }),
-    );
+    ), onWillPop: () async {
+      await homeViewModel.showBannerAd();
+      return true;
+    });
   }
 }
 

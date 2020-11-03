@@ -1,3 +1,5 @@
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:hosheee/ad/ad_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hosheee/domain/models/auth.dart';
@@ -15,6 +17,11 @@ class HomeViewModel extends ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   set selectedIndex(int value) {
     _selectedIndex = value;
+    if (value == 0) {
+      showBannerAd();
+    } else {
+      hideBannerAd();
+    }
     notifyListeners();
   }
 
@@ -27,11 +34,44 @@ class HomeViewModel extends ChangeNotifier {
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
+  BannerAd _bannerAd;
+  bool isAdShown = false;
+
   HomeViewModel(
     Auth auth,
   ) {
     _auth = auth;
     _auth.onAuthStateChanged(_handleAuthChange);
+    showBannerAd();
+  }
+
+  @override
+  void dispose() {
+    hideBannerAd();
+    super.dispose();
+  }
+
+  Future<void> showBannerAd() async {
+    if (!isAdShown) {
+      if (_bannerAd == null) {
+        _bannerAd = BannerAd(
+          adUnitId: AdManager.bannerAdUnitId,
+          size: AdSize.banner,
+        );
+      }
+      _bannerAd
+        ..load()
+        ..show(anchorType: AnchorType.bottom, anchorOffset: 75);
+      isAdShown = true;
+    }
+  }
+
+  void hideBannerAd() async {
+    if (isAdShown) {
+      await _bannerAd.dispose();
+      _bannerAd = null;
+      isAdShown = false;
+    }
   }
 
   void _handleAuthChange(User u) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:hosheee/ui/view_models/collections_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
+import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';
@@ -27,6 +29,11 @@ class ProductsView extends StatelessWidget {
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: false);
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
+    final homeViewModel = Provider.of<HomeViewModel>(context, listen: false);
+    if (!homeViewModel.isAdShown) {
+      homeViewModel.showBannerAd();
+    }
+
     final content = productsViewModel.products.length > 0
       ?
       CustomScrollView(
@@ -70,10 +77,11 @@ class ProductsView extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
+                    homeViewModel.hideBannerAd();
                     collectionsViewModel.selectedCollectionIds = [];
                     productViewModel.product = product;
                     collectionProductsViewModel.product = product;
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(showAdWhenPop: true)));
                   },
                 );
               },
@@ -109,9 +117,13 @@ class ProductsView extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
+              homeViewModel.hideBannerAd();
               collectionsViewModel.selectedCollectionIds = [];
               productViewModel.product = Product(null);
-              Navigator.pushNamed(context, '/products/create');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateProductView()),
+              );
             },
           ),
         ],
