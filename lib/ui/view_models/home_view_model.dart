@@ -17,11 +17,6 @@ class HomeViewModel extends ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   set selectedIndex(int value) {
     _selectedIndex = value;
-    if (value == 0) {
-      showBannerAd();
-    } else {
-      hideBannerAd();
-    }
     notifyListeners();
   }
 
@@ -42,7 +37,6 @@ class HomeViewModel extends ChangeNotifier {
   ) {
     _auth = auth;
     _auth.onAuthStateChanged(_handleAuthChange);
-    showBannerAd();
   }
 
   @override
@@ -56,17 +50,22 @@ class HomeViewModel extends ChangeNotifier {
       if (_bannerAd == null) {
         _bannerAd = BannerAd(
           adUnitId: AdManager.bannerAdUnitId,
-          size: AdSize.banner,
+          size: AdSize.fullBanner,
         );
       }
       _bannerAd
         ..load()
-        ..show(anchorType: AnchorType.bottom, anchorOffset: 75);
+        ..show(anchorType: AnchorType.top);
       isAdShown = true;
     }
   }
 
-  void hideBannerAd() async {
+  Future<void> signOut() async {
+    await _auth.signOut();
+    await hideBannerAd();
+  }
+
+  Future<void> hideBannerAd() async {
     if (isAdShown) {
       await _bannerAd.dispose();
       _bannerAd = null;
@@ -82,6 +81,7 @@ class HomeViewModel extends ChangeNotifier {
         CollectionsView(),
       ];
       user = u;
+      showBannerAd();
     } else if (user != null && u == null) { // sign-out時
       user = u;
     }

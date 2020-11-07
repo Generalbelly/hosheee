@@ -5,6 +5,8 @@ import 'package:hosheee/ui/views/progress_modal.dart';
 
 class HomeView extends StatelessWidget {
 
+  static const routeName = '/';
+
   @override
   Widget build(BuildContext context) {
     final homeViewModel = Provider.of<HomeViewModel>(context);

@@ -69,7 +69,7 @@ class CollectionsView extends StatelessWidget {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 24.0,
-                        ),
+                          ),
                         textAlign: TextAlign.center,
                       ),
                       color: Colors.black.withOpacity(0.5),
@@ -78,14 +78,15 @@ class CollectionsView extends StatelessWidget {
                 ) :
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
                   alignment: Alignment.center,
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
                       collection.name,
+                      textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
                     ),
                   ),
@@ -124,34 +125,38 @@ class CollectionsView extends StatelessWidget {
       ),
     );
     return Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                productsViewModel.selectedProductIds = [];
-                collectionViewModel.collection = Collection(null);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
-              },
-            ),
-          ],
-        ),
-        body: Builder(
-          builder: (BuildContext context) {
-            if (collectionsViewModel.message != null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _showSnackBar(context, collectionsViewModel.message, (ctx) {
-                  Scaffold.of(ctx).hideCurrentSnackBar();
-                });
-                collectionsViewModel.message = null;
+      appBar: AppBar(),
+      body: Builder(
+        builder: (BuildContext context) {
+          if (collectionsViewModel.message != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSnackBar(context, collectionsViewModel.message, (ctx) {
+                Scaffold.of(ctx).hideCurrentSnackBar();
               });
-            }
-            return ProgressModal(
-                isLoading: collectionsViewModel.requestStatusManager.isLoading() &&
-                    collectionsViewModel.collections.length == 0,
-                child: body);
-          },
-        )
+              collectionsViewModel.message = null;
+            });
+          }
+          return ProgressModal(
+              isLoading: collectionsViewModel.requestStatusManager.isLoading() && collectionsViewModel.collections.length == 0,
+              child: body);
+        },
+      ),
+      floatingActionButton: Container(
+        height: 75.0,
+        width: 75.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            heroTag: 'collections-view-action-button',
+            onPressed: () {
+              productsViewModel.selectedProductIds = [];
+              collectionViewModel.collection = Collection(null);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.pinkAccent,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -67,6 +67,7 @@ class CollectionView extends StatelessWidget {
                               await collectionViewModel.delete();
                               Navigator.popUntil(context, ModalRoute.withName('/'));
                             },
+                            contentPadding: EdgeInsets.all(10),
                           ),
                         ],
                       ),

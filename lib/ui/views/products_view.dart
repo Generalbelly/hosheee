@@ -29,10 +29,6 @@ class ProductsView extends StatelessWidget {
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: false);
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
-    final homeViewModel = Provider.of<HomeViewModel>(context, listen: false);
-    if (!homeViewModel.isAdShown) {
-      homeViewModel.showBannerAd();
-    }
 
     final content = productsViewModel.products.length > 0
       ?
@@ -76,9 +72,8 @@ class ProductsView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onTap: () {
-                    homeViewModel.hideBannerAd();
-                    collectionsViewModel.selectedCollectionIds = [];
+                  onTap: () async {
+                    collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((cp) => cp.collectionId).toList();
                     productViewModel.product = product;
                     collectionProductsViewModel.product = product;
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(showAdWhenPop: true)));
@@ -112,22 +107,7 @@ class ProductsView extends StatelessWidget {
           ),
         );
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              homeViewModel.hideBannerAd();
-              collectionsViewModel.selectedCollectionIds = [];
-              productViewModel.product = Product(null);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateProductView()),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(),
       body: Builder(
         builder: (BuildContext context) {
           if (productsViewModel.message != null) {
@@ -139,11 +119,26 @@ class ProductsView extends StatelessWidget {
             });
           }
           return ProgressModal(
-              isLoading: productsViewModel.requestStatusManager.isLoading() &&
-                  productsViewModel.products.length == 0,
-              child: content);
+            isLoading: productsViewModel.requestStatusManager.isLoading() && productsViewModel.products.length == 0,
+            child: content);
         },
-      )
+      ),
+      floatingActionButton: Container(
+        height: 75.0,
+        width: 75.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            heroTag: 'products-view-action-button',
+            onPressed: () {
+              collectionsViewModel.selectedCollectionIds = [];
+              productViewModel.product = Product(null);
+              Navigator.pushNamed(context, 'fetch-url-metadata');
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.pinkAccent,
+          ),
+        ),
+      ),
     );
   }
 }

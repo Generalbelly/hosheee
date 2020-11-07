@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hosheee/domain/models/product.dart';
+import 'package:hosheee/ui/view_models/collections_view_model.dart';
 import 'package:hosheee/ui/view_models/products_view_model.dart';
+import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:hosheee/ui/views/select_products_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/ui/view_models/collection_view_model.dart';
@@ -26,6 +29,7 @@ class CollectionProductsView extends StatelessWidget {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
+    final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
 
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
@@ -84,7 +88,9 @@ class CollectionProductsView extends StatelessWidget {
                       if (product == null) {
                         product = await productViewModel.get(collectionProduct.productId);
                       }
+                      collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((cp) => cp.collectionId).toList();
                       productViewModel.product = product;
+                      collectionProductsViewModel.product = product;
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                     }
                   },
@@ -170,13 +176,23 @@ class CollectionProductsView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // productsViewModel.selectedProductIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.productId).toList();
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.pinkAccent,
+      floatingActionButton: Container(
+        height: 75.0,
+        width: 75.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            heroTag: 'collection-products-view-action-button',
+            onPressed: () {
+              collectionsViewModel.selectedCollectionIds = [collectionProductsViewModel.collection.id];
+              productViewModel.product = Product(null);
+              Navigator.pushNamed(context, 'fetch-url-metadata');
+              // productsViewModel.selectedProductIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.productId).toList();
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.pinkAccent,
+          ),
+        ),
       ),
     );
   }

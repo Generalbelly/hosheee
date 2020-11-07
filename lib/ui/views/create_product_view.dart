@@ -7,6 +7,8 @@ import 'package:hosheee/ui/views/progress_modal.dart';
 
 class CreateProductView extends StatelessWidget {
 
+  static const routeName = 'fetch-url-metadata';
+
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
@@ -23,18 +25,9 @@ class CreateProductView extends StatelessWidget {
     final homeViewModel = Provider.of<HomeViewModel>(context);
 
     final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
-    return WillPopScope(child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('New Item'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Skip'),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => ProductView()));
-            },
-          ),
-        ],
       ),
       body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
@@ -98,10 +91,7 @@ class CreateProductView extends StatelessWidget {
             )
         );
       }),
-    ), onWillPop: () async {
-      await homeViewModel.showBannerAd();
-      return true;
-    });
+    );
   }
 }
 

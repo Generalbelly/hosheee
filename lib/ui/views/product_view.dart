@@ -32,9 +32,8 @@ class ProductView extends StatelessWidget {
     final productViewModel = Provider.of<ProductViewModel>(context);
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
-    final homeViewModel = Provider.of<HomeViewModel>(context);
 
-    return WillPopScope(child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: productViewModel.product.id != null ? Text(productViewModel.product.name) : Text('New Item'),
         actions: <Widget>[
@@ -86,6 +85,7 @@ class ProductView extends StatelessWidget {
                               await productViewModel.delete();
                               Navigator.popUntil(context, ModalRoute.withName('/'));
                             },
+                            contentPadding: EdgeInsets.all(10),
                           ),
                         ],
                       ),
@@ -105,67 +105,82 @@ class ProductView extends StatelessWidget {
           if (collectionProductsViewModel.collectionProducts.length == 0) {
             collectionProductsField = SizedBox.shrink();
           } else {
-            collectionProductsField = Container(
-                margin: EdgeInsets.symmetric(vertical: 20.0),
-                height: 100.0,
-                child: ListView.separated(
-                  itemCount: collectionProductsViewModel.collectionProducts.length,
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (BuildContext context, int index) => SizedBox(
-                    width: 4,
+            collectionProductsField = Column(
+              children: [
+                Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 48.0),
+                    child: Text('Folders', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   ),
-                  itemBuilder: (BuildContext context, int index) {
-                    final collectionProduct = collectionProductsViewModel.collectionProducts[index];
-                    if (collectionProduct.collectionImageUrl != null) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Container(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
-                              child: Image.network(
-                                collectionProduct.collectionImageUrl,
-                                fit: BoxFit.cover,
-                                width: 100.0,
-                                errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                                  return Icon(Icons.error_outline);
-                                },
+                  alignment: Alignment.topLeft),
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 20.0),
+                    height: 100.0,
+                    child: ListView.separated(
+                      itemCount: collectionProductsViewModel.collectionProducts.length,
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (BuildContext context, int index) => SizedBox(
+                        width: 4,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        final collectionProduct = collectionProductsViewModel.collectionProducts[index];
+                        if (collectionProduct.collectionImageUrl != null) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Container(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  child: Image.network(
+                                    collectionProduct.collectionImageUrl,
+                                    fit: BoxFit.cover,
+                                    width: 100.0,
+                                    errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                                      return Icon(Icons.error_outline);
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                                child: Text(
+                                  collectionProduct.collectionName,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                alignment: Alignment.center,
+                              ),
+                            ],
+                          );
+                        }
+                        return Container(
+                          key: Key(collectionProduct.id),
+                          color: Colors.black.withOpacity(
+                            collectionsViewModel.selectedCollectionIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
                           ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                          width: 100.0,
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
                             child: Text(
                               collectionProduct.collectionName,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 24.0,
+                                fontSize: 12.0
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            color: Colors.black.withOpacity(0.5),
                           ),
-                        ],
-                      );
-                    }
-                    return Container(
-                      key: Key(collectionProduct.id),
-                      color: Colors.black.withOpacity(
-                        collectionsViewModel.selectedCollectionIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
-                      ),
-                      width: 100.0,
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          collectionProduct.collectionName,
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    )
                 )
+              ],
             );
           }
         } else {
@@ -176,79 +191,96 @@ class ProductView extends StatelessWidget {
         if (productViewModel.isReadOnly()) {
           collectionsField = SizedBox.shrink();
         } else {
-          collectionsField = Container(
-            margin: EdgeInsets.symmetric(vertical: 20.0),
-            height: 100.0,
-            child: ListView.separated(
-                itemCount: collectionsViewModel.collections.length,
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (BuildContext context, int index) => SizedBox(
-                  width: 4,
+          collectionsField = Column(
+            children: [
+              Container(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 48.0),
+                  child: Text('Add To Folders', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
-                itemBuilder: (BuildContext context, int index) {
-                  final collection = collectionsViewModel.collections[index];
-                  return GestureDetector(
-                    key: Key(collection.id),
-                    child: collection.imageUrl != null ?
-                    Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        ColorFiltered(
-                          colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                            collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
-                          ), BlendMode.srcATop),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            child: Image.network(
-                              collection.imageUrl,
-                              fit: BoxFit.cover,
-                              width: 100.0,
-                              errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                                return Icon(Icons.error_outline);
-                              },
+                alignment: Alignment.topLeft
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 20.0),
+                height: 100.0,
+                child: ListView.separated(
+                    itemCount: collectionsViewModel.collections.length,
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (BuildContext context, int index) => SizedBox(
+                      width: 4,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      final collection = collectionsViewModel.collections[index];
+                      return GestureDetector(
+                        key: Key(collection.id),
+                        child: collection.imageUrl != null ?
+                        Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            ColorFiltered(
+                              colorFilter: ColorFilter.mode(Colors.black.withOpacity(
+                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                              ), BlendMode.srcATop),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                child: Image.network(
+                                  collection.imageUrl,
+                                  fit: BoxFit.cover,
+                                  width: 100.0,
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                                    return Icon(Icons.error_outline);
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                              width: 100.0,
+                              child: Text(
+                                collection.name,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                  backgroundColor: Colors.black.withOpacity(0.5),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              alignment: Alignment.center,
+                            ),
+                          ],
+                        ) :
                         Container(
-                            padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                            width: 100.0,
+                          decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(
+                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                              ),
+                              border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                              borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          width: 100.0,
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
                             child: Text(
                               collection.name,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12.0,
-                                backgroundColor: Colors.black.withOpacity(0.5),
+                                fontSize: 12.0
                               ),
                               textAlign: TextAlign.center,
-                            )
-                        ),
-                      ],
-                    ) :
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(
-                            collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
+                            ),
                           ),
-                          border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                          borderRadius: BorderRadius.all(Radius.circular(20))
-                      ),
-                      width: 100.0,
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          collection.name,
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12.0),
                         ),
-                      ),
-                    ),
-                    onTap: () {
-                      collectionsViewModel.onTapCollection(collection.id);
-                    },
-                  );
-                }
-            ),
+                        onTap: () {
+                          collectionsViewModel.onTapCollection(collection.id);
+                        },
+                      );
+                    }
+                ),
+              )
+            ],
           );
         }
 
@@ -289,12 +321,12 @@ class ProductView extends StatelessWidget {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Note',
-                        hintText: 'Note',
-                        errorText: productViewModel.errors['note'],
+                        labelText: 'Description',
+                        hintText: 'Description',
+                        errorText: productViewModel.errors['description'],
                       ),
-                      initialValue: productViewModel.product.note,
-                      onChanged: (value) => productViewModel.setNote(value),
+                      initialValue: productViewModel.product.description,
+                      onChanged: (value) => productViewModel.setDescription(value),
                       maxLines: 4,
                       readOnly: productViewModel.isReadOnly(),
                     ),
@@ -322,6 +354,17 @@ class ProductView extends StatelessWidget {
                       onChanged: (value) => productViewModel.setPrice(double.parse(value)),
                       readOnly: productViewModel.isReadOnly(),
                     ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Note',
+                        hintText: 'Note',
+                        errorText: productViewModel.errors['note'],
+                      ),
+                      initialValue: productViewModel.product.note,
+                      onChanged: (value) => productViewModel.setNote(value),
+                      maxLines: 4,
+                      readOnly: productViewModel.isReadOnly(),
+                    ),
                     collectionProductsField,
                     collectionsField,
                     // SizedBox(
@@ -339,12 +382,7 @@ class ProductView extends StatelessWidget {
               ),
             ));
       }),
-    ), onWillPop: () async {
-      if (showAdWhenPop) {
-        await homeViewModel.showBannerAd();
-      }
-      return true;
-    });
+    );
   }
 }
 

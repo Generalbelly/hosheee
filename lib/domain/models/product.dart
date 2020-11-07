@@ -9,9 +9,9 @@ class Product implements Model {
   String imageUrl;
   // String videoUrl;
   // String title;
-  // String description;
-  String note;
+  String description;
   double price;
+  String note;
   String provider;
   Timestamp createdAt;
   Timestamp updatedAt;
@@ -22,18 +22,18 @@ class Product implements Model {
     String imageUrl,
     // String videoUrl,
     // String title,
-    // String description,
-    String note,
+    String description,
     double price,
+    String note,
     String provider,
   })
     : this.websiteUrl = websiteUrl,
       this.imageUrl = imageUrl,
       // this.videoUrl = videoUrl,
       // this.title = title,
-      // this.description = description,
-      this.note = note,
+      this.description = description,
       this.price = price,
+      this.note = note,
       this.provider = provider;
 
   Product.fromMap(Map<String, dynamic> data)
@@ -43,9 +43,9 @@ class Product implements Model {
       imageUrl = data['imageUrl'],
       // videoUrl = data['videoUrl'],
       // title = data['title'],
-      // description = data['description'],
-      note = data['note'],
+      description = data['description'],
       price = data['price'],
+      note = data['note'],
       provider = data['provider'],
       createdAt = data['createdAt'],
       updatedAt = data['updatedAt'];
@@ -58,9 +58,9 @@ class Product implements Model {
       'imageUrl': imageUrl,
       // 'videoUrl': videoUrl,
       // 'title': title,
-      // 'description': description,
-      'note': note,
+      'description': description,
       'price': price,
+      'note': note,
       'provider': provider,
       'createdAt': createdAt,
       'updatedAt': updatedAt,

@@ -34,7 +34,7 @@ class SignUpViewModel extends ChangeNotifier {
 
   set password(String value) {
     _password = value;
-    validatePassword();
+    // validatePassword();
     notifyListeners();
   }
 

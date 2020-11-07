@@ -7,6 +7,7 @@ import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collect
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_product_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
+import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hosheee/adapter/gateway/auth.dart';
@@ -38,7 +39,6 @@ import 'package:hosheee/domain/repositories/product_repository.dart' as i_produc
 import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
 import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
 import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:hosheee/ui/views/home_view.dart';
 import 'package:hosheee/ui/views/sign_up_view.dart';
 import 'package:hosheee/ui/views/sign_in_view.dart';
@@ -224,10 +224,15 @@ class App extends StatelessWidget {
         title: 'hosheee',
         theme: appTheme,
         initialRoute: '/',
-        home: HomeView(),
+        builder: (context, child) => Container(
+          margin: EdgeInsets.only(top: 80.0),
+          child: child,
+        ),
         routes: {
-          '/sign-up': (context) => SignUpView(),
-          '/sign-in': (context) => SignInView(),
+          HomeView.routeName: (context) => HomeView(),
+          SignUpView.routeName: (context) => SignUpView(),
+          SignInView.routeName: (context) => SignInView(),
+          CreateProductView.routeName: (context) => CreateProductView(),
         },
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {

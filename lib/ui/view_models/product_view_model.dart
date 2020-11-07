@@ -84,11 +84,11 @@ class ProductViewModel extends ChangeNotifier {
   //   // notifyListeners();
   // }
   //
-  // void setDescription(String value) {
-  //   _product.title = value;
-  //   // notifyListeners();
-  // }
-  //
+  void setDescription(String value) {
+    _product.description = value;
+    // notifyListeners();
+  }
+
   // void setVideoUrl(String value) async {
   //   _product.videoUrl = value;
   //   // notifyListeners();
@@ -98,12 +98,6 @@ class ProductViewModel extends ChangeNotifier {
   void setWebsiteUrl(String value) async {
     _product.websiteUrl = value;
     _validateWebsiteUrl(value);
-    notifyListeners();
-  }
-
-  void setCollectionId(String value) async {
-    // _product.collectionId = value;
-    print('TODO: collectionID');
     notifyListeners();
   }
 
@@ -139,8 +133,8 @@ class ProductViewModel extends ChangeNotifier {
         _product.name = urlMetadata.title ?? '';
         // _product.videoUrl = urlMetadata.video;
         // _product.title = urlMetadata.title;
-        // _product.description = urlMetadata.description;
-        _product.note = urlMetadata.description ?? '';
+        _product.description = urlMetadata.description ?? '';
+        _product.note = '';
         _product.websiteUrl = urlMetadata.url ?? '';
         _product.imageUrl = urlMetadata.image ?? '';
         _product.provider = urlMetadata.publisher ?? '';

@@ -6,6 +6,8 @@ import 'package:hosheee/ui/views/progress_modal.dart';
 
 class SignInView extends StatelessWidget {
 
+  static const routeName = '/sign-in';
+
   _showSnackBar(BuildContext context, String message, Function cb) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
