@@ -124,7 +124,7 @@ class CollectionProductsView extends StatelessWidget {
         :
     Container(
       child: Center(
-        child: Text("No items in this collection."),
+        child: Text("No items in this folder yet."),
       ),
     );
     return Scaffold(
