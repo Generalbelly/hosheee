@@ -1,5 +1,4 @@
 import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
-import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';

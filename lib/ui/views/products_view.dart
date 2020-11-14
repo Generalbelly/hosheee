@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:hosheee/ui/view_models/collections_view_model.dart';
-import 'package:hosheee/ui/view_models/home_view_model.dart';
-import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/ui/view_models/product_view_model.dart';

@@ -7,6 +7,7 @@ import 'package:hosheee/domain/use_cases/product/update_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/url_metadata/get_url_metadata_use_case.dart';
 import 'package:hosheee/ui/common/request_status_manager.dart';
 import 'package:hosheee/ui/common/validator.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ProductViewModel extends ChangeNotifier {
 
@@ -17,6 +18,7 @@ class ProductViewModel extends ChangeNotifier {
     if (_product.id != null) {
       _isEditing = false;
     }
+    webViewShouldOpen = false;
   }
 
   Map<String, String> errors = {
@@ -45,6 +47,19 @@ class ProductViewModel extends ChangeNotifier {
     _isEditing = value;
     notifyListeners();
   }
+
+  bool _webViewShouldOpen = false;
+  bool get webViewShouldOpen => _webViewShouldOpen;
+  set webViewShouldOpen(bool value) {
+    if (value && _validateWebsiteUrl(_product.websiteUrl)) {
+      _webViewShouldOpen = value;
+    } else {
+      _webViewShouldOpen = value;
+      webViewController = null;
+    }
+    notifyListeners();
+  }
+  WebViewController webViewController;
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
@@ -121,31 +136,23 @@ class ProductViewModel extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<bool> fillWithMetadata() async {
-    final isValid = _validateWebsiteUrl(_product.websiteUrl);
-    if (isValid && !requestStatusManager.isLoading()) {
-      requestStatusManager.loading();
-      notifyListeners();
-      final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl));
-      message = response.message;
-      final urlMetadata = response.urlMetadata;
-      if (urlMetadata != null) {
-        _product.name = urlMetadata.title ?? '';
-        // _product.videoUrl = urlMetadata.video;
-        // _product.title = urlMetadata.title;
-        _product.description = urlMetadata.description ?? '';
-        _product.note = '';
-        _product.websiteUrl = urlMetadata.url ?? '';
-        _product.imageUrl = urlMetadata.image ?? '';
-        _product.provider = urlMetadata.publisher ?? '';
-      }
-      requestStatusManager.ok();
-      notifyListeners();
-      return true;
-    } else {
-      notifyListeners();
-      return false;
+  Future<void> fillWithMetadata(String html) async {
+    final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl, html));
+    message = response.message;
+    final urlMetadata = response.urlMetadata;
+    if (urlMetadata != null) {
+      _product.name = urlMetadata.title ?? '';
+      // _product.videoUrl = urlMetadata.video;
+      // _product.title = urlMetadata.title;
+      _product.description = urlMetadata.description ?? '';
+      _product.note = '';
+      _product.websiteUrl = urlMetadata.url ?? '';
+      _product.imageUrl = urlMetadata.image ?? '';
+      _product.provider = urlMetadata.publisher ?? '';
     }
+    _webViewShouldOpen = false;
+    webViewController = null;
+    notifyListeners();
   }
 
   bool _validateWebsiteUrl(String value) {

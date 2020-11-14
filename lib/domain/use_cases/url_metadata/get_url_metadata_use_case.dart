@@ -7,7 +7,8 @@ import 'package:hosheee/utils/helpers.dart';
 
 class GetUrlMetadataUseCaseRequest {
   String url;
-  GetUrlMetadataUseCaseRequest(this.url);
+  String html;
+  GetUrlMetadataUseCaseRequest(this.url, this.html);
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,7 +37,7 @@ class GetUrlMetadataUseCase {
     try {
       final user = await _auth.user();
       if (user is User) {
-        final urlMetadata = await _urlMetadataRepository.get(request.url);
+        final urlMetadata = await _urlMetadataRepository.get(request.url, request.html);
         return GetUrlMetadataUseCaseResponse(urlMetadata);
       }
       throw SignInRequiredException();
