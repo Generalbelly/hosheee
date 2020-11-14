@@ -150,9 +150,7 @@ class ProductViewModel extends ChangeNotifier {
       _product.imageUrl = urlMetadata.image ?? '';
       _product.provider = urlMetadata.publisher ?? '';
     }
-    _webViewShouldOpen = false;
-    webViewController = null;
-    notifyListeners();
+    webViewShouldOpen = false;
   }
 
   bool _validateWebsiteUrl(String value) {
