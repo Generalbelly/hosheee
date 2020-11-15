@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:html/parser.dart';
 import 'package:hosheee/domain/models/url_metadata.dart';
 import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
@@ -59,8 +61,8 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
         final splitValue = selectors[i].split(',');
         // print(splitValue[0]);
         final elements = document.getElementsByTagName(splitValue[0]);
-        for (var i = 0; i < elements.length; i++) {
-          final element = elements[i];
+        for (var j = 0; j < elements.length; j++) {
+          final element = elements[j];
           // print(element);
           var content = '';
           if (splitValue.length == 2) {
@@ -83,6 +85,71 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
         }
       }
     });
+
+    var targetJsonKeys = {};
+    if (data["image"] == null) {
+      targetJsonKeys["image"] = [
+        'image',
+        'thumbnailUrl',
+      ];
+    }
+    if (data["title"] == null) {
+      targetJsonKeys["title"] = [
+        'name',
+        'headline',
+      ];
+    }
+    if (data["description"] == null) {
+      targetJsonKeys["description"] = [
+        'description',
+      ];
+    }
+    final jsonlds = document.getElementsByTagName('script[type="application/ld+json"]');
+    if (jsonlds != null) {
+      targetJsonKeys.forEach((property, jsonKeys) {
+        for (var i = 0; i < jsonlds.length; i++) {
+          final jsonld = jsonDecode(jsonlds[i].text);
+          if (jsonld is List) {
+            for (var j = 0; j < jsonld.length; j++) {
+              Map<String, dynamic> item = jsonld[j];
+              for (var k = 0; k < jsonKeys.length; k++) {
+                final jsonKey = jsonKeys[k];
+                if (item.containsKey(jsonKey)) {
+                  if (item[jsonKey] is List) {
+                    data[property] = item[jsonKey][0];
+                  } else {
+                    data[property] = item[jsonKey];
+                  }
+                }
+                if (data[property] != null) {
+                  break;
+                }
+              }
+              if (data[property] != null) {
+                break;
+              }
+            }
+          } else {
+            for (var k = 0; k < jsonKeys.length; k++) {
+              final jsonKey = jsonKeys[k];
+              if (jsonld.containsKey(jsonKey)) {
+                if (jsonld[jsonKey] is List) {
+                  data[property] = jsonld[jsonKey][0];
+                } else {
+                  data[property] = jsonld[jsonKey];
+                }
+              }
+              if (data[property] != null) {
+                break;
+              }
+            }
+            if (data[property] != null) {
+              break;
+            }
+          }
+        }
+      });
+    }
 
     final title = data["title"];
     if (title != null && title is String) {
