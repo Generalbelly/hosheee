@@ -188,7 +188,6 @@ class CollectionProductsView extends StatelessWidget {
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
             },
             child: Icon(Icons.add),
-            backgroundColor: Colors.pinkAccent,
           ),
         ),
       ),

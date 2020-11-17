@@ -133,7 +133,6 @@ class ProductsView extends StatelessWidget {
               Navigator.pushNamed(context, 'fetch-url-metadata');
             },
             child: Icon(Icons.add),
-            backgroundColor: Colors.pinkAccent,
           ),
         ),
       ),

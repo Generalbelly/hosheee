@@ -39,6 +39,10 @@ class HomeView extends StatelessWidget {
             icon: Icon(Icons.apps),
             label: 'Folders',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.miscellaneous_services),
+            label: 'Preference',
+          ),
         ],
         currentIndex: homeViewModel.selectedIndex,
         //selectedItemColor: Colors.amber[800],

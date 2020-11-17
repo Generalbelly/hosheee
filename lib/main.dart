@@ -2,11 +2,18 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:hosheee/ad/ad_manager.dart';
 import 'package:hosheee/adapter/gateway/collection_product/collection_product_repository.dart';
+import 'package:hosheee/adapter/gateway/setting/setting_repository.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_delete_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_collection_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/collection_product/list_collection_products_by_product_id_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
+import 'package:hosheee/domain/use_cases/setting/add_setting_use_case.dart';
+import 'package:hosheee/domain/use_cases/setting/get_setting_use_case.dart';
+import 'package:hosheee/domain/use_cases/setting/update_setting_use_case.dart';
+import 'package:hosheee/ui/view_models/app_view_model.dart';
+import 'package:hosheee/ui/view_models/setting_view_model.dart';
+import 'package:hosheee/ui/views/app_view.dart';
 import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +45,7 @@ import 'package:hosheee/domain/repositories/collection_repository.dart' as i_col
 import 'package:hosheee/domain/repositories/product_repository.dart' as i_product_repository;
 import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_url_metadata_repository;
 import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
+import 'package:hosheee/domain/repositories/setting_repository.dart' as i_setting_repository;
 import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
 import 'package:hosheee/ui/views/home_view.dart';
 import 'package:hosheee/ui/views/sign_up_view.dart';
@@ -45,6 +53,7 @@ import 'package:hosheee/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
   static const BUILD_ENV = String.fromEnvironment('BUILD_ENV');
+  static const CONTACT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeygm_CYpX6i_lyEu17vgaubtB9VnpIrkBmHGiTdyX9sv3nnA/viewform';
 }
 
 void main() async {
@@ -81,6 +90,9 @@ class App extends StatelessWidget {
         ),
         Provider<i_collection_product_repository.CollectionProductRepository>(
           create: (_) => CollectionProductRepository(),
+        ),
+        Provider<i_setting_repository.SettingRepository>(
+          create: (_) => SettingRepository(),
         ),
         Provider<ListProductsUseCase>(
           create: (context) => ListProductsUseCase(
@@ -172,6 +184,27 @@ class App extends StatelessWidget {
               Provider.of<i_product_repository.ProductRepository>(context, listen: false),
           ),
         ),
+        Provider<GetSettingUseCase>(
+          create: (context) => GetSettingUseCase(
+            Provider.of<i_auth.Auth>(context, listen: false),
+            Provider.of<i_setting_repository.SettingRepository>(context, listen: false),
+          ),
+        ),
+        Provider<AddSettingUseCase>(
+          create: (context) => AddSettingUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_setting_repository.SettingRepository>(context, listen: false),
+          ),
+        ),
+        Provider<UpdateSettingUseCase>(
+          create: (context) => UpdateSettingUseCase(
+              Provider.of<i_auth.Auth>(context, listen: false),
+              Provider.of<i_setting_repository.SettingRepository>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<AppViewModel>(
+          create: (context) => AppViewModel(),
+        ),
         ChangeNotifierProvider<SignInViewModel>(
           create: (context) => SignInViewModel(Provider.of<SignInUseCase>(context, listen: false)),
         ),
@@ -213,40 +246,20 @@ class App extends StatelessWidget {
             Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
           ),
         ),
+        ChangeNotifierProvider<SettingViewModel>(
+          create: (context) => SettingViewModel(
+              Provider.of<GetSettingUseCase>(context, listen: false),
+              Provider.of<AddSettingUseCase>(context, listen: false),
+              Provider.of<UpdateSettingUseCase>(context, listen: false),
+          ),
+        ),
         ChangeNotifierProvider<HomeViewModel>(
           create: (context) => HomeViewModel(
               Provider.of<i_auth.Auth>(context, listen: false),
           ),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'hosheee',
-        theme: appTheme,
-        initialRoute: '/',
-        builder: (context, child) => Container(
-          margin: EdgeInsets.only(top: 80.0),
-          child: child,
-        ),
-        routes: {
-          HomeView.routeName: (context) => HomeView(),
-          SignUpView.routeName: (context) => SignUpView(),
-          SignInView.routeName: (context) => SignInView(),
-          CreateProductView.routeName: (context) => CreateProductView(),
-        },
-        onGenerateRoute: (RouteSettings settings) {
-          switch (settings.name) {
-            default:
-              return MaterialPageRoute(builder: (_) {
-                return Scaffold(
-                  body: Center(
-                    child: Text('No route defined for ${settings.name}'),
-                  ),
-                );
-              });
-          }
-        },
-      ),
+      child: AppView(),
     );
   }
 }

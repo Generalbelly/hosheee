@@ -153,7 +153,6 @@ class CollectionsView extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
             },
             child: Icon(Icons.add),
-            backgroundColor: Colors.pinkAccent,
           ),
         ),
       ),
