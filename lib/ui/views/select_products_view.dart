@@ -108,16 +108,19 @@ class SelectProductsView extends StatelessWidget {
           ),
         );
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Save'),
-            onPressed: () async {
-              await productsViewModel.saveCollectionProducts(collection);
-              Navigator.pop(context);
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          actions: <Widget>[
+            TextButton(
+              child: Text('Save'),
+              onPressed: () async {
+                await productsViewModel.saveCollectionProducts(collection);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
       body: Builder(
         builder: (BuildContext context) {

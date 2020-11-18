@@ -20,21 +20,24 @@ class CollectionView extends StatelessWidget {
     final collectionViewModel = Provider.of<CollectionViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Folder'),
-        actions: <Widget>[
-          FlatButton(
-            child: collectionViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
-            onPressed: () async {
-              if (collectionViewModel.isReadOnly()) {
-                collectionViewModel.isEditing = true;
-              } else {
-                await collectionViewModel.save();
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              }
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Folder'),
+          actions: <Widget>[
+            TextButton(
+              child: collectionViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
+              onPressed: () async {
+                if (collectionViewModel.isReadOnly()) {
+                  collectionViewModel.isEditing = true;
+                } else {
+                  await collectionViewModel.save();
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                }
+              },
+            ),
+          ],
+        ),
       ),
       body: Builder(builder: (BuildContext context) {
         if (collectionViewModel.message != null) {

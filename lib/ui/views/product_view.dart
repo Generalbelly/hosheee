@@ -33,23 +33,28 @@ class ProductView extends StatelessWidget {
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: productViewModel.product.id != null ? Text(productViewModel.product.name) : Text('New Item'),
-        actions: <Widget>[
-          FlatButton(
-            child: productViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
-            onPressed: () async {
-              if (productViewModel.isReadOnly()) {
-                // collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
-                productViewModel.isEditing = true;
-              } else {
-                await productViewModel.save();
-                await collectionsViewModel.saveCollectionProducts(productViewModel.product);
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              }
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          title: productViewModel.product.id != null ? Text(productViewModel.product.name) : Text('New Item'),
+          actions: <Widget>[
+            TextButton(
+              child: productViewModel.isReadOnly() ?
+                Text('Edit') :
+                Text('Save'),
+              onPressed: () async {
+                if (productViewModel.isReadOnly()) {
+                  // collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
+                  productViewModel.isEditing = true;
+                } else {
+                  await productViewModel.save();
+                  await collectionsViewModel.saveCollectionProducts(productViewModel.product);
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                }
+              },
+            ),
+          ],
+        ),
       ),
       body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {

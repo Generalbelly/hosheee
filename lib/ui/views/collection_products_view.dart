@@ -126,7 +126,9 @@ class CollectionProductsView extends StatelessWidget {
       ),
     );
     return Scaffold(
-        appBar: AppBar(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
           leading: collectionProductsViewModel.isActionBarHidden ? null : IconButton(
               color: Colors.white,
               icon: Icon(Icons.clear),
@@ -157,6 +159,7 @@ class CollectionProductsView extends StatelessWidget {
                 ),
               ],
         ),
+      ),
       body: Builder(
         builder: (BuildContext context) {
           if (collectionProductsViewModel.message != null) {

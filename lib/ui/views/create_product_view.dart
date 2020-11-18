@@ -24,8 +24,11 @@ class CreateProductView extends StatelessWidget {
     final productViewModel = Provider.of<ProductViewModel>(context);
     final nextButtonColor = productViewModel.errors['websiteUrl'] == null && productViewModel.product.websiteUrl != null ? Colors.lightBlue : null;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('New Item'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          title: Text('New Item'),
+        ),
       ),
       body: Builder(builder: (BuildContext context) {
         if (productViewModel.message != null) {
