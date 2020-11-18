@@ -161,6 +161,11 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
       data["description"] = description.trim();
     }
 
+    final image = data["image"];
+    if (image != null && image is String) {
+      data["image"] = image.trim();
+    }
+
     data["url"] = url;
 
     return UrlMetadata.fromMap(data);

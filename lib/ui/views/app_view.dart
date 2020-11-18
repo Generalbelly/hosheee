@@ -1,7 +1,6 @@
 import 'package:hosheee/ui/view_models/setting_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:hosheee/ui/view_models/app_view_model.dart';
 import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:hosheee/ui/views/home_view.dart';
 import 'package:hosheee/ui/views/sign_in_view.dart';

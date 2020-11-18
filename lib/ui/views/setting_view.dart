@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hosheee/main.dart';
-import 'package:hosheee/ui/view_models/app_view_model.dart';
 import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:hosheee/ui/view_models/setting_view_model.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +37,7 @@ class SettingView extends StatelessWidget {
                     child: BlockPicker(
                       pickerColor: settingViewModel.generateThemeColor(),
                       onColorChanged: (Color color) {
-                        settingViewModel.setThemeColor(color);
+                        settingViewModel.saveThemeColor(color);
                       },
                     ),
                   ),

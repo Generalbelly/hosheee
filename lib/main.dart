@@ -11,10 +11,8 @@ import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/add_setting_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/get_setting_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/update_setting_use_case.dart';
-import 'package:hosheee/ui/view_models/app_view_model.dart';
 import 'package:hosheee/ui/view_models/setting_view_model.dart';
 import 'package:hosheee/ui/views/app_view.dart';
-import 'package:hosheee/ui/views/create_product_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hosheee/adapter/gateway/auth.dart';
@@ -36,7 +34,6 @@ import 'package:hosheee/ui/view_models/collection_products_view_model.dart';
 import 'package:hosheee/ui/view_models/products_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_in_view_model.dart';
 import 'package:hosheee/ui/view_models/sign_up_view_model.dart';
-import 'package:hosheee/common/theme.dart';
 import 'package:hosheee/domain/models/auth.dart' as i_auth;
 import 'package:hosheee/domain/use_cases/collection/list_collections_use_case.dart';
 import 'package:hosheee/domain/use_cases/auth/sign_in_use_case.dart';
@@ -47,9 +44,6 @@ import 'package:hosheee/domain/repositories/url_metadata_repository.dart' as i_u
 import 'package:hosheee/domain/repositories/collection_product_repository.dart' as i_collection_product_repository;
 import 'package:hosheee/domain/repositories/setting_repository.dart' as i_setting_repository;
 import 'package:hosheee/domain/use_cases/collection/add_collection_use_case.dart';
-import 'package:hosheee/ui/views/home_view.dart';
-import 'package:hosheee/ui/views/sign_up_view.dart';
-import 'package:hosheee/ui/views/sign_in_view.dart';
 
 class EnvironmentConfig {
   static const BUILD_ENV = String.fromEnvironment('BUILD_ENV');
@@ -201,9 +195,6 @@ class App extends StatelessWidget {
               Provider.of<i_auth.Auth>(context, listen: false),
               Provider.of<i_setting_repository.SettingRepository>(context, listen: false),
           ),
-        ),
-        ChangeNotifierProvider<AppViewModel>(
-          create: (context) => AppViewModel(),
         ),
         ChangeNotifierProvider<SignInViewModel>(
           create: (context) => SignInViewModel(Provider.of<SignInUseCase>(context, listen: false)),

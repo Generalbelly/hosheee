@@ -9,7 +9,7 @@ class SettingViewModel extends ChangeNotifier {
 
   String message;
 
-  Setting setting;
+  Setting setting = Setting(null);
 
   GetSettingUseCase _getSettingUseCase;
   AddSettingUseCase _addSettingUseCase;
@@ -29,12 +29,14 @@ class SettingViewModel extends ChangeNotifier {
   void getSetting() async {
     final stream = _getSettingUseCase.handle(GetSettingUseCaseRequest());
     await for (var response in stream) {
-      setting = response.setting != null ? response.setting : Setting(null);
-      notifyListeners();
+      if (response.setting != null) {
+        setting = response.setting;
+        notifyListeners();
+      }
     }
   }
 
-  void setThemeColor(Color color) async {
+  void saveThemeColor(Color color) async {
     setting.themeColor = color.value;
     if (setting.id == null) {
       final response = await _addSettingUseCase.handle(AddSettingUseCaseRequest(setting));
