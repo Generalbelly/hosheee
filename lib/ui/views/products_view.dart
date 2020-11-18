@@ -105,7 +105,21 @@ class ProductsView extends StatelessWidget {
           ),
         );
     return Scaffold(
-      appBar: AppBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          centerTitle: true,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: Icon(Icons.star, size: 26),
+                padding: const EdgeInsets.only(bottom: 22),
+              )
+            ],
+          ),
+        ),
+      ),
       body: Builder(
         builder: (BuildContext context) {
           if (productsViewModel.message != null) {

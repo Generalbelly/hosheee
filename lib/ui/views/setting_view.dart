@@ -24,7 +24,21 @@ class SettingView extends StatelessWidget {
     final settingViewModel = Provider.of<SettingViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(44.0),
+        child: AppBar(
+          centerTitle: true,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: Icon(Icons.star, size: 26),
+                padding: const EdgeInsets.only(bottom: 22),
+              )
+            ],
+          ),
+        ),
+      ),
       body: ListView(
         children: [
           ListTile(title: Text("Theme Color"), onTap: () {
