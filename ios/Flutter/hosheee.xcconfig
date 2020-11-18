@@ -1,3 +1,2 @@
-PRODUCT_BUNDLE_IDENTIFIER=com.nobuyoshi.shimmen.hosheee.dev
-BUILD_ENV=dev
-flutter.inspector.structuredErrors=true
+PRODUCT_BUNDLE_IDENTIFIER=com.nobuyoshi.shimmen.hosheee
+BUILD_ENV=prod
