@@ -113,7 +113,7 @@ class SelectProductsView extends StatelessWidget {
         child: AppBar(
           actions: <Widget>[
             TextButton(
-              child: Text('Save'),
+              child: Text('Save', style: Theme.of(context).primaryTextTheme.button),
               onPressed: () async {
                 await productsViewModel.saveCollectionProducts(collection);
                 Navigator.pop(context);

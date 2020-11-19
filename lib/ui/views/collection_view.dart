@@ -26,7 +26,9 @@ class CollectionView extends StatelessWidget {
           title: collectionViewModel.collection.id != null ? Text(collectionViewModel.collection.name) : Text('New Folder'),
           actions: <Widget>[
             TextButton(
-              child: collectionViewModel.isReadOnly() ? Text('Edit') : Text('Save'),
+              child: collectionViewModel.isReadOnly() ?
+              Text('Edit', style: Theme.of(context).primaryTextTheme.button) :
+              Text('Save', style: Theme.of(context).primaryTextTheme.button),
               onPressed: () async {
                 if (collectionViewModel.isReadOnly()) {
                   collectionViewModel.isEditing = true;

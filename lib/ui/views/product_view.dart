@@ -40,8 +40,8 @@ class ProductView extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               child: productViewModel.isReadOnly() ?
-                Text('Edit') :
-                Text('Save'),
+                Text('Edit', style: Theme.of(context).primaryTextTheme.button) :
+                Text('Save', style: Theme.of(context).primaryTextTheme.button),
               onPressed: () async {
                 if (productViewModel.isReadOnly()) {
                   // collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
