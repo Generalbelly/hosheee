@@ -23,6 +23,14 @@ class SettingView extends StatelessWidget {
     final homeViewModel = Provider.of<HomeViewModel>(context);
     final settingViewModel = Provider.of<SettingViewModel>(context);
 
+    if (settingViewModel.message != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showSnackBar(context, settingViewModel.message, (ctx) {
+          Scaffold.of(ctx).hideCurrentSnackBar();
+        });
+        settingViewModel.message = null;
+      });
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(44.0),

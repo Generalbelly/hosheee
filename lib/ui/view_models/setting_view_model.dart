@@ -45,9 +45,7 @@ class SettingViewModel extends ChangeNotifier {
       final response = await _updateSettingUseCase.handle(UpdateSettingUseCaseRequest(setting));
       message = response.message;
     }
-    if (message != null) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   Color generateThemeColor() {
