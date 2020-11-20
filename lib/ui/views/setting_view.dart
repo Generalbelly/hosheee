@@ -67,6 +67,7 @@ class SettingView extends StatelessWidget {
               },
             );
           }),
+          Divider(height: 1),
           // ListTile(title: Text("Font Family")),
           ListTile(title: Text("Contact"), onTap: () async {
             if (await canLaunch(EnvironmentConfig.CONTACT_FORM_URL)) {
@@ -77,9 +78,11 @@ class SettingView extends StatelessWidget {
               });
             }
           }),
+          Divider(height: 1),
           ListTile(title: Text("Sign Out"), onTap: () async {
             await homeViewModel.signOut();
           }),
+          Divider(height: 1),
         ],
       ),
     );
