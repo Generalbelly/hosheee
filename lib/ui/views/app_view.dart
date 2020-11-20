@@ -14,7 +14,14 @@ class AppView extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'hosheee',
-      theme: settingViewModel.setting.themeColor != null ? ThemeData(primaryColor: Color(settingViewModel.setting.themeColor)) : null,
+      theme: settingViewModel.setting.themeColor != null ?
+        ThemeData(
+          primaryColor: Color(settingViewModel.setting.themeColor),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Color(settingViewModel.setting.themeColor),
+          ),
+        ) :
+        null,
       initialRoute: '/',
       builder: (context, child) => Container(
         margin: EdgeInsets.only(top: 80.0),
