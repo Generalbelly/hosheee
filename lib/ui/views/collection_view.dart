@@ -51,44 +51,6 @@ class CollectionView extends StatelessWidget {
           });
         }
 
-        final setting = collectionViewModel.collection.id != null
-            ?
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: Icon(Icons.more_horiz),
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      child: Wrap(
-                        children: <Widget>[
-                          ListTile(
-                            leading: Icon(Icons.delete),
-                            title: Text('Delete'),
-                            onTap: () async {
-                              await collectionViewModel.delete();
-                              Navigator.popUntil(context, ModalRoute.withName('/'));
-                            },
-                            contentPadding: EdgeInsets.all(10),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        )
-            :
-        Container(
-          padding: EdgeInsets.only(top: 24.0),
-          child: SizedBox.shrink(),
-        );
-
         return ProgressModal(
           isLoading: collectionViewModel.requestStatusManager.isLoading(),
           child: SingleChildScrollView(
@@ -97,7 +59,6 @@ class CollectionView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                setting,
                 // imageField,
                 TextFormField(
                   decoration: InputDecoration(
@@ -108,6 +69,21 @@ class CollectionView extends StatelessWidget {
                   initialValue: collectionViewModel.collection.name,
                   onChanged: (value) => collectionViewModel.setName(value),
                   readOnly: collectionViewModel.isReadOnly(),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlineButton.icon(
+                    icon: Icon(Icons.delete),
+                    color: Colors.red.shade900,
+                    label: Text('DELETE', style: TextStyle(color: Colors.red.shade900)),
+                    onPressed: () async {
+                      await collectionViewModel.delete();
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                    },
+                  ),
                 ),
               ],
             ),

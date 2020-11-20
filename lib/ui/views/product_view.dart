@@ -75,40 +75,6 @@ class ProductView extends StatelessWidget {
             }) :
           SizedBox.shrink();
 
-        final setting = productViewModel.product.id != null ? Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: Icon(Icons.more_horiz),
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      child: Wrap(
-                        children: <Widget>[
-                          ListTile(
-                            leading: Icon(Icons.delete),
-                            title: Text('Delete'),
-                            onTap: () async {
-                              await productViewModel.delete();
-                              Navigator.popUntil(context, ModalRoute.withName('/'));
-                            },
-                            contentPadding: EdgeInsets.all(10),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ) : Container(
-          padding: EdgeInsets.only(top: 24.0),
-          child: SizedBox.shrink(),
-        );
-
         Widget collectionProductsField;
         if (productViewModel.isReadOnly()) {
           if (collectionProductsViewModel.collectionProducts.length == 0) {
@@ -301,7 +267,6 @@ class ProductView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    setting,
                     imageField,
                     Container(
                       padding: EdgeInsets.all(8.0),
@@ -376,16 +341,21 @@ class ProductView extends StatelessWidget {
                     ),
                     collectionProductsField,
                     collectionsField,
-                    // SizedBox(
-                    //   height: 24,
-                    // ),
-                    // SizedBox(
-                    //   width: double.infinity,
-                    //   child: FlatButton(
-                    //     child: productViewModel.detailHidden ? Text('More') : Text('Less'),
-                    //     onPressed: () => productViewModel.detailHidden = !productViewModel.detailHidden,
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlineButton.icon(
+                        icon: Icon(Icons.delete),
+                        color: Colors.red.shade900,
+                        label: Text('DELETE', style: TextStyle(color: Colors.red.shade900)),
+                        onPressed: () async {
+                          await productViewModel.delete();
+                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
