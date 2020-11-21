@@ -28,7 +28,7 @@ class CollectionsView extends StatelessWidget {
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
     final productsViewModel = Provider.of<ProductsViewModel>(context, listen: false);
     final collections = collectionsViewModel.collections;
-    final body = collectionsViewModel.collections.length > 0
+    final body = collections.length > 0
         ?
     CustomScrollView(
       controller: collectionsViewModel.scrollController,

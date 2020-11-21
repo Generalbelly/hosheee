@@ -30,7 +30,7 @@ class ProductsView extends StatelessWidget {
 
     final products = productsViewModel.products;
 
-    final content = productsViewModel.products.length > 0
+    final content = products.length > 0
       ?
       CustomScrollView(
         controller: productsViewModel.scrollController,
