@@ -49,8 +49,9 @@ class SettingView extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ListTile(title: Text("Theme Color"), onTap: () {
-            showDialog(
+          ListTile(title: Text("Theme Color"), onTap: () async {
+            settingViewModel.previousThemeColorValue = settingViewModel.setting.themeColor;
+            await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -59,13 +60,32 @@ class SettingView extends StatelessWidget {
                     child: BlockPicker(
                       pickerColor: settingViewModel.generateThemeColor(),
                       onColorChanged: (Color color) {
-                        settingViewModel.saveThemeColor(color);
+                        settingViewModel.setThemeColor(color.value);
                       },
                     ),
                   ),
+                  actions: [
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed:  () {
+                        settingViewModel.setThemeColor(settingViewModel.previousThemeColorValue);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text("Apply"),
+                      onPressed:  () async {
+                        await settingViewModel.updateSetting();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
                 );
               },
             );
+            if (settingViewModel.previousThemeColorValue != settingViewModel.setting.themeColor) {
+              settingViewModel.setThemeColor(settingViewModel.previousThemeColorValue);
+            }
           }),
           Divider(height: 1),
           // ListTile(title: Text("Font Family")),

@@ -10,7 +10,7 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingViewModel = Provider.of<SettingViewModel>(context);
+    final settingViewModel = Provider.of<SettingViewModel>(context, listen: true);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'hosheee',

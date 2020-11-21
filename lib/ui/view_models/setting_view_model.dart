@@ -11,6 +11,8 @@ class SettingViewModel extends ChangeNotifier {
 
   Setting setting = Setting(null);
 
+  int previousThemeColorValue;
+
   GetSettingUseCase _getSettingUseCase;
   AddSettingUseCase _addSettingUseCase;
   UpdateSettingUseCase _updateSettingUseCase;
@@ -36,8 +38,12 @@ class SettingViewModel extends ChangeNotifier {
     }
   }
 
-  void saveThemeColor(Color color) async {
-    setting.themeColor = color.value;
+  setThemeColor(int value) async {
+    setting.themeColor = value;
+    notifyListeners();
+  }
+
+  Future<void> updateSetting() async {
     if (setting.id == null) {
       final response = await _addSettingUseCase.handle(AddSettingUseCaseRequest(setting));
       message = response.message;
