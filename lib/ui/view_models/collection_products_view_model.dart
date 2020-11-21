@@ -139,6 +139,11 @@ class CollectionProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  reloadImage(CollectionProduct collectionProduct) {
+    collectionProduct.reloadKey = DateTime.now().millisecondsSinceEpoch.toInt().toString();
+    notifyListeners();
+  }
+
   void batchDelete() async {
     requestStatusManager.loading();
     message = null;
