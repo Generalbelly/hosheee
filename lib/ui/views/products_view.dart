@@ -28,6 +28,8 @@ class ProductsView extends StatelessWidget {
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
+    final products = productsViewModel.products;
+
     final content = productsViewModel.products.length > 0
       ?
       CustomScrollView(
@@ -42,7 +44,7 @@ class ProductsView extends StatelessWidget {
                 crossAxisSpacing: 4,
               ),
               delegate: SliverChildBuilderDelegate((c, i) {
-                final product = productsViewModel.products[i];
+                final product = products[i];
                 return GestureDetector(
                   key: Key(product.id+product.reloadKey),
                   child: product.imageUrl != null ?

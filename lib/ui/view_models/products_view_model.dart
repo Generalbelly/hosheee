@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hosheee/domain/models/collection.dart';
@@ -14,13 +13,8 @@ class ProductsViewModel extends ChangeNotifier {
 
   List<List<Product>> accumulatedResult = [];
 
-  List<Product> _products;
-
   List<Product> get products {
-    if (_products == null) {
-      _products = accumulatedResult.expand((ps) => ps).toList();
-    }
-    return _products;
+    return accumulatedResult.expand((ps) => ps).toList();
   }
 
   ListProductsUseCase _listProductsUseCase;
@@ -69,7 +63,6 @@ class ProductsViewModel extends ChangeNotifier {
         } else {
           accumulatedResult.add(response.products);
         }
-        _products = null;
         notifyListeners();
       },
       startIndex: accumulatedResult.length == 0 ? 0 : (accumulatedResult.where((result) => result.length > 0).length * 20).toInt(),
@@ -87,7 +80,7 @@ class ProductsViewModel extends ChangeNotifier {
   }
 
   Future<void> reloadImage(Product product) async {
-    product.reloadKey = Timestamp.now().millisecondsSinceEpoch.toInt().toString();
+    product.reloadKey = DateTime.now().millisecondsSinceEpoch.toInt().toString();
     notifyListeners();
   }
 
