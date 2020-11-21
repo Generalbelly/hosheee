@@ -96,7 +96,10 @@ class CollectionProductsView extends StatelessWidget {
                     collectionProductsViewModel.onTapProduct(collectionProduct.id);
                   } else {
                     // すでにローカルにとってきてるデータをまずチェックする
-                    var product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
+                    Product product;
+                    if (productsViewModel.products.length > 0) {
+                      product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
+                    }
                     if (product == null) {
                       product = await productViewModel.get(collectionProduct.productId);
                     }
