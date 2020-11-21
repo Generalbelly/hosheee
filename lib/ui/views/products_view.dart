@@ -44,7 +44,7 @@ class ProductsView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate((c, i) {
                 final product = productsViewModel.products[i];
                 return GestureDetector(
-                  key: Key(product.id),
+                  key: Key(product.id+product.reloadKey),
                   child: product.imageUrl != null ?
                   ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -52,7 +52,19 @@ class ProductsView extends StatelessWidget {
                       product.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                        return Icon(Icons.error_outline);
+                        final notFoundError = exception.toString().contains('404');
+                        return GestureDetector(
+                          child: Container(
+                            child: Center(
+                              child: notFoundError ? Icon(Icons.error_outline) : Icon(Icons.refresh),
+                            ),
+                          ),
+                          onTap: () {
+                            if (!notFoundError) {
+                              productsViewModel.reloadImage(product);
+                            }
+                          },
+                        );
                       },
                     ),
                   ) :
