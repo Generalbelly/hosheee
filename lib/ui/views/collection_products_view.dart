@@ -48,7 +48,7 @@ class CollectionProductsView extends StatelessWidget {
             delegate: SliverChildBuilderDelegate((c, i) {
               final collectionProduct = collectionProducts[i];
               return GestureDetector(
-                key: Key(collectionProduct.id + collectionProduct.reloadKey),
+                key: Key(collectionProductsViewModel.generateProductKey(collectionProduct)),
                 child: collectionProduct.productImageUrl != null ?
                 ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(20)),

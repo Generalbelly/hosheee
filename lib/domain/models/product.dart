@@ -66,6 +66,4 @@ class Product implements Model {
       'updatedAt': updatedAt,
     };
 
-  String reloadKey = '';
-
 }

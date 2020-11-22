@@ -52,7 +52,4 @@ class CollectionProduct implements Model {
       'updatedAt': updatedAt,
     };
 
-  // ui
-  String reloadKey = '';
-
 }

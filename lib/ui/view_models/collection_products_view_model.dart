@@ -40,6 +40,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   List<String> selectedCollectionProductIds = [];
 
+  Map<String, String> reloadKeys = {};
+
   ListCollectionProductsByCollectionIdUseCase _listCollectionProductsByCollectionIdUseCase;
   ListCollectionProductsByProductIdUseCase _listCollectionProductsByProductIdUseCase;
   BatchDeleteCollectionProductsUseCase _batchDeleteCollectionProductsUseCase;
@@ -139,8 +141,13 @@ class CollectionProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String generateProductKey(CollectionProduct collectionProduct) {
+    final reloadKey = reloadKeys[collectionProduct.id] ?? '';
+    return collectionProduct.id+reloadKey;
+  }
+
   reloadImage(CollectionProduct collectionProduct) {
-    collectionProduct.reloadKey = DateTime.now().millisecondsSinceEpoch.toInt().toString();
+    reloadKeys[collectionProduct.id] = DateTime.now().millisecondsSinceEpoch.toInt().toString();
     notifyListeners();
   }
 

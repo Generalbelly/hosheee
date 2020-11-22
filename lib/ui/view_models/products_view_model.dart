@@ -27,6 +27,8 @@ class ProductsViewModel extends ChangeNotifier {
 
   List<String> selectedProductIds = [];
 
+  Map<String, String> reloadKeys = {};
+
   ProductsViewModel(
     ListProductsUseCase listProductsUseCase,
     BatchUpsertCollectionProductsUseCase batchUpsertCollectionProductsUseCase,
@@ -79,8 +81,14 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> reloadImage(Product product) async {
-    product.reloadKey = DateTime.now().millisecondsSinceEpoch.toInt().toString();
+  String generateProductKey(Product product) {
+    final reloadKey = reloadKeys[product.id] ?? '';
+    print(product.id+reloadKey);
+    return product.id+reloadKey;
+  }
+
+  reloadImage(Product product) {
+    reloadKeys[product.id] = DateTime.now().millisecondsSinceEpoch.toInt().toString();
     notifyListeners();
   }
 
