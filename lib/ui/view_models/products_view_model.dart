@@ -83,7 +83,6 @@ class ProductsViewModel extends ChangeNotifier {
 
   String generateProductKey(Product product) {
     final reloadKey = reloadKeys[product.id] ?? '';
-    print(product.id+reloadKey);
     return product.id+reloadKey;
   }
 
