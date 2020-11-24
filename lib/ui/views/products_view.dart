@@ -127,7 +127,7 @@ class ProductsView extends StatelessWidget {
             children: [
               Container(
                 child: Icon(Icons.star, size: 26),
-                padding: const EdgeInsets.only(bottom: 22),
+                padding: const EdgeInsets.only(bottom: 6),
               )
             ],
           ),
