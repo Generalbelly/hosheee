@@ -47,10 +47,18 @@ class SettingViewModel extends ChangeNotifier {
     if (setting.id == null) {
       final response = await _addSettingUseCase.handle(AddSettingUseCaseRequest(setting));
       message = response.message;
-      getSetting();
-    } else {
-      final response = await _updateSettingUseCase.handle(UpdateSettingUseCaseRequest(setting));
-      message = response.message;
+      if (message != null) {
+        notifyListeners();
+      } else {
+        getSetting();
+      }
+      return;
+    }
+
+    final response = await _updateSettingUseCase.handle(UpdateSettingUseCaseRequest(setting));
+    message = response.message;
+    if (message != null) {
+      notifyListeners();
     }
   }
 
