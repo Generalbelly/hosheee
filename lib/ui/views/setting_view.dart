@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hosheee/main.dart';
 import 'package:hosheee/ui/view_models/home_view_model.dart';
-import 'package:hosheee/ui/view_models/setting_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,14 +20,13 @@ class SettingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeViewModel = Provider.of<HomeViewModel>(context);
-    final settingViewModel = Provider.of<SettingViewModel>(context);
 
-    if (settingViewModel.message != null) {
+    if (homeViewModel.message != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSnackBar(context, settingViewModel.message, (ctx) {
+        _showSnackBar(context, homeViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
         });
-        settingViewModel.message = null;
+        homeViewModel.message = null;
       });
     }
     return Scaffold(
@@ -50,7 +48,7 @@ class SettingView extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(title: Text("Theme Color"), onTap: () async {
-            settingViewModel.previousThemeColorValue = settingViewModel.setting.themeColor;
+            homeViewModel.previousThemeColorValue = homeViewModel.setting.themeColor;
             await showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -58,9 +56,9 @@ class SettingView extends StatelessWidget {
                   title: Text('Pick your theme color'),
                   content: SingleChildScrollView(
                     child: BlockPicker(
-                      pickerColor: settingViewModel.generateThemeColor(),
+                      pickerColor: homeViewModel.generateThemeColor(),
                       onColorChanged: (Color color) {
-                        settingViewModel.setThemeColor(color.value);
+                        homeViewModel.setThemeColor(color.value);
                       },
                     ),
                   ),
@@ -68,14 +66,14 @@ class SettingView extends StatelessWidget {
                     FlatButton(
                       child: Text("Cancel"),
                       onPressed:  () {
-                        settingViewModel.setThemeColor(settingViewModel.previousThemeColorValue);
+                        homeViewModel.setThemeColor(homeViewModel.previousThemeColorValue);
                         Navigator.of(context).pop();
                       },
                     ),
                     FlatButton(
                       child: Text("Apply"),
                       onPressed:  () async {
-                        await settingViewModel.updateSetting();
+                        await homeViewModel.saveSetting();
                         Navigator.of(context).pop();
                       },
                     ),
@@ -83,8 +81,8 @@ class SettingView extends StatelessWidget {
                 );
               },
             );
-            if (settingViewModel.previousThemeColorValue != settingViewModel.setting.themeColor) {
-              settingViewModel.setThemeColor(settingViewModel.previousThemeColorValue);
+            if (homeViewModel.previousThemeColorValue != homeViewModel.setting.themeColor) {
+              homeViewModel.setThemeColor(homeViewModel.previousThemeColorValue);
             }
           }),
           Divider(height: 1),

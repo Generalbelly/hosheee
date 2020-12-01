@@ -21,13 +21,13 @@ class Setting implements Model {
         createdAt = data['createdAt'],
         updatedAt = data['updatedAt'];
 
-    Map<String, dynamic> toMap() =>
-      {
-        'id': id,
-        'themeColor': themeColor,
-        'fontFamily': fontFamily,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-      };
+  Map<String, dynamic> toMap() =>
+    {
+      'id': id,
+      'themeColor': themeColor,
+      'fontFamily': fontFamily,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
 
 }

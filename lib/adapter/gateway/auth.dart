@@ -83,8 +83,12 @@ class Auth implements i_auth.Auth {
   }
 
   Future<User> user() async {
-    final firebaseUser = _auth.currentUser;
-    return firebaseUser != null ? _createUserFrom(firebaseUser) : null;
+    var user;
+    await for (var firebaseUser in _auth.authStateChanges()) {
+      user = firebaseUser != null ? _createUserFrom(firebaseUser) : null;
+      break;
+    }
+    return user;
   }
 
   StreamSubscription onAuthStateChanged(Function(User) callback) {

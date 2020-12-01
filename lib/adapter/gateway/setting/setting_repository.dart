@@ -9,10 +9,18 @@ class SettingRepository implements i_setting_repository.SettingRepository {
     final stream = FirebaseFirestore.instance.collection('users')
         .doc(userId)
         .collection("settings")
+        .orderBy("createdAt", descending: true)
         .limit(1)
         .snapshots();
     await for (var snapshot in stream) {
-      yield Setting.fromMap(snapshot.docs[0].data());
+      if (snapshot.metadata.hasPendingWrites) {
+        continue;
+      }
+      if (snapshot.docs.length == 0) {
+        yield null;
+      } else {
+        yield Setting.fromMap(snapshot.docs[0].data());
+      }
     }
   }
 

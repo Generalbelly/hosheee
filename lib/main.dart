@@ -237,16 +237,12 @@ class App extends StatelessWidget {
             Provider.of<BatchUpsertCollectionProductsUseCase>(context, listen: false),
           ),
         ),
-        ChangeNotifierProvider<SettingViewModel>(
-          create: (context) => SettingViewModel(
-              Provider.of<GetSettingUseCase>(context, listen: false),
-              Provider.of<AddSettingUseCase>(context, listen: false),
-              Provider.of<UpdateSettingUseCase>(context, listen: false),
-          ),
-        ),
         ChangeNotifierProvider<HomeViewModel>(
           create: (context) => HomeViewModel(
-              Provider.of<i_auth.Auth>(context, listen: false),
+            Provider.of<i_auth.Auth>(context, listen: false),
+            Provider.of<GetSettingUseCase>(context, listen: false),
+            Provider.of<AddSettingUseCase>(context, listen: false),
+            Provider.of<UpdateSettingUseCase>(context, listen: false),
           ),
         ),
       ],

@@ -1,4 +1,4 @@
-import 'package:hosheee/ui/view_models/setting_view_model.dart';
+import 'package:hosheee/ui/view_models/home_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hosheee/ui/views/create_product_view.dart';
@@ -10,18 +10,16 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingViewModel = Provider.of<SettingViewModel>(context, listen: true);
+    final homeViewModel = Provider.of<HomeViewModel>(context, listen: true);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'hosheee',
-      theme: settingViewModel.setting.themeColor != null ?
-        ThemeData(
-          primaryColor: Color(settingViewModel.setting.themeColor),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-            backgroundColor: Color(settingViewModel.setting.themeColor),
-          ),
-        ) :
-        null,
+      theme: ThemeData(
+        primaryColor: Color(homeViewModel.setting.themeColor),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Color(homeViewModel.setting.themeColor),
+        ),
+      ),
       initialRoute: '/',
       builder: (context, child) => Container(
         margin: EdgeInsets.only(top: 80.0),
