@@ -11,7 +11,6 @@ import 'package:hosheee/domain/use_cases/product/get_product_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/add_setting_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/get_setting_use_case.dart';
 import 'package:hosheee/domain/use_cases/setting/update_setting_use_case.dart';
-import 'package:hosheee/ui/view_models/setting_view_model.dart';
 import 'package:hosheee/ui/views/app_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
