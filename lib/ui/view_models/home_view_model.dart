@@ -117,13 +117,11 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void getSetting() async {
-    print("getSetting()");
     final stream = _getSettingUseCase.handle(GetSettingUseCaseRequest());
     await for (var response in stream) {
       if (response.message != null) {
         message = response.message;
       } else if (response.setting != null) {
-        print(response.setting.themeColor);
         setting = response.setting;
       }
       notifyListeners();
