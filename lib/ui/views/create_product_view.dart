@@ -35,8 +35,8 @@ class CreateProductView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
+              productViewModel.message = null;
             });
-            productViewModel.message = null;
           });
         }
         if (productViewModel.webViewShouldOpen) {

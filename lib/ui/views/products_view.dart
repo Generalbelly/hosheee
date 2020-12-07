@@ -24,7 +24,6 @@ class ProductsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: false);
-    final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
     final products = productsViewModel.products;
@@ -138,8 +137,8 @@ class ProductsView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, productsViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
+                productsViewModel.message = null;
               });
-              productsViewModel.message = null;
             });
           }
           return ProgressModal(

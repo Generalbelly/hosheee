@@ -155,8 +155,8 @@ class CollectionsView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, collectionsViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
+                collectionsViewModel.message = null;
               });
-              collectionsViewModel.message = null;
             });
           }
           return ProgressModal(

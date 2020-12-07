@@ -18,12 +18,16 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
       'publisher': null,
       'url': null,
       'video': null,
+      'image': null,
+      'images': null,
     };
 
     var targetSelectors = {
       'title': [
         'meta[property="og:title"],content',
         'meta[name="twitter:title"],content',
+        'h1',
+        'h2',
       ],
       'description': [
         'meta[property="og:description"],content',
@@ -149,6 +153,26 @@ class UrlMetadataRepository implements i_url_metadata_repository.UrlMetadataRepo
           }
         }
       });
+    }
+    // 何も取れないとき
+    if (data['image'] == null) {
+      final elements = document.getElementsByTagName('img');
+      List<String> images = [];
+      for (var i = 0; i < elements.length; i++) {
+        final element = elements[i];
+        final content = element.attributes['src'];
+        if (content != null && content.isNotEmpty) {
+          if (content.startsWith('/')) {
+            final uri = Uri.parse(url);
+            images.add(uri.origin+content);
+          } else {
+            images.add(content);
+          }
+        }
+      }
+      data['images'] = images.map((image) {
+        return image.trim();
+      }).toList();
     }
 
     final title = data["title"];

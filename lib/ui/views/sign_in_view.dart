@@ -35,8 +35,8 @@ class SignInView extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackBar(context, signInViewModel.message, (ctx) {
                 Scaffold.of(ctx).hideCurrentSnackBar();
+                signInViewModel.message = null;
               });
-              signInViewModel.message = null;
             });
           }
           return ProgressModal(isLoading: signInViewModel.requestStatusManager.isLoading(), child: SingleChildScrollView(

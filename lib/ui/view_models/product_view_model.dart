@@ -18,6 +18,7 @@ class ProductViewModel extends ChangeNotifier {
     if (_product.id != null) {
       _isEditing = false;
     }
+    _imageCandidateUrls = [];
     webViewShouldOpen = false;
   }
 
@@ -143,6 +144,19 @@ class ProductViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // UI
+  List<String> _imageCandidateUrls = [];
+  String get imageCandidateUrl => _imageCandidateUrls.length > 0 ? _imageCandidateUrls[_selectedImageUrlIndex] : null;
+  int _selectedImageUrlIndex = 0;
+  void updateImageCandidateUrl() {
+    if (_imageCandidateUrls.length > _selectedImageUrlIndex) {
+      _selectedImageUrlIndex += 1;
+    } else {
+      _selectedImageUrlIndex = 0;
+    }
+    notifyListeners();
+  }
+
   Future<void> fillWithMetadata(String html) async {
     final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl, html));
     message = response.message;
@@ -156,6 +170,7 @@ class ProductViewModel extends ChangeNotifier {
       _product.websiteUrl = urlMetadata.url ?? '';
       _product.imageUrl = urlMetadata.image ?? '';
       _product.provider = urlMetadata.publisher ?? '';
+      _imageCandidateUrls = urlMetadata.images ?? [];
     }
     webViewShouldOpen = false;
   }
@@ -195,6 +210,9 @@ class ProductViewModel extends ChangeNotifier {
         final response = await _updateProductUseCase.handle(UpdateProductUseCaseRequest(_product));
         message = response.message;
       } else {
+        if (_product.imageUrl.isEmpty) {
+          _product.imageUrl = imageCandidateUrl;
+        }
         final response = await _addProductUseCase.handle(AddProductUseCaseRequest(_product));
         message = response.message;
       }

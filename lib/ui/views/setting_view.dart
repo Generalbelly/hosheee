@@ -25,8 +25,8 @@ class SettingView extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSnackBar(context, homeViewModel.message, (ctx) {
           Scaffold.of(ctx).hideCurrentSnackBar();
+          homeViewModel.message = null;
         });
-        homeViewModel.message = null;
       });
     }
     return Scaffold(

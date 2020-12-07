@@ -8,9 +8,11 @@ class UrlMetadata {
   String logo;
   String url;
   String video;
+  List<String> images;
 
   UrlMetadata.fromMap(Map<dynamic, dynamic> data)
     :
+      images = data['images'],
       lang = data['lang'],
       author = data['author'],
       title = data['title'],

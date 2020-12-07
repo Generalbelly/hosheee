@@ -61,19 +61,46 @@ class ProductView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _showSnackBar(context, productViewModel.message, (ctx) {
               Scaffold.of(ctx).hideCurrentSnackBar();
+              productViewModel.message = null;
             });
-            productViewModel.message = null;
           });
         }
 
-        final imageField = productViewModel.product.imageUrl != null ?
-          Image.network(
+        Widget imageField = SizedBox.shrink();
+        if (productViewModel.product.imageUrl.isNotEmpty) {
+          imageField = Image.network(
             productViewModel.product.imageUrl,
             fit: BoxFit.cover,
             errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
               return Icon(Icons.error_outline);
-            }) :
-          SizedBox.shrink();
+            });
+        } else if (productViewModel.imageCandidateUrl.isNotEmpty) {
+          imageField = Stack(
+            children: [
+              Image.network(
+                  productViewModel.imageCandidateUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                    print(exception);
+                    return Icon(Icons.error_outline);
+                  }
+              ),
+              Positioned.fill(
+                child: GestureDetector(
+                  child: TextButton(
+                    child: Text('Tap to change the image',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)
+                    ),
+                  ),
+                  onTap: () {
+                    productViewModel.updateImageCandidateUrl();
+                  },
+                ),
+              ),
+            ],
+          );
+        }
 
         Widget collectionProductsField;
         if (productViewModel.isReadOnly()) {
@@ -262,20 +289,24 @@ class ProductView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    imageField,
                     Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: OutlineButton(
-                        onPressed: () async {
-                          if (await canLaunch(productViewModel.product.websiteUrl)) {
-                            await launch(productViewModel.product.websiteUrl);
-                          } else {
-                            _showSnackBar(context, 'Could not launch the url.', (ctx) {
-                              Scaffold.of(ctx).hideCurrentSnackBar();
-                            });
-                          }
-                        },
-                        child: Text('Go To URL'),
+                      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+                      child: Column(
+                        children: [
+                          imageField,
+                          OutlineButton(
+                            onPressed: () async {
+                              if (await canLaunch(productViewModel.product.websiteUrl)) {
+                                await launch(productViewModel.product.websiteUrl);
+                              } else {
+                                _showSnackBar(context, 'Could not launch the url.', (ctx) {
+                                  Scaffold.of(ctx).hideCurrentSnackBar();
+                                });
+                              }
+                            },
+                            child: Text('Go To URL'),
+                          )
+                        ],
                       ),
                     ),
                     TextFormField(
