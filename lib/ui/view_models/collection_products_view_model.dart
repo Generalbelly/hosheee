@@ -12,18 +12,22 @@ class CollectionProductsViewModel extends ChangeNotifier {
 
   String message;
 
-  List<List<CollectionProduct>> accumulatedResult = [];
+  List<List<CollectionProduct>> accumulatedResultByCollectionId = [];
+  List<List<CollectionProduct>> accumulatedResultByProductId = [];
 
-  List<CollectionProduct> get collectionProducts {
-    return accumulatedResult.expand((ps) => ps).toList();
+  List<CollectionProduct> get collectionProductsByCollectionId {
+    return accumulatedResultByCollectionId.expand((ps) => ps).toList();
+  }
+
+  List<CollectionProduct> get collectionProductsByProductId {
+    return accumulatedResultByProductId.expand((ps) => ps).toList();
   }
 
   Collection _collection;
   Collection get collection => _collection;
   set collection(Collection value) {
     _collection = value;
-    accumulatedResult = [];
-    selectedCollectionProductIds = [];
+    accumulatedResultByCollectionId = [];
     notifyListeners();
     listByCollectionId();
   }
@@ -32,13 +36,10 @@ class CollectionProductsViewModel extends ChangeNotifier {
   Product get product => _product;
   set product(Product value) {
     _product = value;
-    accumulatedResult = [];
-    selectedCollectionProductIds = [];
+    accumulatedResultByProductId = [];
     notifyListeners();
     listByProductId();
   }
-
-  List<String> selectedCollectionProductIds = [];
 
   Map<String, String> reloadKeys = {};
 
@@ -56,6 +57,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
+
+  List<String> collectionProductIdsToDelete = [];
 
   CollectionProductsViewModel(
     ListCollectionProductsByCollectionIdUseCase listCollectionProductsByCollectionIdUseCase,
@@ -83,6 +86,7 @@ class CollectionProductsViewModel extends ChangeNotifier {
   }
 
   void listByCollectionId() {
+    if (collection.id == null) return;
     requestStatusManager.loading();
     message = null;
     notifyListeners();
@@ -92,22 +96,28 @@ class CollectionProductsViewModel extends ChangeNotifier {
         message = response.message;
         requestStatusManager.ok();
         final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
-        if (accumulatedResult.length > index) {
-          accumulatedResult[index] = response.collectionProducts;
+        if (accumulatedResultByCollectionId.length > index) {
+          accumulatedResultByCollectionId[index] = response.collectionProducts;
         } else {
-          accumulatedResult.add(response.collectionProducts);
+          accumulatedResultByCollectionId.add(response.collectionProducts);
         }
-        if (collectionProducts.length == 0 && !isActionBarHidden) {
+        if (collectionProductsByCollectionId.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
         }
+        // collectionProductsByCollectionId.map((cp) => cp.id).forEach((id) {
+        //   if (collection.collectionProductIds.indexOf(id) == -1) {
+        //     collection.collectionProductIds.add(id);
+        //   }
+        // });
         notifyListeners();
       },
-      startIndex: accumulatedResult.length == 0 ? 0 : (accumulatedResult.where((result) => result.length > 0).length * 20).toInt(),
+      startIndex: accumulatedResultByCollectionId.length == 0 ? 0 : (accumulatedResultByCollectionId.where((result) => result.length > 0).length * 20).toInt(),
       limit: 20,
     ));
   }
 
   void listByProductId() {
+    if (product.id == null) return;
     requestStatusManager.loading();
     message = null;
     notifyListeners();
@@ -117,26 +127,31 @@ class CollectionProductsViewModel extends ChangeNotifier {
         message = response.message;
         requestStatusManager.ok();
         final index = response.startIndex == 0 ? 0 : response.startIndex ~/ response.limit;
-        if (accumulatedResult.length > index) {
-          accumulatedResult[index] = response.collectionProducts;
+        if (accumulatedResultByProductId.length > index) {
+          accumulatedResultByProductId[index] = response.collectionProducts;
         } else {
-          accumulatedResult.add(response.collectionProducts);
+          accumulatedResultByProductId.add(response.collectionProducts);
         }
-        if (collectionProducts.length == 0 && !isActionBarHidden) {
+        if (collectionProductsByProductId.length == 0 && !isActionBarHidden) {
           _isActionBarHidden = true;
         }
+        collectionProductsByProductId.map((cp) => cp.collectionId).forEach((id) {
+          if (product.collectionIds.indexOf(id) == -1) {
+            product.collectionIds.add(id);
+          }
+        });
         notifyListeners();
       },
-      startIndex: collectionProducts.length,
+      startIndex: collectionProductsByProductId.length,
       limit: 20,
     ));
   }
 
-  void onTapProduct(String productId) async {
-    if (selectedCollectionProductIds.indexOf(productId) == -1) {
-      selectedCollectionProductIds.add(productId);
+  void onTapCollectionProductToDelete(String collectionProductId) async {
+    if (collectionProductIdsToDelete.indexOf(collectionProductId) == -1) {
+      collectionProductIdsToDelete.add(collectionProductId);
     } else {
-      selectedCollectionProductIds.remove(productId);
+      collectionProductIdsToDelete.remove(collectionProductId);
     }
     notifyListeners();
   }
@@ -155,8 +170,8 @@ class CollectionProductsViewModel extends ChangeNotifier {
     requestStatusManager.loading();
     message = null;
     notifyListeners();
-    final collectionProductsToDelete = selectedCollectionProductIds.map((selectedCollectionProductId) {
-      return collectionProducts.firstWhere((collectionProduct) => collectionProduct.id == selectedCollectionProductId, orElse: null);
+    final collectionProductsToDelete = collectionProductIdsToDelete.map((selectedCollectionProductId) {
+      return collectionProductsByCollectionId.firstWhere((collectionProduct) => collectionProduct.id == selectedCollectionProductId, orElse: () => null);
     }).toList();
     final response = await _batchDeleteCollectionProductsUseCase.handle(BatchDeleteCollectionProductsUseCaseRequest(
       collectionProductsToDelete,

@@ -25,7 +25,7 @@ class CollectionsViewModel extends ChangeNotifier {
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
-  List<String> selectedCollectionIds = [];
+  Map<String, String> reloadKeys = {};
 
   CollectionsViewModel(
     ListCollectionsUseCase listCollectionsUseCase,
@@ -70,18 +70,19 @@ class CollectionsViewModel extends ChangeNotifier {
     ));
   }
 
-  void onTapCollection(String collectionId) async {
-    if (selectedCollectionIds.indexOf(collectionId) == -1) {
-      selectedCollectionIds.add(collectionId);
-    } else {
-      selectedCollectionIds.remove(collectionId);
-    }
+  String generateCollectionKey(Collection collection) {
+    final reloadKey = reloadKeys[collection.id] ?? '';
+    return collection.id+reloadKey;
+  }
+
+  reloadImage(Collection collection) {
+    reloadKeys[collection.id] = DateTime.now().millisecondsSinceEpoch.toInt().toString();
     notifyListeners();
   }
 
   Future<void> saveCollectionProducts(Product product) async {
-    final collectionProducts = selectedCollectionIds.map((selectedCollectionId) {
-      final collection = collections.firstWhere((collection) => collection.id == selectedCollectionId, orElse: null);
+    final collectionProducts = product.collectionIds.map((selectedCollectionId) {
+      final collection = collections.firstWhere((collection) => collection.id == selectedCollectionId, orElse: () => null);
       return CollectionProduct(null,
         collectionName: collection.name,
         collectionImageUrl: collection.imageUrl,

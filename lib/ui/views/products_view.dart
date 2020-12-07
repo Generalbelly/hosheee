@@ -53,17 +53,17 @@ class ProductsView extends StatelessWidget {
                       product.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                        final notFoundError = exception.toString().contains('404');
                         return GestureDetector(
                           child: Container(
                             child: Center(
-                              child: notFoundError ? Icon(Icons.error_outline) : Icon(Icons.refresh),
+                              child: Icon(Icons.error_outline),
                             ),
                           ),
                           onTap: () {
-                            if (!notFoundError) {
-                              productsViewModel.reloadImage(product);
-                            }
+                            productsViewModel.reloadImage(product);
+                            productViewModel.product = product;
+                            collectionProductsViewModel.product = product;
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(showAdWhenPop: true)));
                           },
                         );
                       },
@@ -71,7 +71,7 @@ class ProductsView extends StatelessWidget {
                   ) :
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                        border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
                         borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     alignment: Alignment.center,
@@ -84,7 +84,6 @@ class ProductsView extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((cp) => cp.collectionId).toList();
                     productViewModel.product = product;
                     collectionProductsViewModel.product = product;
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(showAdWhenPop: true)));
@@ -155,8 +154,9 @@ class ProductsView extends StatelessWidget {
           child: FloatingActionButton(
             heroTag: 'products-view-action-button',
             onPressed: () {
-              collectionsViewModel.selectedCollectionIds = [];
-              productViewModel.product = Product(null);
+              final product = Product(null);
+              collectionProductsViewModel.product = product;
+              productViewModel.product = product;
               Navigator.pushNamed(context, 'fetch-url-metadata');
             },
             child: Icon(Icons.add),

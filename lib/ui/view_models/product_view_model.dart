@@ -136,6 +136,13 @@ class ProductViewModel extends ChangeNotifier {
     // notifyListeners();
   }
 
+  void appendCollectionId(String id) async {
+    if (_product.collectionIds.indexOf(id) == -1) {
+      _product.collectionIds.add(id);
+    }
+    notifyListeners();
+  }
+
   Future<void> fillWithMetadata(String html) async {
     final response = await _getUrlMetadataUseCase.handle(GetUrlMetadataUseCaseRequest(_product.websiteUrl, html));
     message = response.message;
@@ -217,5 +224,6 @@ class ProductViewModel extends ChangeNotifier {
     }
     return response.product;
   }
+
 }
 

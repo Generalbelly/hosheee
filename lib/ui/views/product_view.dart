@@ -30,7 +30,7 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     final productViewModel = Provider.of<ProductViewModel>(context);
     final collectionsViewModel = Provider.of<CollectionsViewModel>(context);
-    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
+    final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context, listen: true);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -44,7 +44,7 @@ class ProductView extends StatelessWidget {
                 Text('Save', style: Theme.of(context).primaryTextTheme.button),
               onPressed: () async {
                 if (productViewModel.isReadOnly()) {
-                  // collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
+                  // collectionProductsViewModel.product.collectionIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.collectionId).toList();
                   productViewModel.isEditing = true;
                 } else {
                   await productViewModel.save();
@@ -77,7 +77,7 @@ class ProductView extends StatelessWidget {
 
         Widget collectionProductsField;
         if (productViewModel.isReadOnly()) {
-          if (collectionProductsViewModel.collectionProducts.length == 0) {
+          if (collectionProductsViewModel.collectionProductsByProductId.length == 0) {
             collectionProductsField = SizedBox.shrink();
           } else {
             collectionProductsField = Column(
@@ -90,20 +90,20 @@ class ProductView extends StatelessWidget {
                   alignment: Alignment.topLeft),
                 Container(
                     margin: EdgeInsets.symmetric(vertical: 20.0),
-                    height: 100.0,
+                    height: 128.0,
                     child: ListView.separated(
-                      itemCount: collectionProductsViewModel.collectionProducts.length,
+                      itemCount: collectionProductsViewModel.collectionProductsByProductId.length,
                       scrollDirection: Axis.horizontal,
                       separatorBuilder: (BuildContext context, int index) => SizedBox(
-                        width: 4,
+                        width: 12,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        final collectionProduct = collectionProductsViewModel.collectionProducts[index];
+                        final collectionProduct = collectionProductsViewModel.collectionProductsByProductId[index];
                         if (collectionProduct.collectionImageUrl != null) {
-                          return Stack(
-                            alignment: Alignment.center,
+                          return Column(
                             children: <Widget>[
                               Container(
+                                constraints: BoxConstraints(minHeight: 100, maxHeight: 100),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(Radius.circular(20)),
                                   child: Image.network(
@@ -116,18 +116,13 @@ class ProductView extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                                child: Text(
-                                  collectionProduct.collectionName,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              Text(
+                                collectionProduct.collectionName,
+                                style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 12.0,
                                 ),
-                                alignment: Alignment.center,
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           );
@@ -135,7 +130,7 @@ class ProductView extends StatelessWidget {
                         return Container(
                           key: Key(collectionProduct.id),
                           color: Colors.black.withOpacity(
-                            collectionsViewModel.selectedCollectionIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
+                            collectionProductsViewModel.product.collectionIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
                           ),
                           width: 100.0,
                           alignment: Alignment.center,
@@ -177,61 +172,61 @@ class ProductView extends StatelessWidget {
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
-                height: 100.0,
+                height: 128.0,
                 child: ListView.separated(
                     itemCount: collectionsViewModel.collections.length,
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (BuildContext context, int index) => SizedBox(
-                      width: 4,
+                      width: 12,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       final collection = collectionsViewModel.collections[index];
                       return GestureDetector(
                         key: Key(collection.id),
                         child: collection.imageUrl != null ?
-                        Stack(
-                          alignment: Alignment.center,
-                          children: <Widget>[
-                            ColorFiltered(
-                              colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
-                              ), BlendMode.srcATop),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                child: Image.network(
-                                  collection.imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: 100.0,
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                                    return Icon(Icons.error_outline);
-                                  },
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: collectionProductsViewModel.product.collectionIds.indexOf(collection.id) > -1 ? Theme.of(context).accentColor : Colors.transparent,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                constraints: BoxConstraints(minHeight: 100, maxHeight: 100),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  child: Image.network(
+                                    collection.imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: 100.0,
+                                    errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+                                      return Icon(Icons.error_outline);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                              width: 100.0,
-                              child: Text(
+                              Text(
                                 collection.name,
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                  backgroundColor: Colors.black.withOpacity(0.5),
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 12.0,
                                 ),
                                 textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              alignment: Alignment.center,
-                            ),
-                          ],
+                            ],
+                          ),
                         ) :
                         Container(
                           decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(
-                                collectionsViewModel.selectedCollectionIds.indexOf(collection.id) > -1 ? 0.3 : 0,
-                              ),
-                              border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                              borderRadius: BorderRadius.all(Radius.circular(20))
+                            border: Border.all(
+                              color: collectionProductsViewModel.product.collectionIds.indexOf(collection.id) > -1 ? Theme.of(context).accentColor : Colors.transparent,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                           width: 100.0,
                           alignment: Alignment.center,
@@ -249,7 +244,7 @@ class ProductView extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          collectionsViewModel.onTapCollection(collection.id);
+                          productViewModel.appendCollectionId(collection.id);
                         },
                       );
                     }

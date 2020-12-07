@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hosheee/domain/models/collection.dart';
-import 'package:hosheee/domain/models/collection_product.dart';
 import 'package:hosheee/domain/models/product.dart';
 import 'package:hosheee/domain/use_cases/collection_product/batch_upsert_collection_products_use_case.dart';
 import 'package:hosheee/domain/use_cases/product/list_products_use_case.dart';
@@ -25,7 +23,7 @@ class ProductsViewModel extends ChangeNotifier {
 
   RequestStatusManager requestStatusManager = RequestStatusManager();
 
-  List<String> selectedProductIds = [];
+  //List<String> selectedProductIds = [];
 
   Map<String, String> reloadKeys = {};
 
@@ -72,14 +70,14 @@ class ProductsViewModel extends ChangeNotifier {
     ));
   }
 
-  void onTapProduct(String productId) async {
-    if (selectedProductIds.indexOf(productId) == -1) {
-      selectedProductIds.add(productId);
-    } else {
-      selectedProductIds.remove(productId);
-    }
-    notifyListeners();
-  }
+  // void onTapProduct(String productId) async {
+  //   if (selectedProductIds.indexOf(productId) == -1) {
+  //     selectedProductIds.add(productId);
+  //   } else {
+  //     selectedProductIds.remove(productId);
+  //   }
+  //   notifyListeners();
+  // }
 
   String generateProductKey(Product product) {
     final reloadKey = reloadKeys[product.id] ?? '';
@@ -91,26 +89,26 @@ class ProductsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveCollectionProducts(Collection collection) async {
-    final collectionProducts = selectedProductIds.map((selectedProductId) {
-      final product = products.firstWhere((product) => product.id == selectedProductId, orElse: null);
-      return CollectionProduct(null,
-          collectionName: collection.name,
-          collectionImageUrl: collection.imageUrl,
-          productName: product.name,
-          productImageUrl: product.imageUrl,
-          productId: product.id,
-          collectionId: collection.id);
-    }).toList();
-    message = null;
-    final response = await _batchUpsertCollectionProductsUseCase.handle(
-        BatchUpsertCollectionProductsUseCaseRequest(collectionProducts)
-    );
-    message = response.message;
-    if (message != null) {
-      notifyListeners();
-    }
-  }
+  // Future<void> saveCollectionProducts(Collection collection) async {
+  //   final collectionProducts = selectedProductIds.map((selectedProductId) {
+  //     final product = products.firstWhere((product) => product.id == selectedProductId, orElse: () => null);
+  //     return CollectionProduct(null,
+  //         collectionName: collection.name,
+  //         collectionImageUrl: collection.imageUrl,
+  //         productName: product.name,
+  //         productImageUrl: product.imageUrl,
+  //         productId: product.id,
+  //         collectionId: collection.id);
+  //   }).toList();
+  //   message = null;
+  //   final response = await _batchUpsertCollectionProductsUseCase.handle(
+  //       BatchUpsertCollectionProductsUseCaseRequest(collectionProducts)
+  //   );
+  //   message = response.message;
+  //   if (message != null) {
+  //     notifyListeners();
+  //   }
+  // }
 
 }
 

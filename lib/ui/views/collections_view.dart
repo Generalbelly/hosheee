@@ -38,47 +38,56 @@ class CollectionsView extends StatelessWidget {
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 4,
+              mainAxisSpacing: 12,
               crossAxisSpacing: 4,
+              childAspectRatio: 1,
             ),
             delegate: SliverChildBuilderDelegate((c, i) {
               final collection = collections[i];
               return GestureDetector(
-                key: Key(collection.id),
+                key: Key(collectionsViewModel.generateCollectionKey(collection)),
                 child: collection.imageUrl != null ?
-                Stack(
-                  alignment: Alignment.center,
+                Column(
                   children: <Widget>[
                     Container(
+                      constraints: BoxConstraints(minHeight: 180, minWidth: double.infinity, maxHeight: 180),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                         child: Image.network(
                           collection.imageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                            return Icon(Icons.error_outline);
+                            return GestureDetector(
+                              child: Container(
+                                child: Center(
+                                  child: Icon(Icons.error_outline),
+                                ),
+                              ),
+                              onTap: () {
+                                collectionsViewModel.reloadImage(collection);
+                                collectionProductsViewModel.collection = collection;
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
+                              },
+                            );
                           },
                         ),
                       ),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                      child: Text(
-                        collection.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24.0,
-                          ),
-                        textAlign: TextAlign.center,
+                    Text(
+                      collection.name,
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16.0,
                       ),
-                      color: Colors.black.withOpacity(0.5),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ) :
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
+                    border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
                     borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
                   alignment: Alignment.center,
@@ -88,11 +97,11 @@ class CollectionsView extends StatelessWidget {
                       collection.name,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24.0),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
                 onTap: () {
-                  productsViewModel.selectedProductIds = [];
                   collectionProductsViewModel.collection = collection;
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionProductsView()));
                 },
@@ -162,7 +171,6 @@ class CollectionsView extends StatelessWidget {
           child: FloatingActionButton(
             heroTag: 'collections-view-action-button',
             onPressed: () {
-              productsViewModel.selectedProductIds = [];
               collectionViewModel.collection = Collection(null);
               Navigator.push(context, MaterialPageRoute(builder: (context) => CollectionView()));
             },

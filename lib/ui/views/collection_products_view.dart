@@ -27,11 +27,10 @@ class CollectionProductsView extends StatelessWidget {
     final productsViewModel = Provider.of<ProductsViewModel>(context);
     final collectionProductsViewModel = Provider.of<CollectionProductsViewModel>(context);
     final collectionViewModel = Provider.of<CollectionViewModel>(context, listen: false);
-    final collectionsViewModel = Provider.of<CollectionsViewModel>(context, listen: false);
 
     final productViewModel = Provider.of<ProductViewModel>(context, listen: false);
 
-    final collectionProducts = collectionProductsViewModel.collectionProducts;
+    final collectionProducts = collectionProductsViewModel.collectionProductsByCollectionId;
     final content = collectionProducts.length > 0
         ?
     CustomScrollView(
@@ -50,26 +49,41 @@ class CollectionProductsView extends StatelessWidget {
               return GestureDetector(
                 key: Key(collectionProductsViewModel.generateProductKey(collectionProduct)),
                 child: collectionProduct.productImageUrl != null ?
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(
-                      collectionProductsViewModel.selectedCollectionProductIds.indexOf(collectionProduct.id) > -1 ? 0.3 : 0,
-                    ), BlendMode.srcATop),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: !collectionProductsViewModel.isActionBarHidden && collectionProductsViewModel.collectionProductIdsToDelete.indexOf(collectionProduct.id) > -1 ? Theme.of(context).accentColor : Colors.transparent,
+                      width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(20))
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: Image.network(
                       collectionProduct.productImageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-                        final notFoundError = exception.toString().contains('404');
                         return GestureDetector(
                           child: Container(
                             child: Center(
-                              child: notFoundError ? Icon(Icons.error_outline) : Icon(Icons.refresh),
+                              child: Icon(Icons.error_outline),
                             ),
                           ),
-                          onTap: () {
-                            if (!notFoundError) {
-                              collectionProductsViewModel.reloadImage(collectionProduct);
+                          onTap: () async {
+                            collectionProductsViewModel.reloadImage(collectionProduct);
+                            if (!collectionProductsViewModel.isActionBarHidden) {
+                              collectionProductsViewModel.onTapCollectionProductToDelete(collectionProduct.id);
+                            } else {
+                              // すでにローカルにとってきてるデータをまずチェックする
+                              Product product;
+                              if (productsViewModel.products.length > 0) {
+                                product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: () => null);
+                              }
+                              if (product == null) {
+                                product = await productViewModel.get(collectionProduct.productId);
+                              }
+                              productViewModel.product = product;
+                              collectionProductsViewModel.product = product;
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
                             }
                           },
                         );
@@ -79,8 +93,8 @@ class CollectionProductsView extends StatelessWidget {
                 ) :
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.lightBlue.shade50, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    color: !collectionProductsViewModel.isActionBarHidden && collectionProductsViewModel.collectionProductIdsToDelete.indexOf(collectionProduct.id) > -1 ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
                   alignment: Alignment.center,
                   child: Padding(
@@ -93,17 +107,16 @@ class CollectionProductsView extends StatelessWidget {
                 ),
                 onTap: () async {
                   if (!collectionProductsViewModel.isActionBarHidden) {
-                    collectionProductsViewModel.onTapProduct(collectionProduct.id);
+                    collectionProductsViewModel.onTapCollectionProductToDelete(collectionProduct.id);
                   } else {
                     // すでにローカルにとってきてるデータをまずチェックする
                     Product product;
                     if (productsViewModel.products.length > 0) {
-                      product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: null);
+                      product = productsViewModel.products.firstWhere((product) => product.id == collectionProduct.productId, orElse: () => null);
                     }
                     if (product == null) {
                       product = await productViewModel.get(collectionProduct.productId);
                     }
-                    collectionsViewModel.selectedCollectionIds = collectionProductsViewModel.collectionProducts.map((cp) => cp.collectionId).toList();
                     productViewModel.product = product;
                     collectionProductsViewModel.product = product;
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView()));
@@ -116,7 +129,7 @@ class CollectionProductsView extends StatelessWidget {
                 }
               );
             },
-              childCount: collectionProductsViewModel.collectionProducts.length,
+              childCount: collectionProductsViewModel.collectionProductsByCollectionId.length,
             ),
           ),
         ),
@@ -189,7 +202,7 @@ class CollectionProductsView extends StatelessWidget {
           }
           return ProgressModal(
             isLoading: collectionProductsViewModel.requestStatusManager.isLoading() &&
-                collectionProductsViewModel.collectionProducts.length == 0,
+                collectionProductsViewModel.collectionProductsByCollectionId.length == 0,
             child: content,
           );
         },
@@ -201,11 +214,10 @@ class CollectionProductsView extends StatelessWidget {
           child: FloatingActionButton(
             heroTag: 'collection-products-view-action-button',
             onPressed: () {
-              collectionsViewModel.selectedCollectionIds = [collectionProductsViewModel.collection.id];
-              productViewModel.product = Product(null);
+              final product = Product(null);
+              product.collectionIds = [collectionProductsViewModel.collection.id];
+              productViewModel.product = product;
               Navigator.pushNamed(context, 'fetch-url-metadata');
-              // productsViewModel.selectedProductIds = collectionProductsViewModel.collectionProducts.map((collection) => collection.productId).toList();
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => SelectProductsView(collection: collectionProductsViewModel.collection), fullscreenDialog: true));
             },
             child: Icon(Icons.add),
           ),

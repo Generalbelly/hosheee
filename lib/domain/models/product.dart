@@ -16,6 +16,8 @@ class Product implements Model {
   Timestamp createdAt;
   Timestamp updatedAt;
 
+  List<String> collectionIds = [];
+
   Product(this.id, {
     String name,
     String websiteUrl,
